@@ -1,0 +1,109 @@
+import Link from "next/link";
+import { Container } from "@/components/ui/Container";
+import type { ContactsConfig, BrandConfig, FooterConfig } from "@/types/site";
+
+interface FooterProps {
+  brand: BrandConfig;
+  contacts: ContactsConfig;
+  footer: FooterConfig;
+  nav: { label: string; href: string }[];
+}
+
+/**
+ * Спокойный финал страницы: двойная линейка сверху, мелкий кегль,
+ * компактные отступы. Знак бренда тут — последнее место на странице,
+ * где ещё используется акцентный цвет.
+ */
+export function Footer({ brand, contacts, footer, nav }: FooterProps) {
+  const year = new Date().getFullYear();
+
+  return (
+    <footer data-surface="paper" className="bg-bg text-fg">
+      {/* Двойная линейка вместо декора — просто два hairline подряд */}
+      <div className="border-t border-rule">
+        <div className="border-t border-rule pt-12 md:pt-16">
+          <Container>
+            <div className="grid gap-x-gutter gap-y-10 md:grid-cols-12">
+              <div className="md:col-span-4">
+                <p className="font-display text-h3">
+                  <span className="text-accent">{brand.mark}</span>{" "}
+                  <span>{brand.name}</span>
+                </p>
+                <p className="mt-3 text-small text-fg-muted">{brand.tagline}</p>
+              </div>
+
+              <nav className="md:col-span-4" aria-label="Разделы сайта">
+                <ul className="grid gap-2.5 sm:grid-cols-2">
+                  {nav.map((item) => (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className="text-small text-fg-muted transition-colors hover:text-fg"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+
+              <div className="md:col-span-4">
+                <ul className="grid gap-2.5">
+                  <li>
+                    <a
+                      href={contacts.phoneHref}
+                      className="tabular text-small underline decoration-rule-strong underline-offset-4 transition-colors hover:text-accent hover:decoration-accent"
+                    >
+                      {contacts.phone}
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href={`mailto:${contacts.email}`}
+                      className="text-small underline decoration-rule-strong underline-offset-4 transition-colors hover:text-accent hover:decoration-accent"
+                    >
+                      {contacts.email}
+                    </a>
+                  </li>
+                  <li className="text-small text-fg-muted">{contacts.address}</li>
+                  <li className="text-small text-fg-muted">{contacts.hours}</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-12 grid gap-x-gutter gap-y-6 border-t border-rule py-8 md:grid-cols-12">
+              <div className="md:col-span-7">
+                <p className="measure text-small text-fg-muted">{footer.note}</p>
+                {footer.legal.map((line) => (
+                  <p key={line} className="tabular mt-1.5 text-small text-fg-muted">
+                    {line}
+                  </p>
+                ))}
+              </div>
+
+              <div className="md:col-span-5 md:text-right">
+                <ul className="flex flex-wrap gap-x-6 gap-y-2 md:justify-end">
+                  {footer.links.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-small text-fg-muted transition-colors hover:text-fg"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                <p className="tabular mt-4 text-small text-fg-muted">
+                  © {year} {brand.legalName}
+                </p>
+              </div>
+            </div>
+          </Container>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+export default Footer;

@@ -1,0 +1,215 @@
+/* ============================================================================
+   TOKENS — единственный источник визуальных значений во всём проекте.
+   Правило: ни один компонент не содержит hex, px-размера шрифта, тени
+   или радиуса. Всё берётся отсюда через Tailwind-классы или var().
+   ========================================================================= */
+
+:root {
+  color-scheme: light;
+
+  /* --------------------------------------------------------------------
+     1. ПАЛИТРА — ядро (6 токенов)
+     -------------------------------------------------------------------- */
+  --palette-paper: #f7f5f0; /* фон страницы — тёплая небелёная бумага      */
+  --palette-surface: #ffffff; /* поверхность — чистый лист поверх бумаги    */
+  --palette-ink: #1a1a18; /* текст + фон единственного тёмного блока      */
+  --palette-ink-muted: #55584f; /* вторичный текст, подписи, ВСЕ иконки    */
+  --palette-rule: #ddd9d0; /* hairline: линейки, границы сетки            */
+  --palette-accent: #14452f; /* хвойный — только 6 мест из правила акцента */
+
+  /* 2. Производные состояния (посчитаны один раз, не color-mix в рантайме) */
+  --palette-accent-hover: #103625;
+  --palette-accent-active: #0c2a1d;
+  --palette-rule-strong: #83867c; /* границы ИНТЕРАКТИВНЫХ элементов, 3.4:1 */
+
+  /* 3. Инверсия для тёмного блока «Кейсы» */
+  --palette-ink-fg: #f7f5f0;
+  --palette-ink-fg-muted: #9a9c92;
+  --palette-ink-rule: #33362f;
+
+  /* --------------------------------------------------------------------
+     СЕМАНТИЧЕСКИЙ СЛОЙ — то, чем пользуются компоненты.
+     Переопределяется контекстом секции через [data-surface].
+     -------------------------------------------------------------------- */
+  --surface-bg: var(--palette-paper);
+  --surface-fg: var(--palette-ink);
+  --surface-fg-muted: var(--palette-ink-muted);
+  --surface-rule: var(--palette-rule);
+  --surface-rule-strong: var(--palette-rule-strong);
+
+  /* Акцент — семантические имена, чтобы правило акцента читалось в коде */
+  --accent: var(--palette-accent);
+  --accent-hover: var(--palette-accent-hover);
+  --accent-active: var(--palette-accent-active);
+  --accent-fg: var(--palette-paper); /* текст на акцентной заливке */
+  --accent-ring: var(--palette-accent); /* focus-ring, п.4 правила акцента */
+
+  /* Primary-кнопка. Единственное место, где акцент становится заливкой
+     помимо CTA-блока. Внутри акцентного блока пара инвертируется —
+     см. [data-surface="accent"] ниже. */
+  --btn-primary-bg: var(--palette-accent);
+  --btn-primary-fg: var(--palette-paper);
+  --btn-primary-bg-hover: var(--palette-accent-hover);
+  --btn-primary-bg-active: var(--palette-accent-active);
+
+  /* --------------------------------------------------------------------
+     ТИПОГРАФИКА
+     -------------------------------------------------------------------- */
+  --font-display-stack: var(--font-source-serif), "PT Serif", Georgia,
+    "Times New Roman", serif;
+  --font-body-stack: var(--font-golos), -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Arial, sans-serif;
+  /* Вторая серифная гарнитура — только для h1/h2 (font-heading), акцентная
+     декоративная типографика поверх основного font-display. */
+  --font-heading-stack: var(--font-playfair), "PT Serif", Georgia, serif;
+
+  /* Флюид 375 → 1440px, дальше кегль не растёт (контейнер 1240) */
+  /* Нижняя граница 34px, а не 40: на 375px при 40px строка «и жилищные дела»
+     не помещается и «дела» отваливается в отдельную строку. */
+  --size-h1: clamp(2.125rem, 0.76rem + 5.82vw, 6rem); /* 34 → 96 */
+  --size-h2: clamp(1.75rem, 1.4rem + 1.5vw, 2.75rem); /* 28 → 44 */
+  --size-h3: clamp(1.25rem, 1.16rem + 0.38vw, 1.5rem); /* 20 → 24 */
+  --size-stat: clamp(2.75rem, 2.4rem + 1.5vw, 3.75rem); /* 44 → 60 */
+  --size-quote: clamp(1.25rem, 1.07rem + 0.75vw, 1.75rem); /* 20 → 28 */
+  --size-lead: clamp(1.125rem, 1.03rem + 0.38vw, 1.375rem); /* 18 → 22 */
+  --size-body: clamp(1rem, 0.978rem + 0.094vw, 1.0625rem); /* 16 → 17 */
+  --size-small: 0.875rem; /* 14 */
+  --size-caption: 0.8125rem; /* 13 */
+  --size-button: 0.9375rem; /* 15 */
+
+  --leading-h1: 1.05;
+  --leading-h2: 1.12;
+  --leading-h3: 1.3;
+  --leading-stat: 1;
+  --leading-quote: 1.35;
+  --leading-body: 1.6;
+  --leading-tight: 1.2;
+  --leading-flat: 1;
+
+  --tracking-h1: -0.02em;
+  --tracking-h2: -0.015em;
+  --tracking-h3: -0.01em;
+  --tracking-normal: 0em;
+  --tracking-caption: 0.08em;
+  --tracking-button: 0.01em;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  --measure-text: 68ch; /* максимальная длина строки в текстовых блоках */
+
+  /* --------------------------------------------------------------------
+     РИТМ И РАЗМЕРЫ
+     -------------------------------------------------------------------- */
+  --layout-container: 77.5rem; /* 1240px */
+  --layout-narrow: 47.5rem; /* 760px — колонка FAQ */
+  --layout-gutter: clamp(1.25rem, 0.9rem + 1.5vw, 2.5rem); /* 20 → 40 */
+
+  --space-section: clamp(4rem, 2.5rem + 6.4vw, 8rem); /* 64 → 128 */
+  --space-section-lg: clamp(5rem, 2.8rem + 9.4vw, 10rem); /* 80 → 160 — hero, CTA */
+  --space-section-sm: clamp(2.5rem, 2rem + 2.1vw, 3.5rem); /* 40 → 56 — полоса статистики */
+
+  --header-height: 4.5rem; /* 72px */
+  --scroll-offset: 6rem; /* header + воздух, для scroll-margin-top */
+
+  /* --------------------------------------------------------------------
+     ГРАНИЦЫ, РАДИУСЫ, ТЕНИ
+     Тени в проекте отсутствуют как класс решений — документ не парит.
+     -------------------------------------------------------------------- */
+  --border-hairline: 1px;
+  --border-accent-marker: 2px;
+  --radius-sm: 0.125rem; /* 2px */
+  --radius-md: 0.25rem; /* 4px — максимум в проекте */
+
+  /* --------------------------------------------------------------------
+     ДВИЖЕНИЕ
+     -------------------------------------------------------------------- */
+  --duration-reveal: 500ms;
+  --duration-ui: 180ms;
+  --duration-toast-enter: 300ms;
+  --duration-toast-exit: 280ms;
+  --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-ui: cubic-bezier(0.4, 0, 0.2, 1);
+  --reveal-shift: 12px;
+  --reveal-stagger: 60ms;
+
+  --z-header: 50;
+  --z-toast: 80;
+}
+
+/* ============================================================================
+   ТЁМНАЯ ТЕМА
+   На этом проекте выключена (theme.darkModeToggle: false, defaultMode: light).
+   Блок остаётся рабочим, чтобы шаблон переносился на другие проекты флагом.
+   Палитра остаётся ТЁПЛОЙ — уход в сине-серый убивает характер.
+   ========================================================================= */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --palette-paper: #131512;
+  --palette-surface: #1b1e1a;
+  --palette-ink: #edeae3;
+  --palette-ink-muted: #9da096;
+  --palette-rule: #2c302b;
+  --palette-accent: #5ba47d; /* исходный #14452F на тёмном проваливается */
+  --palette-accent-hover: #6db78e;
+  --palette-accent-active: #4a8f69;
+  --palette-rule-strong: #575b52;
+
+  --palette-ink-fg: #131512;
+  --palette-ink-fg-muted: #575b52;
+  --palette-ink-rule: #3a3f38;
+
+  --accent-fg: #0f1a14;
+}
+
+/* ============================================================================
+   КОНТЕКСТЫ ПОВЕРХНОСТЕЙ
+   Секция объявляет data-surface — вложенные компоненты подхватывают
+   семантические переменные и не содержат ни одного условия про тему.
+   ========================================================================= */
+[data-surface="paper"] {
+  --surface-bg: var(--palette-paper);
+  --surface-fg: var(--palette-ink);
+  --surface-fg-muted: var(--palette-ink-muted);
+  --surface-rule: var(--palette-rule);
+  --surface-rule-strong: var(--palette-rule-strong);
+}
+
+[data-surface="surface"] {
+  --surface-bg: var(--palette-surface);
+  --surface-fg: var(--palette-ink);
+  --surface-fg-muted: var(--palette-ink-muted);
+  --surface-rule: var(--palette-rule);
+  --surface-rule-strong: var(--palette-rule-strong);
+}
+
+/* Единственная инверсия в теле страницы — блок кейсов. Акцент здесь не живёт. */
+[data-surface="ink"] {
+  --surface-bg: var(--palette-ink);
+  --surface-fg: var(--palette-ink-fg);
+  --surface-fg-muted: var(--palette-ink-fg-muted);
+  --surface-rule: var(--palette-ink-rule);
+  --surface-rule-strong: var(--palette-ink-fg-muted);
+}
+
+/* Единственная акцентная заливка на странице — CTA. */
+[data-surface="accent"] {
+  --surface-bg: var(--accent);
+  --surface-fg: var(--accent-fg);
+  --surface-fg-muted: color-mix(in srgb, var(--accent-fg) 72%, transparent);
+  --surface-rule: color-mix(in srgb, var(--accent-fg) 24%, transparent);
+  --surface-rule-strong: color-mix(in srgb, var(--accent-fg) 45%, transparent);
+
+  /* Акцент на акценте не читается — кнопка внутри CTA инвертируется */
+  --btn-primary-bg: var(--accent-fg);
+  --btn-primary-fg: var(--accent);
+  --btn-primary-bg-hover: color-mix(in srgb, var(--accent-fg) 88%, #000);
+  --btn-primary-bg-active: color-mix(in srgb, var(--accent-fg) 78%, #000);
+}
+
+/* Тёмный блок: focus-ring осветляется, иначе хвойный тонет в графите */
+[data-surface="ink"] {
+  --accent-ring: var(--palette-ink-fg);
+}

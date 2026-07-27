@@ -1,0 +1,103 @@
+import type { ButtonHTMLAttributes, ReactNode } from "react";
+import Link from "next/link";
+import { cn } from "@/lib/cn";
+
+type Variant = "primary" | "secondary" | "quiet";
+type Size = "md" | "sm";
+
+interface CommonProps {
+  children: ReactNode;
+  variant?: Variant;
+  size?: Size;
+  className?: string;
+  full?: boolean;
+}
+
+interface LinkProps extends CommonProps {
+  href: string;
+  type?: never;
+  disabled?: never;
+}
+
+interface ActionProps
+  extends CommonProps,
+    Pick<ButtonHTMLAttributes<HTMLButtonElement>, "type" | "disabled"> {
+  href?: undefined;
+}
+
+type ButtonProps = LinkProps | ActionProps;
+
+const base =
+  "inline-flex items-center justify-center rounded-doc-sm text-button font-medium transition-colors select-none disabled:opacity-55 disabled:pointer-events-none";
+
+const sizes: Record<Size, string> = {
+  md: "h-12 px-7",
+  sm: "h-10 px-5",
+};
+
+/**
+ * primary — заливка акцентным цветом. Внутри [data-surface="accent"]
+ * bg/fg инвертируются на уровне токенов, кнопка об этом даже не знает.
+ * secondary — просто обводка, без заливки и без акцента.
+ */
+const variants: Record<Variant, string> = {
+  primary:
+    "bg-btn-primary text-btn-primary-fg hover:bg-btn-primary-hover active:bg-btn-primary-active",
+  secondary:
+    "border border-rule-strong text-fg hover:border-fg bg-transparent",
+  quiet:
+    "text-fg-muted hover:text-fg underline decoration-rule-strong underline-offset-4 h-auto px-0",
+};
+
+export function Button(props: ButtonProps) {
+  const {
+    children,
+    variant = "primary",
+    size = "md",
+    className,
+    full,
+  } = props;
+
+  const classes = cn(
+    base,
+    variant !== "quiet" && sizes[size],
+    variants[variant],
+    full && "w-full",
+    className,
+  );
+
+  if ("href" in props && props.href) {
+    const { href } = props;
+    const external = /^(https?:|mailto:|tel:)/.test(href);
+
+    if (external) {
+      return (
+        <a
+          href={href}
+          className={classes}
+          {...(href.startsWith("http")
+            ? { target: "_blank", rel: "noopener noreferrer" }
+            : {})}
+        >
+          {children}
+        </a>
+      );
+    }
+
+    return (
+      <Link href={href} className={classes}>
+        {children}
+      </Link>
+    );
+  }
+
+  const { type = "button", disabled } = props as ActionProps;
+
+  return (
+    <button type={type} disabled={disabled} className={classes}>
+      {children}
+    </button>
+  );
+}
+
+export default Button;

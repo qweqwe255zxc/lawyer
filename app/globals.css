@@ -1,0 +1,291 @@
+@import "tailwindcss";
+@import "../theme/tokens.css";
+
+/* ============================================================================
+   Маппинг Tailwind на CSS-переменные.
+   Все значения приходят из theme/tokens.css — здесь только имена утилит.
+   `inline` обязателен: иначе рантайм-переопределения [data-surface] и
+   [data-theme] не долетят до утилит.
+   ========================================================================= */
+@theme inline {
+  /* Контекстные цвета — меняются вместе с data-surface секции */
+  --color-bg: var(--surface-bg);
+  --color-fg: var(--surface-fg);
+  --color-fg-muted: var(--surface-fg-muted);
+  --color-rule: var(--surface-rule);
+  --color-rule-strong: var(--surface-rule-strong);
+
+  /* Абсолютные цвета палитры — когда нужен именно этот тон */
+  --color-paper: var(--palette-paper);
+  --color-surface: var(--palette-surface);
+  --color-ink: var(--palette-ink);
+  --color-ink-muted: var(--palette-ink-muted);
+
+  /* Акцент */
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-active: var(--accent-active);
+  --color-accent-fg: var(--accent-fg);
+  --color-btn-primary: var(--btn-primary-bg);
+  --color-btn-primary-fg: var(--btn-primary-fg);
+  --color-btn-primary-hover: var(--btn-primary-bg-hover);
+  --color-btn-primary-active: var(--btn-primary-bg-active);
+
+  /* Шрифты */
+  --font-display: var(--font-display-stack);
+  --font-body: var(--font-body-stack);
+  --font-heading: var(--font-heading-stack);
+
+  /* Типографическая шкала (размер + интерлиньяж + трекинг одним классом) */
+  --text-h1: var(--size-h1);
+  --text-h1--line-height: var(--leading-h1);
+  --text-h1--letter-spacing: var(--tracking-h1);
+
+  --text-h2: var(--size-h2);
+  --text-h2--line-height: var(--leading-h2);
+  --text-h2--letter-spacing: var(--tracking-h2);
+
+  --text-h3: var(--size-h3);
+  --text-h3--line-height: var(--leading-h3);
+  --text-h3--letter-spacing: var(--tracking-h3);
+
+  --text-stat: var(--size-stat);
+  --text-stat--line-height: var(--leading-stat);
+  --text-stat--letter-spacing: var(--tracking-h1);
+
+  --text-quote: var(--size-quote);
+  --text-quote--line-height: var(--leading-quote);
+  --text-quote--letter-spacing: var(--tracking-h3);
+
+  --text-lead: var(--size-lead);
+  --text-lead--line-height: 1.5;
+
+  --text-body: var(--size-body);
+  --text-body--line-height: var(--leading-body);
+
+  --text-small: var(--size-small);
+  --text-small--line-height: 1.5;
+
+  --text-caption: var(--size-caption);
+  --text-caption--line-height: var(--leading-tight);
+  --text-caption--letter-spacing: var(--tracking-caption);
+
+  --text-button: var(--size-button);
+  --text-button--line-height: var(--leading-flat);
+  --text-button--letter-spacing: var(--tracking-button);
+
+  /* Ритм */
+  --spacing-section: var(--space-section);
+  --spacing-section-lg: var(--space-section-lg);
+  --spacing-section-sm: var(--space-section-sm);
+  --spacing-gutter: var(--layout-gutter);
+  --spacing-header: var(--header-height);
+
+  --container-page: var(--layout-container);
+  --container-narrow: var(--layout-narrow);
+
+  --radius-doc: var(--radius-md);
+  --radius-doc-sm: var(--radius-sm);
+
+  --ease-reveal: var(--ease-reveal);
+  --ease-ui: var(--ease-ui);
+}
+
+/* ========================================================================= */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--surface-rule);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background-color: var(--palette-paper);
+    color: var(--palette-ink);
+    font-family: var(--font-body-stack);
+    font-size: var(--size-body);
+    line-height: var(--leading-body);
+    font-weight: var(--weight-regular);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  blockquote {
+    font-family: var(--font-display-stack);
+    font-weight: var(--weight-regular);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Единственное место, где живёт focus-ring — и он всегда акцентный */
+  :focus-visible {
+    outline: var(--border-accent-marker) solid var(--accent-ring);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--accent-fg);
+  }
+
+  /* Якорные ссылки не прячутся под sticky-хедер */
+  :target,
+  [data-section] {
+    scroll-margin-top: var(--scroll-offset);
+  }
+
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+@layer utilities {
+  /* Табличные цифры: статистика, телефоны, реестр кейсов */
+  .tabular {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  .measure {
+    max-width: var(--measure-text);
+  }
+
+  /* Курсив разрешён ровно в одном случае — отсылки к нормам права */
+  .legal-ref {
+    font-family: var(--font-display-stack);
+    font-style: italic;
+  }
+}
+
+/* ============================================================================
+   REVEAL при скролле — IntersectionObserver, без библиотек.
+   Прячем элементы только если рантайм подтвердил поддержку: без JS
+   и при prefers-reduced-motion контент виден сразу.
+   ========================================================================= */
+[data-reveal-enabled="true"] [data-reveal] {
+  opacity: 0;
+  transform: translateY(var(--reveal-shift));
+  transition:
+    opacity var(--duration-reveal) var(--ease-reveal),
+    transform var(--duration-reveal) var(--ease-reveal);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+[data-reveal-enabled="true"] [data-reveal][data-revealed="true"] {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal-enabled="true"] [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ============================================================================
+   Аккордеон FAQ: высота панели анимируется через grid-template-rows,
+   а не через height/max-height — не требует измерения scrollHeight в JS
+   и работает для контента любой длины.
+   ========================================================================= */
+.accordion-panel {
+  transition: grid-template-rows var(--duration-reveal) var(--ease-reveal);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accordion-panel {
+    transition: none;
+  }
+}
+
+/* ============================================================================
+   Мобильное меню в хедере: та же техника grid-template-rows, что у
+   аккордеона (высота ужимается до 0 без display/hidden), плюс лёгкое
+   затухание — резкое появление крупной панели выглядит рвано.
+   ========================================================================= */
+.mobile-nav {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows var(--duration-reveal) var(--ease-reveal),
+    opacity var(--duration-ui) var(--ease-ui);
+}
+
+.mobile-nav[data-open="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav {
+    transition: none;
+  }
+}
+
+/* ============================================================================
+   Тост: на мобильном — снекбар на всю ширину, въезжает снизу; от sm и шире —
+   карточка в правом нижнем углу, въезжает справа. Уходит тем же путём при
+   закрытии. Контент остаётся в DOM на время exit-анимации (см. Toast.tsx) —
+   иначе закрытие выглядело бы как мгновенное исчезновение.
+   ========================================================================= */
+.toast {
+  opacity: 0;
+  transform: translateY(var(--reveal-shift));
+  transition:
+    opacity var(--duration-toast-exit) var(--ease-ui),
+    transform var(--duration-toast-exit) var(--ease-ui);
+}
+
+@media (min-width: 640px) {
+  .toast {
+    transform: translateX(calc(var(--reveal-shift) * 2));
+  }
+}
+
+.toast[data-state="visible"] {
+  opacity: 1;
+  transform: none;
+  transition-duration: var(--duration-toast-enter);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    transition: none;
+  }
+}

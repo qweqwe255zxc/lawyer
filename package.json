@@ -1,0 +1,27 @@
+{
+  "name": "landing-template",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Переиспользуемый шаблон лендинга: Next.js 16 App Router, TypeScript, Tailwind CSS, конфиг-driven секции",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "new-project": "node scripts/new-project.mjs"
+  },
+  "dependencies": {
+    "lucide-react": "^1.27.0",
+    "next": "^16.2.12",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.1.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2"
+  }
+}
