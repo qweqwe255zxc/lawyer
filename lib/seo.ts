@@ -20,8 +20,8 @@ export function buildMetadata(config: SiteConfig): Metadata {
     },
     icons: {
       icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-      shortcut: [{ url: "/icon.svg", type: "image/svg+xml" }],
-      apple: [{ url: "/icon.svg", type: "image/svg+xml" }],
+      shortcut: [{ url: "/favicon.ico" }],
+      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
     },
     openGraph: {
       type: "website",
