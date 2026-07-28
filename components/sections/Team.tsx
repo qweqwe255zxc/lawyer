@@ -53,7 +53,19 @@ export function Team(props: TeamSection) {
                 index > 0 && "mt-10 md:mt-0",
               )}
             >
-              <div className="relative mb-7 aspect-[3/4] w-full overflow-hidden rounded-doc-sm bg-rule">
+              <div
+                className={cn(
+                  "relative mb-7 aspect-[3/4] w-full overflow-hidden rounded-doc-sm bg-rule",
+                  // variant="rows" роняет grid-cols-3 до grid-cols-1 — без
+                  // потолка ширины aspect-[3/4] растягивается на всю
+                  // ~1240px колонку контейнера и даёт портрет ~1650px
+                  // высотой. Тот же паттерн бага, что был у карты в
+                  // ContactForm при variant="stacked": вариант снял
+                  // constraint (grid-cols-3), а зависимый aspect-ratio
+                  // блок на это не рассчитан.
+                  variant === "rows" && "max-w-xs",
+                )}
+              >
                 {member.photo ? (
                   <Image
                     src={member.photo}

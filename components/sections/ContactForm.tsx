@@ -214,7 +214,18 @@ export function ContactForm(props: ContactFormProps) {
             ) : null}
 
             {mapSrc ? (
-              <div className="mt-6 overflow-hidden rounded-doc-sm border border-rule">
+              <div
+                className={cn(
+                  "mt-6 overflow-hidden rounded-doc-sm border border-rule",
+                  // В stacked-варианте колонка реквизитов растягивается на всю
+                  // ширину контейнера (~1240px) вместо узкой 5/12-колонки —
+                  // без верхнего предела ширины iframe с aspectRatio="4/3"
+                  // растягивается вместе с ней и превращается в 930px высотой
+                  // полосу на весь экран. В split-варианте колонка и так узкая
+                  // (5/12), там это ограничение не нужно и не применяется.
+                  isStacked && "mx-auto max-w-md",
+                )}
+              >
                 <iframe
                   src={mapSrc}
                   loading="lazy"
