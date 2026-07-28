@@ -42,6 +42,8 @@ export interface HeroSection extends SectionBase {
   facts?: HeroFact[];
   /** Вертикальный колонтитул на левом поле. */
   rail?: string;
+  /** Фон/фото для variant="split". Без variant="split" не используется. */
+  image?: string;
 }
 
 // Stats
@@ -66,6 +68,7 @@ export interface FeatureItem {
   title: string;
   text: string;
   points?: string[];
+  photo?: string;
 }
 
 export interface FeaturesSection extends SectionBase {
@@ -159,6 +162,7 @@ export interface PricingPlan {
   features: string[];
   action?: CtaLink;
   featured?: boolean;
+  photo?: string;
 }
 
 export interface PricingSection extends SectionBase {
@@ -199,6 +203,8 @@ export interface ContactSection extends SectionBase {
   errorText: string;
   /** Заголовок левой колонки с реквизитами. */
   detailsTitle?: string;
+  /** URL embed-iframe карты (Google/Yandex Maps). Без него карта не рендерится. */
+  mapSrc?: string;
 }
 
 export type Section =

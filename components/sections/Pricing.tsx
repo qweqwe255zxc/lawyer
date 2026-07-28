@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
@@ -47,6 +48,16 @@ export function Pricing(props: PricingSection) {
           {items.map((plan, index) => {
             const body = (
               <>
+                {!isTable && plan.photo ? (
+                  <Image
+                    src={plan.photo}
+                    alt={plan.name}
+                    width={480}
+                    height={320}
+                    className="mb-5 w-full rounded-doc-sm object-cover"
+                  />
+                ) : null}
+
                 <h3 className="font-display text-h3">{plan.name}</h3>
                 <p className="tabular mt-6 font-display text-stat">
                   {plan.price}

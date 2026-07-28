@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
@@ -7,18 +8,24 @@ import type { HeroSection } from "@/types/site";
 /**
  * Самая разреженная секция на сайте, без картинок и графики —
  * держится на крупной серифной типографике и колонтитуле на поле.
+ * variant="split" с заданным image — исключение, добавляет фото рядом
+ * с заголовком; без image всегда падает обратно на type-only.
  */
 export function Hero(props: HeroSection) {
   const {
     id,
     surface = "paper",
+    variant = "type-only",
     number,
     rail,
     headline,
     lead,
     actions = [],
     facts = [],
+    image,
   } = props;
+
+  const isSplit = variant === "split" && Boolean(image);
 
   return (
     <Section id={id} surface={surface} spacing="lg">
@@ -57,7 +64,7 @@ export function Hero(props: HeroSection) {
             </div>
           </div>
 
-          <div className="md:col-span-10">
+          <div className={isSplit ? "md:col-span-4" : "md:col-span-10"}>
             {/* Ручные переносы включаются только с md: на узком экране они
                 дают висячие строки, там заголовок верстается потоком. */}
             <h1 className="font-heading text-h1" data-reveal>
@@ -103,6 +110,20 @@ export function Hero(props: HeroSection) {
               </div>
             ) : null}
           </div>
+
+          {isSplit ? (
+            <div className="mt-10 md:col-span-6 md:col-start-7 md:mt-0">
+              <Image
+                src={image as string}
+                alt={headline.join(" ")}
+                width={960}
+                height={1200}
+                className="h-full w-full rounded-doc-sm object-cover"
+                data-reveal
+                style={revealDelay(1)}
+              />
+            </div>
+          ) : null}
         </div>
 
         {/* «Шапка дела»: три факта через вертикальные линейки */}

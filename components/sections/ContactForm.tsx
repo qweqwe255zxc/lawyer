@@ -9,6 +9,7 @@ import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Toast, type ToastState } from "@/components/ui/Toast";
 import { isRuPhoneComplete } from "@/lib/phoneMask";
+import { cn } from "@/lib/cn";
 import type { ContactSection, ContactsConfig } from "@/types/site";
 
 type ContactFormProps = ContactSection & { contacts: ContactsConfig };
@@ -23,6 +24,7 @@ export function ContactForm(props: ContactFormProps) {
   const {
     id,
     surface = "surface",
+    variant = "split",
     number,
     eyebrow,
     title,
@@ -35,7 +37,10 @@ export function ContactForm(props: ContactFormProps) {
     successText,
     errorText,
     contacts,
+    mapSrc,
   } = props;
+
+  const isStacked = variant === "stacked";
 
   const formRef = useRef<HTMLFormElement>(null);
   const honeypotRef = useRef<HTMLInputElement>(null);
@@ -145,9 +150,14 @@ export function ContactForm(props: ContactFormProps) {
           lead={lead}
         />
 
-        <div className="mt-14 grid gap-x-gutter gap-y-14 md:mt-20 md:grid-cols-12">
+        <div
+          className={cn(
+            "mt-14 grid gap-x-gutter gap-y-14 md:mt-20",
+            isStacked ? "md:grid-cols-1" : "md:grid-cols-12",
+          )}
+        >
           {/* Реквизиты сторон */}
-          <div className="md:col-span-5" data-reveal>
+          <div className={isStacked ? undefined : "md:col-span-5"} data-reveal>
             {detailsTitle ? (
               <h3 className="text-caption font-medium uppercase text-fg-muted">
                 {detailsTitle}
@@ -196,6 +206,16 @@ export function ContactForm(props: ContactFormProps) {
                   .join(" · ")}
               </p>
             ) : null}
+
+            {mapSrc ? (
+              <iframe
+                src={mapSrc}
+                loading="lazy"
+                title="Карта проезда"
+                className="mt-6 w-full rounded-doc-sm"
+                style={{ border: 0, aspectRatio: "4 / 3" }}
+              />
+            ) : null}
           </div>
 
           {/* Форма */}
@@ -203,7 +223,7 @@ export function ContactForm(props: ContactFormProps) {
             ref={formRef}
             onSubmit={handleSubmit}
             noValidate
-            className="md:col-span-7"
+            className={isStacked ? undefined : "md:col-span-7"}
             data-reveal
           >
             {/* honeypot: обычный человек это поле не видит и не заполнит */}

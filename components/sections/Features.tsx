@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -63,6 +64,16 @@ export function Features(props: FeaturesSection) {
 
             const content = (
               <>
+                {!isTable && item.photo ? (
+                  <Image
+                    src={item.photo}
+                    alt={item.title}
+                    width={480}
+                    height={320}
+                    className="mb-5 w-full rounded-doc-sm object-cover"
+                  />
+                ) : null}
+
                 {Icon ? (
                   <Icon
                     aria-hidden="true"
