@@ -1,4 +1,5 @@
 import { Fragment, type ReactNode } from "react";
+import { About } from "@/components/sections/About";
 import { CTA } from "@/components/sections/CTA";
 import { ContactForm } from "@/components/sections/ContactForm";
 import { FAQ } from "@/components/sections/FAQ";
@@ -35,7 +36,7 @@ type Renderer<K extends SectionType> = (
  * Turbopack, что на Webpack.
  *
  * У большинства секций (Hero, Stats, Features, Steps, Gallery,
- * Testimonials, Team, Pricing, CTA) нет собственного клиентского JS
+ * Testimonials, Team, About, Pricing, CTA) нет собственного клиентского JS
  * вообще — это чистые Server Components, их код и так не попадает в
  * бандл браузера независимо от способа импорта. Единственные тяжёлые
  * по клиентскому JS — FAQ (через Accordion) и ContactForm (форма,
@@ -61,6 +62,7 @@ const registry: { [K in SectionType]: Renderer<K> } = {
   gallery: (section) => <Gallery {...section} />,
   testimonials: (section) => <Testimonials {...section} />,
   team: (section) => <Team {...section} />,
+  about: (section) => <About {...section} />,
   faq: (section) => <FAQ {...section} />,
   pricing: (section) => <Pricing {...section} />,
   cta: (section) => <CTA {...section} />,

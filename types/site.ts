@@ -139,6 +139,18 @@ export interface TeamSection extends SectionBase {
   items: TeamMember[];
 }
 
+// About ("о нас" / "о месте")
+
+export interface AboutSection extends SectionBase {
+  type: "about";
+  /** Какая колонка занята фото — вторая колонка всегда 7/12, текстовая 5/12. */
+  variant?: "photo-right" | "photo-left";
+  /** Абзацы, один <p> на элемент массива. */
+  text: string[];
+  photo: string;
+  photoAlt?: string;
+}
+
 // FAQ
 
 export interface FaqItem {
@@ -215,6 +227,7 @@ export type Section =
   | GallerySection
   | TestimonialsSection
   | TeamSection
+  | AboutSection
   | FaqSection
   | PricingSection
   | CtaSection
@@ -240,6 +253,9 @@ export interface ContactsConfig {
   telegram: string;
   telegramHref: string;
   whatsapp?: string;
+  whatsappHref?: string;
+  instagram?: string;
+  instagramHref?: string;
   address: string;
   addressShort: string;
   postalCode: string;

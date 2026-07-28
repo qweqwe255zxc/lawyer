@@ -7,8 +7,9 @@ import { cn } from "@/lib/cn";
 import type { TeamSection } from "@/types/site";
 
 /**
- * Фото рендерим, только если оно реально есть в конфиге. Пока фото нет,
- * под именем стоит круглая заглушка с инициалами — место под будущий портрет.
+ * Аватар — единый бокс aspect-[3/4] независимо от того, есть фото или
+ * нет: пока фото не задано, в том же боксе стоит заглушка с инициалами.
+ * Так карточки с фото и без фото в одной секции остаются одной высоты.
  */
 export function Team(props: TeamSection) {
   const {
@@ -52,24 +53,26 @@ export function Team(props: TeamSection) {
                 index > 0 && "mt-10 md:mt-0",
               )}
             >
-              {member.photo ? (
-                <Image
-                  src={member.photo}
-                  alt={`${member.name} — ${member.role}`}
-                  width={480}
-                  height={600}
-                  className="mb-7 w-full rounded-doc-sm object-cover grayscale"
-                />
-              ) : null}
+              <div className="relative mb-7 aspect-[3/4] w-full overflow-hidden rounded-doc-sm bg-rule">
+                {member.photo ? (
+                  <Image
+                    src={member.photo}
+                    alt={`${member.name} — ${member.role}`}
+                    fill
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                    className="object-cover grayscale"
+                  />
+                ) : (
+                  <div
+                    aria-hidden="true"
+                    className="flex h-full w-full items-center justify-center font-display text-h1 text-fg-muted"
+                  >
+                    {initials}
+                  </div>
+                )}
+              </div>
 
               <h3 className="font-display text-h3">{member.name}</h3>
-
-              <div
-                aria-hidden="true"
-                className="mt-4 flex h-20 w-20 items-center justify-center rounded-full bg-rule text-body font-medium text-fg-muted"
-              >
-                {initials}
-              </div>
 
               <p className="mt-2 text-caption font-medium uppercase text-fg-muted">
                 {member.role}

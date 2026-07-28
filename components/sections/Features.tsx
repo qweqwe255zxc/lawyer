@@ -40,7 +40,15 @@ export function Features(props: FeaturesSection) {
     items,
   } = props;
 
-  const isTable = variant === "table";
+  const hasPhoto = items.some((item) => item.photo);
+
+  if (process.env.NODE_ENV !== "production" && hasPhoto && variant === "table") {
+    console.warn(
+      `[Features] Секция "${id}": variant="table" не поддерживает photo — форсирован variant="cards".`,
+    );
+  }
+
+  const isTable = variant === "table" && !hasPhoto;
 
   return (
     <Section id={id} surface={surface}>
@@ -64,14 +72,16 @@ export function Features(props: FeaturesSection) {
 
             const content = (
               <>
-                {!isTable && item.photo ? (
-                  <Image
-                    src={item.photo}
-                    alt={item.title}
-                    width={480}
-                    height={320}
-                    className="mb-5 w-full rounded-doc-sm object-cover"
-                  />
+                {item.photo ? (
+                  <div className="relative mb-5 aspect-[4/3] w-full overflow-hidden rounded-doc-sm">
+                    <Image
+                      src={item.photo}
+                      alt={item.title}
+                      fill
+                      sizes="(min-width: 768px) 33vw, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
                 ) : null}
 
                 {Icon ? (

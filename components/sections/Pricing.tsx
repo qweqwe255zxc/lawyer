@@ -13,6 +13,9 @@ import type { PricingSection } from "@/types/site";
  * оставлена про запас для других проектов на этом шаблоне.
  * Выделенный тариф подсвечивается линией --color-fg, не акцентом —
  * акцентная заливка занята под primary-кнопку и CTA-блок.
+ * Если хотя бы у одного плана задан photo — variant форсируется в
+ * "cards": табличная сетка с border-top/border-l не умеет выравнивать
+ * фото произвольной высоты, только карточки с фиксированным aspect-ratio.
  */
 export function Pricing(props: PricingSection) {
   const {
@@ -27,7 +30,15 @@ export function Pricing(props: PricingSection) {
     note,
   } = props;
 
-  const isTable = variant === "table";
+  const hasPhoto = items.some((plan) => plan.photo);
+
+  if (process.env.NODE_ENV !== "production" && hasPhoto && variant === "table") {
+    console.warn(
+      `[Pricing] Секция "${id}": variant="table" не поддерживает photo — форсирован variant="cards".`,
+    );
+  }
+
+  const isTable = variant === "table" && !hasPhoto;
 
   return (
     <Section id={id} surface={surface}>
@@ -48,14 +59,16 @@ export function Pricing(props: PricingSection) {
           {items.map((plan, index) => {
             const body = (
               <>
-                {!isTable && plan.photo ? (
-                  <Image
-                    src={plan.photo}
-                    alt={plan.name}
-                    width={480}
-                    height={320}
-                    className="mb-5 w-full rounded-doc-sm object-cover"
-                  />
+                {plan.photo ? (
+                  <div className="relative mb-5 aspect-[4/3] w-full overflow-hidden rounded-doc-sm">
+                    <Image
+                      src={plan.photo}
+                      alt={plan.name}
+                      fill
+                      sizes="(min-width: 768px) 33vw, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
                 ) : null}
 
                 <h3 className="font-display text-h3">{plan.name}</h3>

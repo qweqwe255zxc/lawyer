@@ -423,6 +423,8 @@ export const siteConfig: SiteConfig = {
       title: "Записаться на консультацию",
       lead: "Опишите ситуацию в двух словах — перезвоним и назначим встречу в офисе или онлайн.",
       detailsTitle: "Реквизиты и связь",
+      mapSrc:
+        "https://yandex.ru/map-widget/v1/?ll=37.5972,55.7423&z=16&pt=37.5972,55.7423,pm2rdm",
       fields: [
         {
           name: "name",

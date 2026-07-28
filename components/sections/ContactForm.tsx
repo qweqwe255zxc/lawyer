@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, type FormEvent } from "react";
-import { Clock, Mail, MapPin, Phone, Send } from "lucide-react";
+import { AtSign, Clock, Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Input } from "@/components/ui/Input";
@@ -132,10 +132,16 @@ export function ContactForm(props: ContactFormProps) {
     }
   }
 
-  const details = [
+  const details: { icon: typeof Phone; label: string; value: string; href?: string }[] = [
     { icon: Phone, label: "Телефон", value: contacts.phone, href: contacts.phoneHref },
     { icon: Mail, label: "Почта", value: contacts.email, href: `mailto:${contacts.email}` },
     { icon: Send, label: "Telegram", value: contacts.telegram, href: contacts.telegramHref },
+    ...(contacts.whatsapp
+      ? [{ icon: MessageCircle, label: "WhatsApp", value: contacts.whatsapp, href: contacts.whatsappHref }]
+      : []),
+    ...(contacts.instagram
+      ? [{ icon: AtSign, label: "Instagram", value: contacts.instagram, href: contacts.instagramHref }]
+      : []),
     { icon: MapPin, label: "Офис", value: contacts.address, href: undefined },
     { icon: Clock, label: "Часы работы", value: contacts.hours, href: undefined },
   ];
@@ -208,13 +214,15 @@ export function ContactForm(props: ContactFormProps) {
             ) : null}
 
             {mapSrc ? (
-              <iframe
-                src={mapSrc}
-                loading="lazy"
-                title="Карта проезда"
-                className="mt-6 w-full rounded-doc-sm"
-                style={{ border: 0, aspectRatio: "4 / 3" }}
-              />
+              <div className="mt-6 overflow-hidden rounded-doc-sm border border-rule">
+                <iframe
+                  src={mapSrc}
+                  loading="lazy"
+                  title="Карта проезда"
+                  className="block w-full grayscale transition-[filter] duration-500 hover:grayscale-0"
+                  style={{ border: 0, aspectRatio: "4 / 3" }}
+                />
+              </div>
             ) : null}
           </div>
 

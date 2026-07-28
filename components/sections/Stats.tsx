@@ -8,17 +8,21 @@ import type { StatsSection } from "@/types/site";
  * Разделители полосы: 2 колонки на мобильном, 4 на десктопе.
  * Классы собираются статическими литералами — иначе сканер Tailwind
  * их не увидит и утилиты не попадут в сборку.
+ *
+ * Паддинг симметричный на всех ячейках (без обнуления слева у первой
+ * колонки) и текст внутри центрирован — иначе цифры разной длины
+ * («18» рядом с «640») висят на левом крае каждой колонки и полоса
+ * читается неровной, особенно когда все 4 в одну строку на десктопе.
  */
 function bandCell(index: number): string {
-  const parts = ["px-5 py-4 md:px-8 border-rule"];
+  const parts = ["px-4 py-4 text-center sm:px-6 md:px-8 border-rule"];
 
   if (index % 2 === 1) parts.push("border-l");
-  else parts.push("pl-0");
   if (index >= 2) parts.push("border-t");
 
   parts.push("md:border-t-0");
-  if (index % 4 === 0) parts.push("md:border-l-0 md:pl-0");
-  else parts.push("md:border-l md:pl-8");
+  if (index % 4 === 0) parts.push("md:border-l-0");
+  else parts.push("md:border-l");
 
   return parts.join(" ");
 }
@@ -69,7 +73,7 @@ export function Stats(props: StatsSection) {
                   <span className="text-fg-muted">{item.suffix}</span>
                 ) : null}
               </dt>
-              <dd className="mt-3 max-w-[22ch] text-caption font-medium uppercase text-fg-muted">
+              <dd className="mx-auto mt-3 max-w-[22ch] text-caption font-medium uppercase text-fg-muted">
                 {item.label}
               </dd>
             </div>
