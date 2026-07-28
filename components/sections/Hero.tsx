@@ -64,10 +64,23 @@ export function Hero(props: HeroSection) {
             </div>
           </div>
 
-          <div className={isSplit ? "md:col-span-4" : "md:col-span-10"}>
+          <div className={isSplit ? "md:col-span-6" : "md:col-span-10"}>
             {/* Ручные переносы включаются только с md: на узком экране они
-                дают висячие строки, там заголовок верстается потоком. */}
-            <h1 className="font-heading text-h1" data-reveal>
+                дают висячие строки, там заголовок верстается потоком.
+                В isSplit локально понижаем потолок --size-h1 (96px → 72px,
+                минимум не трогаем): даже при col-span-6 (~600px) базовый
+                --size-h1 иногда не оставляет места двум словам в одной
+                ручной строке («Хороший кофе»), и она сама переносится
+                внутри уже готовой строки — второй уровень переноса поверх
+                авторского. --size-h1 — обычная CSS-переменная, override
+                внутри поддерева переопределяет её только для isSplit,
+                не трогая токен глобально (type-only и все остальные
+                потребители text-h1 — Team, not-found — не затронуты). */}
+            <h1
+              className="font-heading text-h1"
+              style={isSplit ? ({ "--size-h1": "clamp(2.125rem, 0.9rem + 4vw, 4.5rem)" } as React.CSSProperties) : undefined}
+              data-reveal
+            >
               {headline.map((line, index) => (
                 <span key={line} className="md:block">
                   {index === headline.length - 1 ? (
@@ -112,26 +125,39 @@ export function Hero(props: HeroSection) {
           </div>
 
           {isSplit ? (
-            // col-start-8 (не 7) — сознательно жертвуем целой колонкой сетки
-            // как явным зазором между текстом (кончается на col-6) и фото:
-            // одного gap-x-gutter (20–40px) не хватает, когда фото плотное/
-            // контрастное и заканчивается на col-6/начинается на col-7 без
-            // собственной рамки. Предпочли этот вариант рамке (Card
-            // variant="framed") вокруг фото — рамка добавила бы новый
-            // визуальный элемент (бордюр+паддинг), которого у Hero нигде
-            // больше нет (секция сознательно «без картинок и графики»,
-            // см. комментарий выше); сдвиг колонки ничего не меняет в самом
-            // фото, только раздвигает сетку.
-            <div className="mt-10 md:col-span-5 md:col-start-8 md:mt-0">
-              <Image
-                src={image as string}
-                alt={headline.join(" ")}
-                width={960}
-                height={1200}
-                className="h-full w-full rounded-doc-sm object-cover"
-                data-reveal
-                style={revealDelay(1)}
-              />
+            // Текстовая колонка — col-span-6 (не 5): при заголовке из
+            // нескольких слов на строку (например «Хороший кофе») крупный
+            // --size-h1 (до 96px) не помещался в узкую 5-колоночную ширину
+            // и переносился ВНУТРИ уже готовой ручной строки — три строки
+            // из headline превращались в 4-5 визуальных строк, секция
+            // раздувалась по высоте, и actions уезжали за пределы экрана
+            // при заходе на сайт. col-span-6 даёт заметно больше места по
+            // горизонтали для той же типографики.
+            // Фото — col-span-4 col-start-9, встык к правому краю
+            // контейнера (без пустой col-12): при text=6 не остаётся
+            // лишней колонки под зеркальный отступ, как было при text=5;
+            // pl-8/lg:pl-12 на этом div — единственный источник зазора
+            // между текстом и фото (плюс стандартный gap-x-gutter).
+            // Фото — в контейнере aspect-square, высота предсказуема и не
+            // зависит от grid stretch (см. правило про aspect-ratio+фото
+            // в docs/section-system.md).
+            // Паддинг (зазор) — на внешнем grid-элементе; aspect-ratio и
+            // overflow-hidden — на внутреннем боксе. Оба на одном div дали бы
+            // paddig внутри самого aspect-ratio (border-box), и картинка
+            // перестала бы быть квадратной — ширина уменьшилась бы на
+            // паддинг, а высота считалась бы от полной ширины до паддинга.
+            <div className="mt-10 self-center md:col-span-4 md:col-start-9 md:mt-0 md:pl-8 lg:pl-12">
+              <div className="relative aspect-square w-full overflow-hidden rounded-doc-sm">
+                <Image
+                  src={image as string}
+                  alt={headline.join(" ")}
+                  fill
+                  sizes="(min-width: 768px) 33vw, 100vw"
+                  className="object-cover"
+                  data-reveal
+                  style={revealDelay(1)}
+                />
+              </div>
             </div>
           ) : null}
         </div>
