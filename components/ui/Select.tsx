@@ -130,9 +130,11 @@ export function Select({
         onClick={() => (open ? setOpen(false) : openAt(Math.max(0, indexOfValue())))}
         onKeyDown={handleKeyDown}
         className={cn(
-          "flex w-full items-center justify-between gap-3 border-b border-rule-strong bg-transparent",
-          "pb-2.5 pt-1 text-body text-left transition-colors hover:border-fg focus:border-fg",
-          "focus:outline-none focus-visible:outline-none rounded-none",
+          // Геометрия — та же .ui-control, что у обычного поля: подчёркивание
+          // в «Экономе», коробка в «Стандарте». См. Input.tsx.
+          "ui-control flex w-full items-center justify-between gap-3",
+          "text-body text-left hover:border-fg focus:border-fg",
+          "focus:outline-none focus-visible:outline-none",
           value ? "text-fg" : "text-fg-muted/60",
         )}
       >
@@ -160,7 +162,7 @@ export function Select({
             id={listboxId}
             role="listbox"
             aria-label={placeholder}
-            className="mt-2 max-h-64 overflow-auto border border-rule bg-bg text-fg"
+            className="ui-popover mt-2 max-h-64 overflow-auto border border-rule bg-bg text-fg"
           >
             {options.map((option, index) => (
               <li

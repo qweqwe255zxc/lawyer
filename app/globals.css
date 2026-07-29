@@ -100,17 +100,23 @@
      Самоссылка вида `--radius-lg: var(--radius-lg)` — не опечатка:
      при `@theme inline` переменная не эмитится в :root, а подставляется
      в утилиту как есть, и значение приходит из tokens.css (тот же
-     приём, что у --ease-ui ниже). */
+     приём, что у --ease-ui ниже).
+     rounded-card / rounded-control / rounded-pill — не ступени шкалы,
+     а РОЛИ: какую ступень они означают, решает пресет тарифа
+     (см. блок ПРЕСЕТЫ в tokens.css). Радиус медиа применяет класс
+     .ui-media ниже, отдельная утилита ему не нужна. */
   --radius-doc: var(--radius-md);
   --radius-doc-sm: var(--radius-sm);
   --radius-card: var(--radius-card);
+  --radius-control: var(--radius-control);
+  --radius-pill: var(--radius-pill);
   --radius-lg: var(--radius-lg);
   --radius-xl: var(--radius-xl);
   --radius-2xl: var(--radius-2xl);
 
   /* Глубина: shadow-none/sm/md/lg + shadow-card-hover под подъём
      карточки на hover. Значения — --elevation-* из tokens.css,
-     включая усиленные для тёмной темы. */
+     включая усиленные для тёмной темы и для пресета «Стандарт». */
   --shadow-none: var(--elevation-none);
   --shadow-sm: var(--elevation-sm);
   --shadow-md: var(--elevation-md);
@@ -199,6 +205,217 @@
   select {
     font: inherit;
     color: inherit;
+  }
+}
+
+/* ============================================================================
+   СЛОЙ ГЛУБИНЫ — классы, читающие ручки пресета из theme/tokens.css.
+
+   Зачем классы, а не утилиты Tailwind прямо в компонентах: значения
+   этих свойств зависят и от поверхности секции (--surface-*), и от
+   тарифа (--card-*, --icon-tile-*, --control-*), а их комбинация не
+   выражается набором статических утилит. Компонент вешает одну роль
+   («это карточка», «это поле», «это медиа-бокс»), а чем она окажется —
+   плоской рамкой Эконома или поднятой карточкой Стандарта — решают
+   токены. В @layer components специально: обычные утилиты Tailwind
+   (border-fg у выделенного тарифа, h-full, mt-*) должны такой класс
+   перебивать, а слой utilities идёт после components.
+
+   Базовые значения токенов — экономовские, поэтому все правила ниже
+   в базе дают ровно то же, что было захардкожено раньше: тень none,
+   подъём 0, документные радиусы, паддинг плашки 0.
+   ========================================================================= */
+@layer components {
+  /* ---- Карточка ---------------------------------------------------- */
+  .ui-card {
+    background-color: var(--card-bg);
+    border-color: var(--card-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+    transition:
+      box-shadow var(--duration-ui) var(--ease-ui),
+      transform var(--duration-ui) var(--ease-ui),
+      border-color var(--duration-ui) var(--ease-ui);
+  }
+
+  .ui-card:hover {
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  /* Сдвиг — только под motion-safe, тень плавно меняется всегда:
+     при prefers-reduced-motion карточка не должна прыгать. */
+  @media (prefers-reduced-motion: no-preference) {
+    .ui-card:hover {
+      transform: translateY(var(--card-lift));
+    }
+  }
+
+  /* Явно поднятая карточка: собственная поверхность и своя пара теней,
+     не зависящая от того, плоский ли пресет. */
+  .ui-card--elevated {
+    --card-bg: var(--card-elevated-bg);
+    --card-border: var(--card-elevated-border);
+    --card-shadow: var(--card-elevated-shadow);
+    --card-shadow-hover: var(--card-elevated-shadow-hover);
+  }
+
+  /* Глубина рамкой вместо тени. */
+  .ui-card--accent {
+    --card-bg: var(--surface-card);
+    --card-border: var(--accent-border);
+    --card-shadow: var(--elevation-none);
+    --card-shadow-hover: var(--elevation-none);
+  }
+
+  /* Выделенный тариф в Pricing. Объявлен после вариантов выше, чтобы
+     перебить их рамку: у правил одинаковая специфичность, побеждает
+     последнее. Тот же токен применяет .ui-featured-border в табличной
+     раскладке, где карточки нет вообще. */
+  .ui-card--featured,
+  .ui-featured-border {
+    border-color: var(--card-featured-border);
+  }
+
+  .ui-card--featured {
+    --card-border: var(--card-featured-border);
+    --card-shadow: var(--card-featured-shadow);
+    --card-shadow-hover: var(--card-featured-shadow);
+  }
+
+  /* «Живая, но не кликабельная»: реагирует на курсор тенью, но без
+     cursor-pointer — карточка никуда не ведёт, и указатель обещал бы
+     клик, которого нет (таймлайн шагов). Значение — ступень шкалы, а
+     не число: в «Экономе» это прежний shadow-lg, в «Стандарте» та же
+     ступень уже двухслойная. */
+  .ui-card--live {
+    --card-shadow-hover: var(--elevation-lg);
+  }
+
+  /* Кликабельная карточка. Объявлена ПОСЛЕ вариантов выше: у правил
+     одинаковая специфичность, и побеждает последнее — значит подъём
+     интерактивной карточки перебивает покой любого варианта. */
+  .ui-card--interactive {
+    --card-shadow-hover: var(--card-hover-shadow);
+    --card-lift: var(--card-hover-lift);
+  }
+
+  /* ---- Кнопка -------------------------------------------------------- */
+  /* Раньше тут был rounded-doc-sm + transition-colors прямо в компоненте.
+     Теперь и радиус, и глубина — ручки пресета; в базе они дают ровно
+     ту же плоскую кнопку (2px, тень none, сдвиг 0). */
+  .ui-button {
+    border-radius: var(--radius-control);
+    box-shadow: var(--btn-shadow);
+    transition:
+      color var(--duration-ui) var(--ease-ui),
+      background-color var(--duration-ui) var(--ease-ui),
+      border-color var(--duration-ui) var(--ease-ui),
+      box-shadow var(--duration-ui) var(--ease-ui),
+      transform var(--duration-ui) var(--ease-ui);
+  }
+
+  .ui-button:hover {
+    box-shadow: var(--btn-shadow-hover);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .ui-button:hover {
+      transform: translateY(var(--btn-lift));
+    }
+  }
+
+  /* ---- Плашка под иконкой ------------------------------------------ */
+  /* В Экономе паддинг 0 и прозрачный фон — визуально это голая иконка
+     ровно на том же месте, что и раньше (высота = высота svg). */
+  .icon-tile {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    justify-content: center;
+    padding: var(--icon-tile-padding);
+    border-radius: var(--icon-tile-radius);
+    background-color: var(--icon-tile-bg);
+    color: var(--icon-tile-fg);
+  }
+
+  /* ---- Медиа-бокс (фото, карта, аватар) ---------------------------- */
+  /* Только скругление — для фото ВНУТРИ карточки: своя тень у картинки
+     поверх тени карточки даёт грязный двойной ореол. */
+  .ui-media {
+    border-radius: var(--radius-media);
+  }
+
+  /* Скругление + тень — для самостоятельного медиа, которое само себе
+     объект на странице: фото hero, фото «о нас», карта в контактах. */
+  .ui-media-raised {
+    border-radius: var(--radius-media);
+    box-shadow: var(--media-shadow);
+  }
+
+  /* ---- Всплывающая панель (тост, меню селекта) ---------------------- */
+  .ui-popover {
+    border-radius: var(--popover-radius);
+    box-shadow: var(--popover-shadow);
+  }
+
+  /* ---- Поле формы --------------------------------------------------- */
+  /* База: подчёркивание (border только снизу, без фона и радиуса).
+     Стандарт: коробка. Цвет линии на hover/focus остаётся утилитами
+     в компоненте — они из слоя utilities и перебивают этот класс. */
+  .ui-control {
+    background-color: var(--control-bg);
+    border-style: solid;
+    border-width: var(--control-border-width);
+    border-color: var(--control-border-color);
+    border-radius: var(--control-radius);
+    padding: var(--control-pt) var(--control-px) var(--control-pb);
+    transition: border-color var(--duration-ui) var(--ease-ui);
+  }
+
+  /* ---- Аккордеон ---------------------------------------------------- */
+  /* База: список на линейках (gap 0, фона нет) — flex-column с нулевым
+     зазором раскладывается идентично прежнему блочному потоку. */
+  .ui-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: var(--accordion-gap);
+    border-top: var(--border-hairline) solid var(--accordion-top-border);
+  }
+
+  .ui-accordion-item {
+    border-bottom: var(--border-hairline) solid var(--accordion-border);
+    border-radius: var(--accordion-radius);
+    background-color: var(--accordion-bg);
+    box-shadow: var(--accordion-shadow);
+    padding-inline: var(--accordion-px);
+  }
+
+  /* ---- Хедер -------------------------------------------------------- */
+  .ui-header {
+    background-color: var(--header-bg);
+    backdrop-filter: var(--header-blur);
+    -webkit-backdrop-filter: var(--header-blur);
+    transition:
+      background-color var(--duration-ui) var(--ease-ui),
+      border-color var(--duration-ui) var(--ease-ui),
+      box-shadow var(--duration-ui) var(--ease-ui);
+  }
+
+  .ui-header[data-scrolled="true"] {
+    box-shadow: var(--header-shadow);
+  }
+
+  /* ---- Подсветка секции --------------------------------------------- */
+  /* background-image поверх background-color самой секции. В базе
+     --section-tint: none, поэтому у Эконома фон остаётся заливкой. */
+  [data-section] {
+    background-image: var(--section-tint);
+  }
+
+  /* Hero — своя, более выраженная подсветка. Правило идёт после
+     общего: специфичность та же, побеждает последнее. */
+  [data-section][data-tint="hero"] {
+    background-image: var(--hero-tint);
   }
 }
 

@@ -24,8 +24,16 @@ function tableCell(index: number, columns: number): string {
 
 /**
  * Первая смена фона на странице (белая поверхность вместо бумаги).
- * Верстаем как таблицу услуг, а не плитки с тенями — плотнее и опрятнее.
- * Иконки всегда --color-fg-muted, акцентных иконок в проекте нет.
+ *
+ * variant по умолчанию приходит из тарифа (SectionRenderer + lib/preset):
+ * «Эконом» верстает таблицу услуг — плотно и опрятно, без теней;
+ * «Стандарт» — карточки, потому что глубину пресета физически некуда
+ * положить в табличной сетке (рамки там рисует grid, а не объект).
+ *
+ * Иконка сидит в .icon-tile: в «Экономе» плашки нет вообще (нулевой
+ * паддинг, прозрачный фон — визуально голая иконка цвета fg-muted, как
+ * и было), в «Стандарте» — акцентная плашка. Цвет иконка наследует от
+ * плашки, поэтому text-* на самой иконке ставить нельзя.
  */
 export function Features(props: FeaturesSection) {
   const {
@@ -73,7 +81,7 @@ export function Features(props: FeaturesSection) {
             const content = (
               <>
                 {item.photo ? (
-                  <div className="relative mb-5 aspect-[4/3] w-full overflow-hidden rounded-doc-sm">
+                  <div className="ui-media relative mb-5 aspect-[4/3] w-full overflow-hidden">
                     <Image
                       src={item.photo}
                       alt={item.title}
@@ -85,11 +93,9 @@ export function Features(props: FeaturesSection) {
                 ) : null}
 
                 {Icon ? (
-                  <Icon
-                    aria-hidden="true"
-                    strokeWidth={1.5}
-                    className="size-5 text-fg-muted"
-                  />
+                  <span className="icon-tile">
+                    <Icon aria-hidden="true" strokeWidth={1.5} className="size-5" />
+                  </span>
                 ) : null}
 
                 <h3 className="mt-5 font-display text-h3">{item.title}</h3>

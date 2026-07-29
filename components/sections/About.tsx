@@ -81,7 +81,7 @@ export function About(props: AboutSectionProps) {
 
             <div
               className={cn(
-                "relative aspect-[4/3] w-full overflow-hidden rounded-doc-sm md:col-span-7 md:aspect-auto md:h-full md:min-h-[420px]",
+                "ui-media-raised relative aspect-[4/3] w-full overflow-hidden md:col-span-7 md:aspect-auto md:h-full md:min-h-[420px]",
                 photoFirst && "md:order-1",
               )}
               data-reveal

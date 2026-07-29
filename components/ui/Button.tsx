@@ -27,8 +27,16 @@ interface ActionProps
 
 type ButtonProps = LinkProps | ActionProps;
 
+/**
+ * Радиус, тень и подъём под курсором приходят из класса .ui-button
+ * (app/globals.css) и ручек пресета --radius-control / --btn-* :
+ * в «Экономе» это 2px, тень none и сдвиг 0 — ровно плоская кнопка базы,
+ * в «Стандарте» — 12px, тень покоя и подъём. Хардкодить их тут нельзя,
+ * иначе кнопка перестанет отличаться между тарифами.
+ */
 const base =
-  "inline-flex items-center justify-center rounded-doc-sm text-button font-medium transition-colors select-none disabled:opacity-55 disabled:pointer-events-none";
+  "ui-button inline-flex items-center justify-center text-button font-medium select-none " +
+  "disabled:opacity-55 disabled:pointer-events-none";
 
 const sizes: Record<Size, string> = {
   md: "h-12 px-7",

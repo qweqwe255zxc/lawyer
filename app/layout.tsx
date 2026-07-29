@@ -49,8 +49,13 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
+    // data-preset — единственное место, откуда тариф оформления попадает
+    // в CSS: блоки [data-preset=...] в theme/tokens.css переопределяют
+    // ручки глубины, и вся страница разом становится «дорогой». Значение
+    // серверное и статическое, поэтому вспышки смены темы тут нет.
     <html
       lang="ru"
+      data-preset={siteConfig.theme.preset ?? "econom"}
       className={`${sourceSerif.variable} ${golos.variable} ${playfair.variable}`}
       suppressHydrationWarning
     >

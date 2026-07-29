@@ -86,7 +86,11 @@ export function Gallery(props: GallerySection) {
             <ul className="grid gap-gutter sm:grid-cols-2 lg:grid-cols-3">
               {items.map((item, index) => (
                 <li key={`${item.category}-${item.year}-${index}`}>
-                  <Card variant="framed" className="h-full border-rule-strong">
+                  {/* Раньше тут был border-rule-strong: hairline на
+                      графите почти не виден. Теперь это --card-border,
+                      переопределённый в [data-surface="ink"] — и им
+                      может распорядиться пресет тарифа. */}
+                  <Card variant="framed" className="h-full">
                     <div data-reveal style={revealDelay(index % 3, 40)}>
                       <div className="flex items-baseline justify-between gap-4">
                         <p className="text-small font-medium">

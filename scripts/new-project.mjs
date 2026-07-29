@@ -129,6 +129,11 @@ export const siteConfig: SiteConfig = {
     darkModeToggle: false,
     defaultMode: "light",
     faviconGlyph: "•",
+    // Тариф оформления: "econom" | "standard" | "premium".
+    // Одно это поле включает всю глубину «Стандарта» (тени, карточки,
+    // скругления, подсветку) и переключает дефолтные раскладки секций.
+    // Как собирать «Стандарт» — docs/presets.md.
+    preset: "econom",
   },
 
   analytics: {

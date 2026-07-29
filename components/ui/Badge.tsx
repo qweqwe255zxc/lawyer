@@ -23,6 +23,11 @@ interface BadgeProps {
  *
  * Кегль — text-caption (13px + трекинг капса) из общей шкалы, а не
  * произвольные 12px: в шаблоне размеров шрифта вне токенов нет.
+ *
+ * Радиус — rounded-pill (--radius-pill), ручка пресета: документные 2px
+ * в «Экономе», таблетка в «Стандарте». Плашка — самая заметная мелочь,
+ * по которой тариф читается с первого взгляда, поэтому радиус тут не
+ * хардкодится.
  */
 const variants: Record<BadgeVariant, string> = {
   soft: "bg-badge-soft text-badge-soft-fg",
@@ -33,7 +38,7 @@ export function Badge({ children, variant = "soft", className }: BadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-doc-sm px-2.5 py-1 text-caption font-medium",
+        "inline-flex items-center rounded-pill px-2.5 py-1 text-caption font-medium",
         variants[variant],
         className,
       )}

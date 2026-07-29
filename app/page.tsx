@@ -25,7 +25,10 @@ export default function HomePage() {
       />
 
       <main id="main">
-        <SectionRenderer sections={sections} context={{ contacts }} />
+        <SectionRenderer
+          sections={sections}
+          context={{ contacts, preset: theme.preset ?? "econom" }}
+        />
       </main>
 
       <Footer brand={brand} contacts={contacts} footer={footer} nav={nav} />

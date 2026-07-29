@@ -142,12 +142,13 @@
   /* --------------------------------------------------------------------
      ГРАНИЦЫ, РАДИУСЫ, ТЕНИ
 
-     База (тариф «Эконом») по-прежнему плоская: шкала глубины ниже
-     объявлена, но ни один компонент не включает её по умолчанию —
-     тень появляется только у Card variant="elevated" / hoverEffect и
-     Stats containerVariant="elevated", то есть по явному выбору
-     в site.config.ts. Тариф «Стандарт» поднимает карточки, меняя
-     --radius-card и выбирая варианты, а не правя компоненты.
+     Всё, что ниже, — это значения тарифа «Эконом»: плоско, документно,
+     без теней. Тариф переключается ОДНИМ полем конфига
+     (theme.preset в content/site.config.ts → data-preset на <html>),
+     а не правкой компонентов: блоки [data-preset="standard"] и
+     [data-preset="premium"] в конце файла переопределяют ручки ниже,
+     и вся страница разом получает глубину. Ни один компонент про
+     пресет не знает.
      -------------------------------------------------------------------- */
   --border-hairline: 1px;
   --border-accent-marker: 2px;
@@ -156,28 +157,117 @@
      обычно начинается с 4/8px: на этих двух значениях свёрстана вся
      текущая база (rounded-doc / rounded-doc-sm — кнопки, тосты, боксы
      фото), и их сдвиг переверстал бы Эконом. Шкала поэтому растёт
-     вверх, а карточки выбирают ступень через --radius-card. */
+     вверх, а роли ниже выбирают ступень. */
   --radius-sm: 0.125rem; /* 2px */
   --radius-md: 0.25rem; /* 4px — «документный» радиус базы */
   --radius-lg: 0.75rem; /* 12px */
   --radius-xl: 1rem; /* 16px */
   --radius-2xl: 1.5rem; /* 24px */
+  --radius-full: 9999px;
 
-  /* Радиус карточек и панелей — одна ручка на пресет: Эконом оставляет
-     документные 4px, «Стандарт IT» ставит var(--radius-xl), «Стандарт
-     Premium» — var(--radius-sm). Компоненты знают только rounded-card. */
-  --radius-card: var(--radius-md);
+  /* Радиусы по РОЛЯМ, а не по размеру — это и есть ручки пресета.
+     Компоненты знают только rounded-card / rounded-control /
+     rounded-media / rounded-pill и не содержат конкретных px.
+     В базе все четыре — документные, поэтому появление этих имён
+     ничего не изменило в Экономе. */
+  --radius-card: var(--radius-md); /* карточки, панели, блок статистики */
+  --radius-control: var(--radius-sm); /* кнопки, поля, селект */
+  --radius-media: var(--radius-sm); /* боксы фото, карта, аватары */
+  --radius-pill: var(--radius-sm); /* бейджи, полосы прогресса */
 
   /* Шкала глубины. Имена --elevation-*, а не --shadow-*, потому что в
      утилиты Tailwind (shadow-sm/md/lg/card-hover) они попадают через
      @theme inline в app/globals.css — одноимённые переменные дали бы
      там самоссылку. Значения одни на весь проект: ни один компонент
-     не пишет box-shadow напрямую. */
+     не пишет box-shadow напрямую.
+
+     Базовые значения — намеренно почти невидимые: Эконом плоский, и
+     даже явно выбранный Card variant="elevated" не должен превращать
+     его в «карточный» лендинг. Настоящая, читаемая глубина приезжает
+     из блока пресета — см. [data-preset="standard"] внизу файла. */
   --elevation-none: none;
   --elevation-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --elevation-md: 0 4px 20px -2px rgb(0 0 0 / 0.06);
   --elevation-lg: 0 10px 30px -4px rgb(0 0 0 / 0.08);
   --elevation-card-hover: 0 12px 32px -4px rgb(0 0 0 / 0.12);
+
+  /* --------------------------------------------------------------------
+     РУЧКИ ПРЕСЕТА
+
+     Всё, чем «Стандарт» отличается от «Эконома» визуально, живёт здесь
+     и переопределяется одним блоком внизу файла. Значения в :root —
+     это Эконом, и они подобраны так, чтобы компоненты, переведённые на
+     эти токены, рендерились ровно как до появления пресетов
+     (тень none, подъём 0, радиусы документные).
+
+     Правило для будущих правок: новая «дорогая» деталь (тень, подсветка,
+     скругление, плашка под иконкой) заводится ТОЛЬКО как токен с
+     нейтральным значением в :root и настоящим значением в блоке пресета.
+     Хардкод тени/радиуса в компоненте ломает оба тарифа сразу.
+     -------------------------------------------------------------------- */
+
+  /* Карточка Card variant="framed" — «карточка по умолчанию»: именно её
+     рисуют Features, Gallery, Pricing, Testimonials, Team, Steps.
+     В Экономе это hairline-рамка на фоне своей секции без тени,
+     в Стандарте — собственная поверхность + тень (см. блок пресета).
+     Цвета фона и рамки объявлены не тут, а в [data-surface] ниже:
+     var() внутри :root посчитался бы один раз по paper. */
+  --card-shadow: var(--elevation-none);
+  --card-shadow-hover: var(--elevation-none);
+  --card-lift: 0rem; /* сдвиг по Y на hover */
+  /* Значения, которыми hoverEffect подменяет пару выше: карточка
+     реально кликабельна. В Экономе это единственный источник тени. */
+  --card-hover-shadow: var(--elevation-card-hover);
+  --card-hover-lift: -0.25rem;
+  /* Card variant="elevated" — явная глубина независимо от пресета.
+     Hover-значение равно покою: в Экономе поднятая карточка на курсор
+     не реагирует, реакцию включает либо пресет, либо hoverEffect. */
+  --card-elevated-shadow: var(--elevation-md);
+  --card-elevated-shadow-hover: var(--elevation-md);
+
+  /* Выделенный тариф в Pricing (plan.featured). В Экономе подсветка —
+     линия --color-fg (акцент занят под кнопку и CTA-блок), в Стандарте
+     карточка выходит вперёд рамкой и более сильной тенью. */
+  --card-featured-shadow: var(--elevation-none);
+
+  /* Кнопка. В Экономе — плоская заливка без тени и без подъёма. */
+  --btn-shadow: var(--elevation-none);
+  --btn-shadow-hover: var(--elevation-none);
+  --btn-lift: 0rem;
+
+  /* Хедер: в Экономе при скролле появляется линия, а не тень. */
+  --header-shadow: var(--elevation-none);
+  --header-blur: none;
+
+  /* Плашка под иконкой (Features). В Экономе плашки нет вообще —
+     нулевой паддинг и прозрачный фон дают ровно голую иконку. */
+  --icon-tile-padding: 0rem;
+  --icon-tile-radius: var(--radius-card);
+
+  /* Фоновая подсветка секции и hero. none = чистая заливка (Эконом). */
+  --section-tint: none;
+  --hero-tint: none;
+
+  /* Поля формы: в Экономе — подчёркивание, а не коробка. */
+  --control-bg: transparent;
+  --control-border-width: 0 0 var(--border-hairline) 0;
+  --control-radius: 0;
+  --control-px: 0rem;
+  --control-pt: 0.25rem;
+  --control-pb: 0.625rem;
+
+  /* Аккордеон FAQ: в Экономе — список на линейках, без зазора и фона. */
+  --accordion-gap: 0rem;
+  --accordion-radius: 0;
+  --accordion-shadow: var(--elevation-none);
+  --accordion-px: 0rem;
+
+  /* Фото и карта: тень под медиа. */
+  --media-shadow: var(--elevation-none);
+
+  /* Всплывающие панели: тост и меню селекта. */
+  --popover-radius: var(--radius-md);
+  --popover-shadow: var(--elevation-none);
 
   /* --------------------------------------------------------------------
      ДВИЖЕНИЕ
@@ -234,6 +324,33 @@
    Секция объявляет data-surface — вложенные компоненты подхватывают
    семантические переменные и не содержат ни одного условия про тему.
    ========================================================================= */
+
+/* Токены, которые ОБЯЗАНЫ пересчитываться на каждой поверхности: их
+   значение — var() от --surface-*, а внутри :root такой var()
+   подставился бы один раз по paper и дальше только наследовался (та же
+   причина, по которой --surface-card объявлен в каждом блоке ниже).
+   Селектор без значения ([data-surface], а не четыре штуки с "=") —
+   специально: правило одно, а var() внутри резолвится уже на конкретной
+   секции, с её собственными --surface-*. */
+[data-surface] {
+  --card-bg: var(--surface-bg);
+  --card-border: var(--surface-rule);
+  --card-elevated-bg: var(--surface-card);
+  --card-elevated-border: color-mix(
+    in srgb,
+    var(--surface-rule) 50%,
+    transparent
+  );
+  --card-featured-border: var(--surface-fg);
+  --icon-tile-bg: transparent;
+  --icon-tile-fg: var(--surface-fg-muted);
+  --control-border-color: var(--surface-rule-strong);
+  --accordion-bg: transparent;
+  --accordion-border: var(--surface-rule);
+  --accordion-top-border: var(--surface-rule);
+  --header-bg: var(--surface-bg);
+}
+
 [data-surface="paper"] {
   --surface-bg: var(--palette-paper);
   --surface-fg: var(--palette-ink);
@@ -266,6 +383,11 @@
   /* На тёмном тень не работает как подъём — карточку приподнимает
      сам тон: на несколько процентов светлее фона блока. */
   --surface-card: color-mix(in srgb, var(--palette-ink) 93%, var(--palette-ink-fg));
+  /* Обычный hairline на графите почти не виден, а карточка в реестре
+     кейсов должна читаться как объект. Раньше это чинил класс
+     border-rule-strong прямо в Gallery — теперь это токен, и им может
+     распорядиться пресет. */
+  --card-border: var(--surface-rule-strong);
   /* Хвойный акцент на графите тонет ровно так же, как focus-ring
      (см. ниже) — акцентная рамка на тёмном блоке светлеет. */
   --accent-border: var(--palette-ink-fg-muted);
@@ -297,4 +419,207 @@
 /* Тёмный блок: focus-ring осветляется, иначе хвойный тонет в графите */
 [data-surface="ink"] {
   --accent-ring: var(--palette-ink-fg);
+}
+
+/* ============================================================================
+   ПРЕСЕТЫ ТАРИФОВ
+
+   data-preset ставится на <html> из content/site.config.ts
+   (theme.preset → app/layout.tsx). Отсутствие атрибута = "econom":
+   все значения выше уже экономовские, отдельного блока для него нет
+   и быть не должно — иначе появится два источника правды.
+
+   Что здесь можно менять: только ручки из блока «РУЧКИ ПРЕСЕТА» выше
+   плюс --surface-card и --radius-*. Что НЕЛЬЗЯ: палитру ядра
+   (--palette-*), типографическую шкалу и ритм — тариф отличается
+   глубиной и пластикой, а не другим брендом и не другими отступами.
+   ========================================================================= */
+
+/* ----------------------------------------------------------------------------
+   СТАНДАРТ — «дорогой» тариф: собственная поверхность у карточек,
+   читаемая многослойная тень, крупные скругления, подсветка секций,
+   плашки под иконками, живой hover. Ни одного нового компонента —
+   только значения.
+   -------------------------------------------------------------------------- */
+[data-preset="standard"] {
+  /* Пластика: карточка мягкая, кнопка/поле — заметно скруглённые,
+     но не «таблетка»; бейдж — таблетка. */
+  --radius-card: var(--radius-xl); /* 16px */
+  --radius-control: var(--radius-lg); /* 12px */
+  --radius-media: var(--radius-xl); /* 16px */
+  --radius-pill: var(--radius-full);
+
+  /* Глубина. Две тени в каждой ступени — контактная (короткая, плотная)
+     и рассеянная (длинная, мягкая): одна плоская тень на 6% альфы, как
+     в базе, физически не читается на бумаге и была главной причиной
+     того, что «Стандарт» выглядел как «Эконом».
+     Цвет — тёплый чёрный (24 22 18), а не чистый: на тёплой бумаге
+     нейтрально-серая тень выглядит грязной. */
+  --elevation-sm:
+    0 1px 2px -1px rgb(24 22 18 / 0.1), 0 1px 3px 0 rgb(24 22 18 / 0.08);
+  --elevation-md:
+    0 2px 6px -2px rgb(24 22 18 / 0.1), 0 12px 28px -8px rgb(24 22 18 / 0.16);
+  --elevation-lg:
+    0 4px 10px -3px rgb(24 22 18 / 0.1), 0 24px 48px -14px rgb(24 22 18 / 0.22);
+  --elevation-card-hover:
+    0 6px 14px -4px rgb(24 22 18 / 0.12), 0 32px 64px -18px rgb(24 22 18 / 0.28);
+
+  /* Карточка по умолчанию (framed) перестаёт быть плоской рамкой. */
+  --card-shadow: var(--elevation-md);
+  --card-shadow-hover: var(--elevation-lg);
+  --card-lift: -0.125rem; /* лёгкий подъём даже у некликабельной карточки */
+  --card-hover-shadow: var(--elevation-card-hover);
+  --card-hover-lift: -0.375rem;
+  --card-elevated-shadow: var(--elevation-lg);
+  --card-elevated-shadow-hover: var(--elevation-card-hover);
+  --card-featured-shadow: var(--elevation-card-hover);
+
+  /* Кнопка получает вес: тень покоя + подъём под курсором. */
+  --btn-shadow: var(--elevation-sm);
+  --btn-shadow-hover: var(--elevation-md);
+  --btn-lift: -0.0625rem;
+
+  /* Хедер отрывается от страницы при скролле. */
+  --header-shadow: var(--elevation-sm);
+  --header-blur: saturate(1.6) blur(12px);
+
+  /* Иконка садится в акцентную плашку — самый заметный признак того,
+     что это не «таблица услуг», а продуктовые карточки. */
+  --icon-tile-padding: 0.875rem;
+
+  /* Медиа: фото живут карточками, а не вклейками. */
+  --media-shadow: var(--elevation-md);
+
+  /* Всплывающие панели отрываются от страницы. */
+  --popover-radius: var(--radius-card);
+  --popover-shadow: var(--elevation-lg);
+
+  /* Поля формы становятся коробками. */
+  --control-bg: var(--surface-card);
+  --control-border-width: var(--border-hairline);
+  --control-radius: var(--radius-control);
+  --control-px: 0.875rem;
+  --control-pt: 0.75rem;
+  --control-pb: 0.75rem;
+
+  /* FAQ: список на линейках → стопка карточек. */
+  --accordion-gap: 0.75rem;
+  --accordion-radius: var(--radius-card);
+  --accordion-shadow: var(--elevation-sm);
+  --accordion-px: 1.5rem;
+}
+
+/* Карточка получает собственную поверхность на любой секции.
+   Отдельным правилом по [data-surface], а не внутри блока выше:
+   var(--surface-card) обязан резолвиться на самой секции. */
+[data-preset="standard"] [data-surface],
+[data-preset="premium"] [data-surface] {
+  --card-bg: var(--surface-card);
+  --card-border: color-mix(in srgb, var(--surface-rule) 70%, transparent);
+  /* Выделенный тариф выходит вперёд акцентной рамкой: в дорогом тарифе
+     это единственное место, где акцент допускается на рамке карточки. */
+  --card-featured-border: var(--accent-border);
+}
+
+/* Плашка под иконкой берёт уже готовую, посчитанную под каждую
+   поверхность пару из Badge variant="soft" — на тёмном и акцентном
+   блоке хвойный акцент не читается, а эта пара там уже переопределена. */
+[data-preset="standard"] [data-surface] {
+  --icon-tile-bg: var(--badge-soft-bg);
+  --icon-tile-fg: var(--badge-soft-fg);
+
+  /* Аккордеон превращается в стопку карточек: разделительные линейки
+     снимаются (их роль берут зазор и подложка), фон — поверхность
+     карточки своей секции. */
+  --accordion-bg: var(--surface-card);
+  --accordion-border: transparent;
+  --accordion-top-border: transparent;
+
+  /* Полупрозрачный хедер поверх подсвеченной страницы — вместе с
+     --header-blur даёт «стекло». Без backdrop-filter (старый браузер)
+     останется просто чуть прозрачная плашка, читаемость не страдает. */
+  --header-bg: color-mix(in srgb, var(--surface-bg) 82%, transparent);
+}
+
+/* Подсветка секций. Не «градиентный фон» ради градиента: очень слабый
+   акцентный намёк сверху даёт странице глубину и не спорит с правилом
+   акцента — он ниже порога, на котором читается как цвет. */
+[data-preset="standard"] [data-surface="paper"],
+[data-preset="standard"] [data-surface="surface"] {
+  --section-tint: radial-gradient(
+    120% 80% at 50% 0%,
+    color-mix(in srgb, var(--accent) 6%, transparent) 0%,
+    transparent 62%
+  );
+  --hero-tint:
+    radial-gradient(
+      68% 62% at 88% 12%,
+      color-mix(in srgb, var(--accent) 15%, transparent) 0%,
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--accent) 6%, transparent) 0%,
+      transparent 58%
+    );
+}
+
+[data-preset="standard"] [data-surface="ink"] {
+  --section-tint: radial-gradient(
+    110% 70% at 50% 0%,
+    color-mix(in srgb, var(--palette-ink-fg) 7%, transparent) 0%,
+    transparent 68%
+  );
+}
+
+[data-preset="standard"] [data-surface="accent"] {
+  --section-tint: radial-gradient(
+    90% 130% at 100% 0%,
+    color-mix(in srgb, var(--accent-fg) 16%, transparent) 0%,
+    transparent 62%
+  );
+}
+
+/* Тёмная тема + Стандарт: форма теней та же, альфа выше — иначе на
+   тёмной бумаге подъёма не видно вообще. Селектор двойной, чтобы
+   выиграть у одиночного [data-preset="standard"] выше (обе группы
+   висят на <html>, специфичность решает). */
+[data-theme="dark"][data-preset="standard"] {
+  --elevation-sm:
+    0 1px 2px -1px rgb(0 0 0 / 0.5), 0 1px 3px 0 rgb(0 0 0 / 0.4);
+  --elevation-md:
+    0 2px 6px -2px rgb(0 0 0 / 0.5), 0 12px 28px -8px rgb(0 0 0 / 0.55);
+  --elevation-lg:
+    0 4px 10px -3px rgb(0 0 0 / 0.5), 0 24px 48px -14px rgb(0 0 0 / 0.6);
+  --elevation-card-hover:
+    0 6px 14px -4px rgb(0 0 0 / 0.55), 0 32px 64px -18px rgb(0 0 0 / 0.7);
+}
+
+/* ----------------------------------------------------------------------------
+   PREMIUM — тоже «дорогой», но противоположным способом: глубина
+   строится рамкой и воздухом, а не тенью. Радиус минимальный,
+   теней нет вообще, карточка стоит на своей поверхности с акцентной
+   рамкой. Пластика кнопок и полей остаётся документной.
+   -------------------------------------------------------------------------- */
+[data-preset="premium"] {
+  --radius-card: var(--radius-sm);
+  --radius-control: var(--radius-sm);
+  --radius-media: var(--radius-sm);
+  --radius-pill: var(--radius-sm);
+
+  --card-shadow: var(--elevation-none);
+  --card-shadow-hover: var(--elevation-none);
+  --card-lift: 0rem;
+  --card-elevated-shadow: var(--elevation-none);
+  --card-elevated-shadow-hover: var(--elevation-none);
+
+  /* Единственное «движение» премиума — рамка, а не подъём. */
+  --card-hover-shadow: var(--elevation-none);
+  --card-hover-lift: 0rem;
+}
+
+/* Рамка карточки — акцентная и приглушённая: в полную силу акцента
+   она кричит на каждой карточке сразу. */
+[data-preset="premium"] [data-surface] {
+  --card-border: color-mix(in srgb, var(--accent-border) 45%, transparent);
 }

@@ -11,11 +11,14 @@ import { Stats } from "@/components/sections/Stats";
 import { Steps } from "@/components/sections/Steps";
 import { Team } from "@/components/sections/Team";
 import { Testimonials } from "@/components/sections/Testimonials";
-import type { ContactsConfig, Section, SectionType } from "@/types/site";
+import { presetDefaults, warnFlatVariant } from "@/lib/preset";
+import type { ContactsConfig, Preset, Section, SectionType } from "@/types/site";
 
 /** Данные сайта, которые нужны секциям помимо их собственных. */
 export interface RenderContext {
   contacts: ContactsConfig;
+  /** Тариф оформления: от него зависит раскладка секции по умолчанию. */
+  preset: Preset;
 }
 
 type Renderer<K extends SectionType> = (
@@ -53,21 +56,71 @@ type Renderer<K extends SectionType> = (
  * 1. Новый тип в types/site.ts.
  * 2. Компонент в components/sections/.
  * 3. Обычный import сверху + строка в registry ниже.
+ *
+ * ТАРИФ И ВАРИАНТЫ. Реестр — единственное место, где variant секции
+ * подставляется по тарифу: `section.variant ?? presetDefaults(preset).X`.
+ * Смысл: секция без variant в конфиге получает раскладку СВОЕГО тарифа
+ * (в «Стандарте» — карточную), а не всегда экономовскую табличную.
+ * Явно указанный в site.config.ts variant всегда главнее. Резолвим
+ * именно тут, а не внутри компонентов: SectionRenderer — серверный, и
+ * так таблица «тариф → раскладка» не утекает в клиентский бандл вместе
+ * с ContactForm ("use client"), а заодно читается одним куском.
  */
 const registry: { [K in SectionType]: Renderer<K> } = {
-  hero: (section) => <Hero {...section} />,
-  stats: (section) => <Stats {...section} />,
-  features: (section) => <Features {...section} />,
-  steps: (section) => <Steps {...section} />,
-  gallery: (section) => <Gallery {...section} />,
-  testimonials: (section) => <Testimonials {...section} />,
-  team: (section) => <Team {...section} />,
+  hero: (section, { preset }) => (
+    <Hero {...section} variant={section.variant ?? presetDefaults(preset).hero} />
+  ),
+  stats: (section, { preset }) => (
+    <Stats
+      {...section}
+      variant={section.variant ?? presetDefaults(preset).stats}
+      containerVariant={
+        section.containerVariant ?? presetDefaults(preset).statsContainer
+      }
+    />
+  ),
+  features: (section, { preset }) => (
+    <Features
+      {...section}
+      variant={section.variant ?? presetDefaults(preset).features}
+    />
+  ),
+  steps: (section, { preset }) => (
+    <Steps {...section} variant={section.variant ?? presetDefaults(preset).steps} />
+  ),
+  gallery: (section, { preset }) => (
+    <Gallery
+      {...section}
+      variant={section.variant ?? presetDefaults(preset).gallery}
+    />
+  ),
+  testimonials: (section, { preset }) => (
+    <Testimonials
+      {...section}
+      variant={section.variant ?? presetDefaults(preset).testimonials}
+    />
+  ),
+  team: (section, { preset }) => (
+    <Team {...section} variant={section.variant ?? presetDefaults(preset).team} />
+  ),
   about: (section) => <About {...section} />,
-  faq: (section) => <FAQ {...section} />,
-  pricing: (section) => <Pricing {...section} />,
+  faq: (section, { preset }) => (
+    <FAQ {...section} variant={section.variant ?? presetDefaults(preset).faq} />
+  ),
+  pricing: (section, { preset }) => (
+    <Pricing
+      {...section}
+      variant={section.variant ?? presetDefaults(preset).pricing}
+    />
+  ),
   cta: (section) => <CTA {...section} />,
-  contact: (section, context) => (
-    <ContactForm {...section} contacts={context.contacts} />
+  contact: (section, { contacts, preset }) => (
+    <ContactForm
+      {...section}
+      variant={section.variant ?? presetDefaults(preset).contact}
+      layout={section.layout ?? presetDefaults(preset).contactLayout}
+      contacts={contacts}
+    />
   ),
 };
 
@@ -81,6 +134,32 @@ export function SectionRenderer({ sections, context }: SectionRendererProps) {
     <>
       {sections.map((section) => {
         const render = registry[section.type] as Renderer<SectionType>;
+
+        // Дефолт тарифа помогает только там, где variant в конфиге не
+        // указан вовсе. А конфиг обычно копируют с примера, где variant
+        // проставлен везде — и «Стандарт» снова собирается из плоских
+        // раскладок. Про это говорим вслух в dev, с готовой заменой.
+        warnFlatVariant(
+          context.preset,
+          section.type,
+          section.id,
+          "variant" in section ? section.variant : undefined,
+          section.type === "stats"
+            ? {
+                key: "containerVariant",
+                value: section.containerVariant,
+                flat: "flat",
+                use: 'containerVariant: "elevated"',
+              }
+            : section.type === "contact"
+              ? {
+                  key: "layout",
+                  value: section.layout,
+                  flat: "plain",
+                  use: 'layout: "cardContainer"',
+                }
+              : undefined,
+        );
 
         if (!render) {
           if (process.env.NODE_ENV !== "production") {

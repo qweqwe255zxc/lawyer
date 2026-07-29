@@ -11,6 +11,13 @@ interface SectionProps {
   spacing?: "default" | "lg" | "sm" | "none";
   /** Линейка во всю ширину сверху, базовый разделитель между секциями. */
   ruleTop?: boolean;
+  /**
+   * Какую фоновую подсветку берёт секция: обычную (--section-tint) или
+   * усиленную геройскую (--hero-tint). В тарифе «Эконом» оба токена —
+   * none, то есть заливка остаётся плоской; значение имеет смысл только
+   * в «Стандарте». Ставит его один Hero, остальным секциям не нужно.
+   */
+  tint?: "section" | "hero";
   className?: string;
 }
 
@@ -32,6 +39,7 @@ export function Section({
   surface = "paper",
   spacing = "default",
   ruleTop = false,
+  tint = "section",
   className,
 }: SectionProps) {
   return (
@@ -39,6 +47,7 @@ export function Section({
       id={id}
       data-section
       data-surface={surface}
+      data-tint={tint}
       className={cn(
         "bg-bg text-fg",
         spacingMap[spacing],

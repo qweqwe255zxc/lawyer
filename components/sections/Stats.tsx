@@ -32,15 +32,18 @@ function bandCell(index: number): string {
  * блока нет. elevated/bordered — цифры собираются в один монолитный
  * блок, и тогда линейки секции снимаются: сквозная линейка во всю
  * ширину визуально перечёркивала бы поднятый блок.
+ *
+ * Глубина блока — те же классы .ui-card*, что и у карточек: значит она
+ * растёт вместе с тарифом, а не остаётся навсегда тенью на 6% альфы.
  */
 function containerClasses(
   containerVariant: NonNullable<StatsSection["containerVariant"]>,
 ): string | undefined {
   switch (containerVariant) {
     case "elevated":
-      return "rounded-card bg-card p-7 shadow-md md:p-9";
+      return "ui-card ui-card--elevated p-7 md:p-9";
     case "bordered":
-      return "rounded-card border border-accent-border bg-card p-7 md:p-9";
+      return "ui-card ui-card--accent border p-7 md:p-9";
     default:
       return undefined;
   }

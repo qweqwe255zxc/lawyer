@@ -69,6 +69,12 @@ export function Hero(props: HeroSection) {
       // там ничего не меняется. Виджет тоже не меняет: он заметно ниже
       // фото и в первый экран укладывается при обычном spacing="lg".
       spacing={withImage ? "none" : "lg"}
+      // Единственная секция с усиленной фоновой подсветкой (--hero-tint).
+      // В тарифе «Эконом» этот токен — none, то есть фон остаётся плоской
+      // заливкой и hero не меняется; в «Стандарте» под заголовком
+      // появляется мягкое акцентное свечение — то, что дороже всего
+      // читается на первом экране и чего в шаблоне не было вообще.
+      tint="hero"
       className={
         withImage ? "pt-8 pb-[var(--space-section-lg)] md:pt-10 lg:pt-14" : undefined
       }
@@ -243,7 +249,7 @@ export function Hero(props: HeroSection) {
             // Паддинг (зазор) — на внешнем grid-элементе; overflow-hidden —
             // на внутреннем боксе, чтобы паддинг не резал скругление.
             <div className="mt-10 md:col-span-5 md:col-start-8 md:mt-0 md:pl-8 lg:pl-12">
-              <div className="relative aspect-square w-full overflow-hidden rounded-doc-sm md:aspect-auto md:h-[34rem] lg:h-[40rem]">
+              <div className="ui-media-raised relative aspect-square w-full overflow-hidden md:aspect-auto md:h-[34rem] lg:h-[40rem]">
                 <Image
                   src={image as string}
                   alt={headline.join(" ")}
@@ -301,10 +307,10 @@ export function Hero(props: HeroSection) {
                         // вторым голосом то же самое.
                         <div
                           aria-hidden="true"
-                          className="mt-3 h-1 w-full overflow-hidden rounded-doc-sm bg-rule"
+                          className="mt-3 h-1 w-full overflow-hidden rounded-pill bg-rule"
                         >
                           <span
-                            className="block h-full rounded-doc-sm bg-accent"
+                            className="block h-full rounded-pill bg-accent"
                             style={{ width: progressWidth(metric.progress) }}
                           />
                         </div>

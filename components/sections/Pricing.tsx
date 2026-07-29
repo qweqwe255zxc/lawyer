@@ -60,7 +60,7 @@ export function Pricing(props: PricingSection) {
             const body = (
               <>
                 {plan.photo ? (
-                  <div className="relative mb-5 aspect-[4/3] w-full overflow-hidden rounded-doc-sm">
+                  <div className="ui-media relative mb-5 aspect-[4/3] w-full overflow-hidden">
                     <Image
                       src={plan.photo}
                       alt={plan.name}
@@ -119,7 +119,11 @@ export function Pricing(props: PricingSection) {
                 style={revealDelay(index)}
                 className={cn(
                   "border-t pt-8",
-                  plan.featured ? "border-fg" : "border-rule",
+                  // ui-featured-border / --card-featured-border вместо
+                  // жёсткого border-fg: в «Экономе» это та же линия
+                  // --color-fg, в «Стандарте» выделенный тариф выходит
+                  // вперёд акцентной рамкой.
+                  plan.featured ? "ui-featured-border" : "border-rule",
                   index > 0 && "mt-10 md:mt-0 md:border-l md:border-l-rule md:pl-9",
                   index < items.length - 1 && "md:pr-9",
                 )}
@@ -130,7 +134,7 @@ export function Pricing(props: PricingSection) {
               <Card
                 key={plan.name}
                 variant="framed"
-                className={cn("h-full", plan.featured && "border-fg")}
+                className={cn("h-full", plan.featured && "ui-card--featured")}
               >
                 <div data-reveal style={revealDelay(index)}>
                   {body}

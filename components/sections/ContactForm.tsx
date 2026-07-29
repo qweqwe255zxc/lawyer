@@ -265,7 +265,7 @@ export function ContactForm(props: ContactFormProps) {
             {mapSrc ? (
               <div
                 className={cn(
-                  "mt-6 overflow-hidden rounded-doc-sm border border-rule",
+                  "ui-media-raised mt-6 overflow-hidden border border-rule",
                   // В stacked-варианте колонка реквизитов растягивается на всю
                   // ширину контейнера (~1240px) вместо узкой 5/12-колонки —
                   // без верхнего предела ширины iframe с aspectRatio="4/3"

@@ -6,6 +6,23 @@ import type { IconName } from "@/lib/icons";
 /** Фон секции, задаёт цвета через CSS-переменные (paper/surface/ink/accent). */
 export type Surface = "paper" | "surface" | "ink" | "accent";
 
+/**
+ * Тариф оформления. Единственная ручка, которой «дорогой» сайт отличается
+ * от базового — см. docs/presets.md.
+ *
+ * econom   — плоско и документно: линейки вместо карточек, теней нет,
+ *            радиус 4px. То, чем шаблон был до появления пресетов.
+ * standard — глубина: карточки на собственной поверхности, многослойные
+ *            тени, крупные скругления, подсветка секций, плашки под
+ *            иконками, живой hover, стеклянный хедер.
+ * premium  — тоже дорого, но через воздух и акцентную рамку: теней нет,
+ *            радиус минимальный.
+ *
+ * Влияет на две вещи сразу: на токены (data-preset на <html> →
+ * theme/tokens.css) и на дефолтные variant секций (lib/preset.ts).
+ */
+export type Preset = "econom" | "standard" | "premium";
+
 export interface SectionBase {
   /** Используется как anchor и как key, плюс scroll-margin-top под sticky-хедер. */
   id: string;
@@ -176,7 +193,12 @@ export interface TeamMember {
 
 export interface TeamSection extends SectionBase {
   type: "team";
-  variant?: "columns" | "rows";
+  /**
+   * columns — 3 колонки на линейках, rows — одна колонка,
+   * cards — те же 3 колонки, но каждый человек в карточке
+   * (единственный вариант, где у секции появляется глубина пресета).
+   */
+  variant?: "columns" | "rows" | "cards";
   items: TeamMember[];
 }
 
@@ -347,6 +369,14 @@ export interface ThemeConfig {
   defaultMode: "light" | "dark";
   /** Символ для favicon, если нет файла-картинки. */
   faviconGlyph: string;
+  /**
+   * Тариф оформления. Не задан — "econom" (плоская база).
+   * Одно это поле включает всю глубину «Стандарта»: тени, радиусы,
+   * поверхности карточек, подсветку секций, плашки под иконками — и
+   * заодно переключает дефолтные раскладки секций на карточные.
+   * Подробно — docs/presets.md.
+   */
+  preset?: Preset;
 }
 
 export interface FooterConfig {

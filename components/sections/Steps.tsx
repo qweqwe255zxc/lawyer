@@ -76,13 +76,13 @@ export function Steps(props: StepsSection) {
                   </span>
 
                   <div className={onRight ? "md:col-start-2 md:pl-12" : "md:col-start-1 md:pr-12"}>
-                    {/* Карточка реагирует на курсор тенью, но не
-                        hoverEffect: шаг никуда не ведёт, и cursor-pointer
-                        из этого набора обещал бы клик, которого нет. */}
-                    <Card
-                      variant="elevated"
-                      className="h-full transition-shadow duration-200 ease-ui hover:shadow-lg"
-                    >
+                    {/* ui-card--live, а не hoverEffect: шаг никуда не
+                        ведёт, и cursor-pointer из набора hoverEffect
+                        обещал бы клик, которого нет. Переход по
+                        box-shadow и transform уже задан в .ui-card —
+                        своего transition-shadow тут быть не должно, он
+                        снял бы переход у подъёма в «Стандарте». */}
+                    <Card variant="elevated" className="ui-card--live h-full">
                       <h3 className="font-display text-h3">{item.title}</h3>
                       <p className="mt-3 text-body text-fg-muted">{item.text}</p>
 

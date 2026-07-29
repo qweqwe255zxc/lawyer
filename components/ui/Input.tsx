@@ -25,14 +25,18 @@ interface InputProps {
 }
 
 /**
- * Поля с подчёркиванием вместо рамки-коробки, под общую стилистику.
+ * Геометрия поля — класс .ui-control и ручки --control-* (theme/tokens.css):
+ * в «Экономе» это подчёркивание без фона и радиуса, в «Стандарте» —
+ * коробка с заливкой и скруглением. Компонент задаёт только типографику
+ * и цвет линии на hover/focus.
+ *
  * Цвет линии — --color-rule-strong (контраст 3.4:1), обычный hairline
  * тут недостаточно контрастен для границы интерактивного поля (WCAG 1.4.11).
  */
 const control =
-  "w-full bg-transparent border-b border-rule-strong pb-2.5 pt-1 text-body text-fg " +
-  "placeholder:text-fg-muted/60 transition-colors hover:border-fg focus:border-fg " +
-  "focus:outline-none focus-visible:outline-none rounded-none appearance-none";
+  "ui-control w-full text-body text-fg " +
+  "placeholder:text-fg-muted/60 hover:border-fg focus:border-fg " +
+  "focus:outline-none focus-visible:outline-none appearance-none";
 
 /**
  * Полностью контролируемое поле: значение и маска телефона живут

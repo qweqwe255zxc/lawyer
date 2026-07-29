@@ -59,7 +59,9 @@ export function Toast({ toast, onClose, duration = 6000 }: ToastProps) {
       className={cn(
         "toast fixed inset-x-gutter bottom-4 z-[var(--z-toast)] flex items-start gap-4",
         "sm:inset-x-auto sm:right-6 sm:left-auto sm:bottom-6 sm:max-w-md",
-        "rounded-doc border border-rule bg-bg p-5 text-fg",
+        // Радиус и тень — ui-popover (ручки пресета): в «Экономе» те же
+        // документные 4px без тени, в «Стандарте» панель отрывается от страницы.
+        "ui-popover border border-rule bg-bg p-5 text-fg",
       )}
     >
       {content.tone === "success" ? (

@@ -19,9 +19,12 @@ interface HeaderProps {
 }
 
 /**
- * Sticky-хедер. При скролле вместо тени появляется тонкая линия снизу —
- * теней в проекте вообще не используем. Якорные ссылки не заезжают под
- * хедер благодаря scroll-margin-top на секциях (см. globals.css).
+ * Sticky-хедер. Чем он отрывается от страницы при скролле, решает пресет
+ * тарифа (класс .ui-header + --header-shadow / --header-bg / --header-blur):
+ * в «Экономе» это по-прежнему только тонкая линия снизу, теней нет;
+ * в «Стандарте» добавляются полупрозрачный фон, backdrop-blur и тень.
+ * Якорные ссылки не заезжают под хедер благодаря scroll-margin-top на
+ * секциях (см. globals.css).
  */
 export function Header({
   brandName,
@@ -59,8 +62,9 @@ export function Header({
   return (
     <header
       data-surface="paper"
+      data-scrolled={scrolled}
       className={cn(
-        "sticky top-0 z-[var(--z-header)] bg-bg text-fg transition-colors",
+        "ui-header sticky top-0 z-[var(--z-header)] text-fg",
         scrolled ? "border-b border-rule" : "border-b border-transparent",
       )}
     >

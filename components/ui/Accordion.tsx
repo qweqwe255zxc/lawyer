@@ -17,9 +17,11 @@ interface AccordionProps {
 }
 
 /**
- * Без рамок и фонов, только линейки между пунктами.
- * Раскрытый пункт подсвечивается 2px линией акцентного цвета слева —
- * единственное цветное состояние во всём блоке.
+ * Форма списка — ручки пресета (.ui-accordion / --accordion-* ):
+ * в «Экономе» это список на линейках без рамок и фонов, в «Стандарте»
+ * — стопка карточек с зазором (линейки при этом снимаются, их роль
+ * берут подложка и тень). Раскрытый пункт в обоих случаях подсвечивается
+ * 2px линией акцентного цвета слева — единственное цветное состояние.
  */
 export function Accordion({ items, multiple = false, className }: AccordionProps) {
   const baseId = useId();
@@ -38,14 +40,14 @@ export function Accordion({ items, multiple = false, className }: AccordionProps
   };
 
   return (
-    <div className={cn("border-t border-rule", className)}>
+    <div className={cn("ui-accordion", className)}>
       {items.map((item, index) => {
         const isOpen = open.includes(index);
         const panelId = `${baseId}-panel-${index}`;
         const buttonId = `${baseId}-button-${index}`;
 
         return (
-          <div key={item.question} className="border-b border-rule">
+          <div key={item.question} className="ui-accordion-item">
             <h3>
               <button
                 id={buttonId}
