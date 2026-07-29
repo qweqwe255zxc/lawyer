@@ -33,7 +33,7 @@ npm run dev
 | `content/site.config.ts` | Бренд, контакты, SEO, аналитика, массив секций. **Единственный файл под замену на новом проекте** |
 | `types/site.ts` | Формы данных всех секций |
 | `components/ui/` | Button, Card, Badge, Input, Accordion, Toast, Container, Section, SectionHeader, RevealRoot |
-| `components/sections/` | Hero, Stats, Features, Steps, Gallery, Testimonials, Team, FAQ, Pricing, CTA, ContactForm, Footer |
+| `components/sections/` | Секции. Каждая — папка одного устройства: `index.tsx` (роутер по `variant`), `variants/` (файл на дизайн), `parts/` (общие куски) |
 | `components/SectionRenderer.tsx` | Реестр: тип секции → компонент |
 | `app/api/contact/route.ts` | Приём формы: Telegram + email, антиспам, фолбэк в лог |
 | `lib/seo.ts` | Metadata, JSON-LD (Organization + LegalService), навигация из секций |
@@ -43,11 +43,24 @@ npm run dev
 ### Добавить новую секцию
 
 1. Тип и интерфейс в `types/site.ts`, добавить в юнион `Section`.
-2. Компонент в `components/sections/`.
+2. Папка `components/sections/<Название>/` — `index.tsx` (роутер) +
+   `variants/<Вариант>.tsx`.
 3. Строка в реестре `components/SectionRenderer.tsx`.
-4. Объект в `sections` внутри `content/site.config.ts`.
+4. Раскладки по тарифам в `lib/preset.ts`, если у секции есть `variant`.
+5. Объект в `sections` внутри `content/site.config.ts`.
 
 Больше нигде ничего подключать не нужно.
+
+### Добавить новый вариант дизайна существующей секции
+
+1. Файл в `components/sections/<Название>/variants/`.
+2. Значение в union `variant` этой секции в `types/site.ts`.
+3. Строка в `variants`-мапе внутри `<Название>/index.tsx`.
+
+Пропустить шаг 3 не получится: мапа типизирована как `Record` по всему
+union, забытый вариант ломает сборку. Подробно, с примером кода и
+правилами «что в вариант, а что в parts/» — `docs/section-system.md`,
+раздел 7.
 
 ---
 

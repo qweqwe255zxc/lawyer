@@ -1,0 +1,20 @@
+import { Section } from "@/components/ui/Section";
+import { FaqBody } from "../parts/FaqBody";
+import type { FaqSection } from "@/types/site";
+
+/**
+ * Колонка 760px — заметный контраст после широкого реестра дел выше по
+ * странице. Вариант по умолчанию во всех тарифах: длинные ответы нельзя
+ * растягивать на 1240px, строка становится нечитаемой.
+ */
+export function Narrow(props: FaqSection) {
+  const { id, surface = "surface" } = props;
+
+  return (
+    <Section id={id} surface={surface}>
+      <FaqBody {...props} width="narrow" />
+    </Section>
+  );
+}
+
+export default Narrow;

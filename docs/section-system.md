@@ -5,6 +5,10 @@
 `content/site.config.ts`. Если код и этот файл разойдутся — верить коду,
 и поправить этот файл.
 
+Каждая секция — папка одного и того же устройства: `index.tsx` (роутер
+по `variant`), `variants/` (файл на дизайн), `parts/` (общие куски).
+Как добавить новый вариант — раздел 7.
+
 Общее для всех секций: базовые поля приходят из `SectionBase`
 (`types/site.ts:9`) — `id` (обязательное, anchor + key), `surface?`,
 `number?`, `eyebrow?`, `title?`, `lead?`, `nav?`. Но **не все компоненты
@@ -28,7 +32,7 @@
 
 ## 1. Секции и их props
 
-### Hero — `components/sections/Hero.tsx`, тип `"hero"`
+### Hero — `components/sections/Hero/`, тип `"hero"`
 
 | Поле | Обязательное | По умолчанию | Примечание |
 |---|---|---|---|
@@ -45,7 +49,7 @@
 | — | — | — | `image` и `widget` делят одну колонку: если заданы оба, показывается фото, виджет пропускается (в dev — `console.warn`) |
 | `number`, `eyebrow`, `title`, `nav` (из SectionBase) | — | — | **не используются Hero** — заголовок берётся только из `headline` (`number` и `rail` идут в колонтитул на поле) |
 
-### Stats — `Stats.tsx`, тип `"stats"`
+### Stats — `Stats/`, тип `"stats"`
 
 | Поле | Обязательное | По умолчанию | Примечание |
 |---|---|---|---|
@@ -55,7 +59,7 @@
 | `containerVariant: "flat" \| "elevated" \| "bordered"` | нет | `"flat"` | подложка под цифрами. `flat` — как было: линейки сверху и снизу секции, блока нет. `elevated` — `rounded-card bg-card shadow-md`, `bordered` — `rounded-card border-accent-border bg-card`. **У обоих непустых вариантов линейки секции снимаются** (`ruleTop` и `border-b`): сквозная линейка во всю ширину перечёркивала бы блок. С `variant` комбинируется свободно |
 | `number?` | нет | — | секция без заголовка/эйброу/лида — `eyebrow`/`title`/`lead` из SectionBase не читаются вообще |
 
-### Features — `Features.tsx`, тип `"features"`
+### Features — `Features/`, тип `"features"`
 
 | Поле | Обязательное | По умолчанию | Примечание |
 |---|---|---|---|
@@ -64,9 +68,9 @@
 | `variant: "table" \| "cards"` | нет | `"table"` | `table` — линейки-разделители, `cards` — `Card variant="framed"`. **Если у хотя бы одного `item` задан `photo` — компонент форсирует `variant="cards"` сам**, значение из конфига игнорируется (в dev — `console.warn`), см. раздел 2 |
 | `columns: 2 \| 3` | нет | `2` | |
 | `number`, `eyebrow`, `title`, `lead` | нет | — | обычные, идут в `SectionHeader` |
-| — | — | — | если у `item` есть `photo` — рендерится в боксе `aspect-[4/3] overflow-hidden` (`Features.tsx`), не произвольным `width`/`height` |
+| — | — | — | если у `item` есть `photo` — рендерится в боксе `aspect-[4/3] overflow-hidden` (`Features/variants/Cards.tsx`), не произвольным `width`/`height` |
 
-### Steps — `Steps.tsx`, тип `"steps"`
+### Steps — `Steps/`, тип `"steps"`
 
 | Поле | Обязательное | По умолчанию | Примечание |
 |---|---|---|---|
@@ -76,7 +80,7 @@
 | `number`, `eyebrow`, `title`, `lead` (SectionBase) | нет | — | обычные |
 | — | — | — | `numbered-nodes`: `item.number` становится бейджем-нодой на оси (круг `size-10` на линии), шаг — `Card variant="elevated"`; на `md+` карточки чередуют стороны, ось по центру, на мобильном ось слева и все карточки справа от неё. Зазор между шагами — `padding-bottom` внутри `<li>`, а не внешний margin: отрезок оси рисуется абсолютом внутри того же `<li>` и через margin рвался бы. Карточка подсвечивается тенью на hover, но без `hoverEffect` — шаг никуда не ведёт, и `cursor-pointer` обещал бы клик, которого нет |
 
-### Gallery — `Gallery.tsx`, тип `"gallery"` (кейсы/работы)
+### Gallery — `Gallery/`, тип `"gallery"` (кейсы/работы)
 
 | Поле | Обязательное | По умолчанию | Примечание |
 |---|---|---|---|
@@ -88,16 +92,16 @@
 | `tags?: string[]` (на элементе) | нет | — | мелкие моноширинные плашки `Badge variant="outline"` под категорией. Своей колонки не занимают: количество тегов у кейсов разное, и колонка переменной высоты ломала бы ровные строки реестра |
 | `number`, `eyebrow`, `title`, `lead` | нет | — | обычные |
 
-### Testimonials — `Testimonials.tsx`, тип `"testimonials"`
+### Testimonials — `Testimonials/`, тип `"testimonials"`
 
 | Поле | Обязательное | По умолчанию | Примечание |
 |---|---|---|---|
 | `items: TestimonialItem[]` (`quote`, `author`, `meta?`) | да | — | |
 | `surface` | нет | `"paper"` | |
 | `variant: "quotes" \| "cards"` | нет | `"quotes"` | `quotes` — по одной цитате в ряд с 12-колоночной сеткой автора слева; `cards` — `md:grid-cols-3`, каждый отзыв в `Card variant="framed"`. Раньше `cards` менял только число колонок и рисовал те же линейки — «карточки» без карточек, из-за чего секция оставалась плоской в любом тарифе |
-| `title?` | нет | — | если не задан — `spacing="none"` и другой набор отступов (см. `Testimonials.tsx:27,38`); в текущем конфиге секция `testimonials` идёт без заголовка и с `number: ""` (пустая строка — falsy, `SectionHeader` не рендерится вовсе, см. `SectionHeader.tsx:25`) |
+| `title?` | нет | — | если не задан — `spacing="none"` и другой набор отступов (см. варианты в `Testimonials/variants/`); в текущем конфиге секция `testimonials` идёт без заголовка и с `number: ""` (пустая строка — falsy, `SectionHeader` не рендерится вовсе, см. `SectionHeader.tsx:25`) |
 
-### Team — `Team.tsx`, тип `"team"`
+### Team — `Team/`, тип `"team"`
 
 | Поле | Обязательное | По умолчанию | Примечание |
 |---|---|---|---|
@@ -105,9 +109,9 @@
 | `surface` | нет | `"paper"` | |
 | `variant: "columns" \| "rows" \| "cards"` | нет | `"columns"` | `columns` — 3 колонки на линейках, `rows` — 1 колонка, `cards` — те же 3 колонки, но каждый человек в `Card variant="framed"`. `cards` — единственный вариант, где у секции есть объект, способный принять глубину тарифа, поэтому в «Стандарте» он стоит умолчанием |
 | `number`, `eyebrow`, `title`, `lead` | нет | — | обычные |
-| — | — | — | аватар — единый бокс `aspect-[3/4] overflow-hidden`: если `photo` задан, в боксе `next/image`, иначе — заглушка с инициалами того же размера в том же месте; они взаимоисключающие (`Team.tsx`), карточки с фото и без фото в одной секции остаются одной высоты |
+| — | — | — | аватар — единый бокс `aspect-[3/4] overflow-hidden`: если `photo` задан, в боксе `next/image`, иначе — заглушка с инициалами того же размера в том же месте; они взаимоисключающие (`Team/parts/MemberContent.tsx`), карточки с фото и без фото в одной секции остаются одной высоты |
 
-### About — `About.tsx`, тип `"about"` («о нас» / «о месте»)
+### About — `About/`, тип `"about"` («о нас» / «о месте»)
 
 | Поле | Обязательное | По умолчанию | Примечание |
 |---|---|---|---|
@@ -119,7 +123,7 @@
 | `number`, `eyebrow`, `title`, `lead` | нет | — | не через `SectionHeader` — рендерятся в текстовой колонке, а не на всю ширину (единственная секция с такой раскладкой заголовка, наравне с Hero) |
 | — | — | — | **единственная секция, где раскладка сознательно асимметричная 5/7, а не «текст на всю ширину + фото сбоку»** — фото на `md+` растягивается на всю высоту строки грида (`md:h-full`, `align-items: stretch`), на мобильном держит `aspect-[4/3]` (колонки ещё нет) |
 
-### FAQ — `FAQ.tsx`, тип `"faq"`
+### FAQ — `FAQ/`, тип `"faq"`
 
 | Поле | Обязательное | По умолчанию | Примечание |
 |---|---|---|---|
@@ -128,7 +132,7 @@
 | `variant: "narrow" \| "split"` | нет | `"narrow"` | `narrow` → `Container width="narrow"` (760px), любое другое значение (в типе — `"split"`) → `Container width="page"` (1240px); **собственной split-раскладки для `"split"` не реализовано**, это просто более широкий контейнер |
 | `number`, `eyebrow`, `title`, `lead` | нет | — | обычные |
 
-### Pricing — `Pricing.tsx`, тип `"pricing"`
+### Pricing — `Pricing/`, тип `"pricing"`
 
 | Поле | Обязательное | По умолчанию | Примечание |
 |---|---|---|---|
@@ -140,7 +144,7 @@
 | — | — | — | **в `content/site.config.ts` этой секции сейчас нет вообще** — компонент существует, но не используется на текущем лендинге (это явно написано в комментарии `Pricing.tsx:11`, а не забытый мёртвый код) |
 | — | — | — | если у `plan` есть `photo` — тот же бокс `aspect-[4/3] overflow-hidden`, что и в Features |
 
-### CTA — `CTA.tsx`, тип `"cta"`
+### CTA — `CTA/`, тип `"cta"`
 
 | Поле | Обязательное | По умолчанию | Примечание |
 |---|---|---|---|
@@ -152,7 +156,7 @@
 | `variant: "band" \| "quiet"` | нет | `"band"` | влияет только на `spacing` секции (`lg` vs `default`), раскладка одна и та же |
 | `number`, `eyebrow`, `nav` (SectionBase) | — | — | **не используются CTA** — компонент их не деструктурирует вообще, задать в конфиге можно, эффекта не будет |
 
-### Contact / ContactForm — `ContactForm.tsx`, тип `"contact"`
+### Contact / ContactForm — `ContactForm/`, тип `"contact"`
 
 Единственная секция, которая сама является `"use client"` (стейт формы,
 антибот-таймер, honeypot, `fetch("/api/contact")`).
@@ -341,9 +345,16 @@ client"` где-либо в дереве, их код и так не попад�
 ### Чтобы добавить новую секцию (не убрать, а добавить)
 
 1. Тип и интерфейс в `types/site.ts`, добавить в union `Section`.
-2. Компонент в `components/sections/`.
+2. Папка секции в `components/sections/<Название>/` — по тому же
+   шаблону, что и все остальные: `index.tsx` (роутер) +
+   `variants/<Вариант>.tsx`. Подробно — раздел 7.
 3. Обычный `import` сверху `SectionRenderer.tsx` + строка в `registry`.
-4. Объект в `sections` внутри `content/site.config.ts`.
+   Импортируется папка (`@/components/sections/<Название>`), файл
+   разрешается в `index.tsx`.
+4. Если у секции есть `variant` — добавить её в таблицу дефолтов
+   `lib/preset.ts` (какая раскладка берётся в каком тарифе) и в
+   резолвинг в `registry`.
+5. Объект в `sections` внутри `content/site.config.ts`.
 
 Больше нигде ничего подключать не нужно (это же в `README.md`, раздел
 «Добавить новую секцию» — здесь то же самое, но с объяснением, почему
@@ -622,7 +633,7 @@ Golos Text, `preset: "econom"`.
   отдельная задача: либо новый `variant="bento"` у `Features` с
   ручными `col-span`/`row-span` на части `items`, либо новый компонент
   секции (`BentoGrid`) — в любом случае это выходит за рамки «поменять
-  токены и variant», нужна доработка `components/sections/Features.tsx`
+  токены и variant», нужна доработка `components/sections/Features/`
   или новый файл.
 - **SaaS-тарифы**: `pricing` секция уже покрывает большую часть —
   `variant: "cards"`, `featured` на плане, `unit` (например «/ мес»),
@@ -641,11 +652,136 @@ Golos Text, `preset: "econom"`.
 
 ---
 
+## 7. Как добавить новый вариант дизайна
+
+Все секции в `components/sections/` устроены ОДИНАКОВО, без исключений —
+даже те, у кого вариант один (`Footer`). Смысл в том, что новый дизайн
+всегда добавляется одним и тем же алгоритмом, и не надо каждый раз
+сначала распиливать монолит.
+
+### Структура папки секции
+
+```
+components/sections/<Название>/
+  index.tsx            — роутер: по props.variant выбирает файл из variants/
+  variants/<V>.tsx      — законченный вариант: рендерит секцию ЦЕЛИКОМ
+  parts/*.tsx           — куски разметки, общие для нескольких вариантов
+  types.ts              — только если пропсы шире типа секции (Footer, ContactForm)
+```
+
+Точка импорта не меняется: `SectionRenderer.tsx` по-прежнему пишет
+`import { Hero } from "@/components/sections/Hero"` — путь резолвится
+в `index.tsx` папки.
+
+### Три шага
+
+**1. Создать файл в `variants/`.** Проще всего скопировать соседний
+вариант и переписать разметку. Вариант принимает пропсы своей секции
+целиком (тот же тип, что в `types/site.ts`) и рендерит всю секцию — от
+`<Section>` до закрывающего тега:
+
+```tsx
+// components/sections/Features/variants/Bento.tsx
+import { Container } from "@/components/ui/Container";
+import { Section } from "@/components/ui/Section";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+import { FeatureContent } from "../parts/FeatureContent";
+import type { FeaturesSection } from "@/types/site";
+
+export function Bento(props: FeaturesSection) {
+  const { id, surface = "surface", number, eyebrow, title, lead, items } = props;
+
+  return (
+    <Section id={id} surface={surface}>
+      <Container>
+        <SectionHeader number={number} eyebrow={eyebrow} title={title} lead={lead} />
+        {/* ...своя раскладка... */}
+      </Container>
+    </Section>
+  );
+}
+
+export default Bento;
+```
+
+**2. Добавить значение в тип секции** (`types/site.ts`):
+
+```ts
+export interface FeaturesSection extends SectionBase {
+  type: "features";
+  variant?: "table" | "cards" | "bento";   // ← новое значение
+  ...
+}
+```
+
+**3. Добавить строку в `index.tsx` этой секции:**
+
+```tsx
+import { Bento } from "./variants/Bento";
+
+const variants: VariantMap<FeaturesSection, NonNullable<FeaturesSection["variant"]>> = {
+  table: Table,
+  cards: Cards,
+  bento: Bento,   // ← новая строка
+};
+```
+
+Порядок шагов важен: `VariantMap` — это `Record<V, …>`, где `V` — весь
+union `variant`. Добавили значение в тип (шаг 2), но забыли строку в
+роутере (шаг 3) — TypeScript не соберётся с ошибкой «Property 'bento' is
+missing». Забытый вариант не отрендерится пустотой, а сломает сборку —
+так и задумано.
+
+### Что писать в вариант, а что в parts/
+
+- **В вариант** — всё, что отличает этот дизайн: сетка, оболочка
+  элемента (ячейка / карточка / строка реестра), вертикальный ритм
+  секции, поверхность по умолчанию.
+- **В `parts/`** — то, что повторяется между вариантами дословно:
+  содержимое карточки (`FeatureContent`, `PlanContent`, `MemberContent`),
+  оболочка секции, если она общая (`GalleryShell`), клиентская логика
+  (`ContactForm/parts/useContactForm.ts`).
+
+Правило простое: скопировали блок разметки во второй вариант без
+изменений — значит ему место в `parts/`.
+
+### Чего в варианте быть не должно
+
+Ни `shadow-*`, ни `rounded-xl`, ни `hover:-translate-y-*`, ни hex-цветов.
+Глубина и пластика приходят из тарифа — классы `ui-card`, `ui-button`,
+`ui-media`, `icon-tile` и роли-радиусы `rounded-card` / `rounded-control` /
+`rounded-pill` (см. раздел 5 и `docs/presets.md`). Вариант отвечает за
+РАСКЛАДКУ, тариф — за ГЛУБИНУ. Захардкодив тень в варианте, вы ломаете
+оба тарифа сразу.
+
+Карточку в новом варианте ставьте через `Card variant="framed"` — это
+«карточка по умолчанию», её глубину выберет тариф. `elevated` — только
+там, где подъём нужен по смыслу независимо от тарифа.
+
+### Дефолт варианта по тарифу
+
+Если новый вариант должен становиться умолчанием в каком-то тарифе —
+это отдельная правка в `lib/preset.ts` (таблица `PRESET_DEFAULTS`), а не
+в самой секции. Роутер читает `props.variant`, а подставляет его
+`SectionRenderer` — см. `docs/presets.md`, раздел 2.2.
+
+### Вторая ось
+
+У двух секций есть второй, независимый от `variant` переключатель:
+`Stats.containerVariant` (подложка под цифрами) и `ContactForm.layout`
+(подложка под формой). Такие оси НЕ попадают в `variants/` — иначе
+пришлось бы заводить файл на каждую комбинацию (band+flat, band+elevated,
+grid+flat…). Они живут в `parts/` общим хелпером, который вызывают все
+варианты: `Stats/parts/container.ts`, `ContactForm/parts/FormColumn.tsx`.
+Если у новой секции появляется вторая ось — делайте так же.
+
+---
+
 ## Проверка расхождений с кодом
 
 Таблицы выше и раздел про `next/dynamic` сверены построчно с текущим
-состоянием: `types/site.ts`, `components/SectionRenderer.tsx`, каждым
-файлом в `components/sections/`, `components/ui/Section.tsx`,
+состоянием: `types/site.ts`, `components/SectionRenderer.tsx`, каждой
+папкой в `components/sections/`, `components/ui/Section.tsx`,
 `components/ui/Container.tsx`, `components/ui/SectionHeader.tsx`,
 `components/ui/Card.tsx`, `components/ui/Badge.tsx`,
 `components/ui/Button.tsx`, `components/ui/Input.tsx`,
