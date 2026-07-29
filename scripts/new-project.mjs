@@ -10,7 +10,7 @@
  * конкретный бренд, а не автозаменой.
  */
 
-import { cp, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
@@ -159,6 +159,20 @@ await writeFile(
   "utf8",
 );
 
+/* --- Иконки: favicon.ico / apple-touch-icon.png запечены под демо-бренд -
+ * это растровые файлы, отрендеренные один раз под конкретный проект
+ * (глиф, акцентный цвет) и просто лежат в public/ — в отличие от
+ * app/icon.svg/route.ts, они не читают theme.faviconGlyph на лету.
+ * Скопировать их как есть в новый проект — значит показать чужому
+ * бизнесу favicon и иконку на iOS от предыдущего клиента. Безопаснее
+ * удалить и явно попросить сгенерировать новые под этот бренд. --------- */
+for (const stale of ["favicon.ico", "apple-touch-icon.png"]) {
+  const filePath = path.join(target, "public", stale);
+  if (existsSync(filePath)) {
+    await rm(filePath);
+  }
+}
+
 /* --- Заготовка политики: текст под нового оператора вычитывает юрист ---- */
 const privacyPath = path.join(target, "app", "privacy", "page.tsx");
 if (existsSync(privacyPath)) {
@@ -176,7 +190,7 @@ if (existsSync(privacyPath)) {
 /* --- README ------------------------------------------------------------ */
 await writeFile(
   path.join(target, "README.md"),
-  `# ${name}\n\nЛендинг на базе шаблона.\n\n1. \`npm install\`\n2. Заполнить \`content/site.config.ts\`\n3. Проверить палитру и шрифты в \`theme/tokens.css\` и \`theme/palette.ts\`\n4. \`cp .env.example .env.local\` и заполнить каналы формы\n5. \`npm run dev\`\n`,
+  `# ${name}\n\nЛендинг на базе шаблона.\n\n1. \`npm install\`\n2. Заполнить \`content/site.config.ts\`\n3. Проверить палитру и шрифты в \`theme/tokens.css\` и \`theme/palette.ts\`\n4. \`cp .env.example .env.local\` и заполнить каналы формы\n5. Добавить \`public/favicon.ico\` и \`public/apple-touch-icon.png\` под этот бренд (в шаблоне их не было — старые от демо-проекта нарочно удалены при копировании). \`app/icon.svg\` дополнительно генерируется на лету из \`theme.faviconGlyph\`, отдельно править не нужно\n6. \`npm run dev\`\n`,
   "utf8",
 );
 
@@ -188,4 +202,6 @@ console.log(`
     npm run dev
 
   Дальше: content/site.config.ts → theme/tokens.css → .env.local
+  Не забыть: public/favicon.ico + public/apple-touch-icon.png под новый бренд
+  (старые от демо-проекта удалены, чтобы не утащить чужой логотип)
 `);

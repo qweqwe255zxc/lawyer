@@ -28,20 +28,47 @@ function bandCell(index: number): string {
 }
 
 /**
+ * Подложка под цифрами. flat — как было: линейки сверху/снизу секции,
+ * блока нет. elevated/bordered — цифры собираются в один монолитный
+ * блок, и тогда линейки секции снимаются: сквозная линейка во всю
+ * ширину визуально перечёркивала бы поднятый блок.
+ */
+function containerClasses(
+  containerVariant: NonNullable<StatsSection["containerVariant"]>,
+): string | undefined {
+  switch (containerVariant) {
+    case "elevated":
+      return "rounded-card bg-card p-7 shadow-md md:p-9";
+    case "bordered":
+      return "rounded-card border border-accent-border bg-card p-7 md:p-9";
+    default:
+      return undefined;
+  }
+}
+
+/**
  * Фон тот же, что у hero, но плотность другая: после разреженного hero
  * сразу идёт сжатая полоса с цифрами. Цифры всегда --color-fg, без акцента.
  */
 export function Stats(props: StatsSection) {
-  const { id, surface = "paper", variant = "band", number, items } = props;
+  const {
+    id,
+    surface = "paper",
+    variant = "band",
+    containerVariant = "flat",
+    number,
+    items,
+  } = props;
   const isBand = variant === "band";
+  const isFlat = containerVariant === "flat";
 
   return (
     <Section
       id={id}
       surface={surface}
       spacing="sm"
-      ruleTop
-      className="border-b border-rule"
+      ruleTop={isFlat}
+      className={isFlat ? "border-b border-rule" : undefined}
     >
       <Container>
         {/* Секция без заголовка (SectionHeader тут не участвует), но номер
@@ -58,6 +85,7 @@ export function Stats(props: StatsSection) {
             isBand
               ? "grid-cols-2 md:grid-cols-4"
               : "gap-x-gutter gap-y-10 sm:grid-cols-2 lg:grid-cols-4",
+            containerClasses(containerVariant),
           )}
         >
           {items.map((item, index) => (

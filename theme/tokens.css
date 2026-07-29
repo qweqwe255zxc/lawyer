@@ -36,6 +36,14 @@
   --surface-fg-muted: var(--palette-ink-muted);
   --surface-rule: var(--palette-rule);
   --surface-rule-strong: var(--palette-rule-strong);
+  /* Заливка карточек (bg-card). По умолчанию — цвет самой секции, то
+     есть карточка не отличается от фона и «поднимается» только рамкой
+     или тенью: так база (Эконом) остаётся плоской. Пресет «Стандарт»
+     переопределяет это значение (обычно на var(--palette-surface)),
+     и все карточки разом получают собственную поверхность.
+     Объявляется заново в каждом [data-surface] ниже — var() внутри
+     :root посчитался бы один раз по paper и дальше только наследовался. */
+  --surface-card: var(--surface-bg);
 
   /* Акцент — семантические имена, чтобы правило акцента читалось в коде */
   --accent: var(--palette-accent);
@@ -43,6 +51,19 @@
   --accent-active: var(--palette-accent-active);
   --accent-fg: var(--palette-paper); /* текст на акцентной заливке */
   --accent-ring: var(--palette-accent); /* focus-ring, п.4 правила акцента */
+  /* Граница карточки Card variant="bordered-accent" и Stats
+     containerVariant="bordered". Отдельный токен, а не var(--accent)
+     в компоненте: пресет может сделать её мягче (например
+     color-mix(in srgb, var(--accent) 40%, transparent)), не трогая
+     сам акцент и не переписывая компоненты. */
+  --accent-border: var(--accent);
+
+  /* Мягкая плашка Badge variant="soft" (статусы в реестре, бейдж
+     виджета в hero). На светлых поверхностях это акцент на 10%-подложке;
+     на тёмном и акцентном блоке пара переопределяется в своём
+     [data-surface] — хвойный акцент на графите не читается. */
+  --badge-soft-bg: color-mix(in srgb, var(--accent) 10%, transparent);
+  --badge-soft-fg: var(--accent);
 
   /* Primary-кнопка. Единственное место, где акцент становится заливкой
      помимо CTA-блока. Внутри акцентного блока пара инвертируется —
@@ -62,6 +83,11 @@
   /* Вторая серифная гарнитура — только для h1/h2 (font-heading), акцентная
      декоративная типографика поверх основного font-display. */
   --font-heading-stack: var(--font-playfair), "PT Serif", Georgia, serif;
+  /* Моноширинная — только служебные подписи: теги реестра, коды, номера
+     (Badge variant="outline"). Отдельный веб-шрифт под это не тянем,
+     системного стека достаточно. */
+  --font-mono-stack: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
 
   /* Флюид 375 → 1440px, дальше кегль не растёт (контейнер 1240) */
   /* Нижняя граница 34px, а не 40: на 375px при 40px строка «и жилищные дела»
@@ -115,12 +141,43 @@
 
   /* --------------------------------------------------------------------
      ГРАНИЦЫ, РАДИУСЫ, ТЕНИ
-     Тени в проекте отсутствуют как класс решений — документ не парит.
+
+     База (тариф «Эконом») по-прежнему плоская: шкала глубины ниже
+     объявлена, но ни один компонент не включает её по умолчанию —
+     тень появляется только у Card variant="elevated" / hoverEffect и
+     Stats containerVariant="elevated", то есть по явному выбору
+     в site.config.ts. Тариф «Стандарт» поднимает карточки, меняя
+     --radius-card и выбирая варианты, а не правя компоненты.
      -------------------------------------------------------------------- */
   --border-hairline: 1px;
   --border-accent-marker: 2px;
+
+  /* --radius-sm/md намеренно оставлены 2/4px, хотя расширенная шкала
+     обычно начинается с 4/8px: на этих двух значениях свёрстана вся
+     текущая база (rounded-doc / rounded-doc-sm — кнопки, тосты, боксы
+     фото), и их сдвиг переверстал бы Эконом. Шкала поэтому растёт
+     вверх, а карточки выбирают ступень через --radius-card. */
   --radius-sm: 0.125rem; /* 2px */
-  --radius-md: 0.25rem; /* 4px — максимум в проекте */
+  --radius-md: 0.25rem; /* 4px — «документный» радиус базы */
+  --radius-lg: 0.75rem; /* 12px */
+  --radius-xl: 1rem; /* 16px */
+  --radius-2xl: 1.5rem; /* 24px */
+
+  /* Радиус карточек и панелей — одна ручка на пресет: Эконом оставляет
+     документные 4px, «Стандарт IT» ставит var(--radius-xl), «Стандарт
+     Premium» — var(--radius-sm). Компоненты знают только rounded-card. */
+  --radius-card: var(--radius-md);
+
+  /* Шкала глубины. Имена --elevation-*, а не --shadow-*, потому что в
+     утилиты Tailwind (shadow-sm/md/lg/card-hover) они попадают через
+     @theme inline в app/globals.css — одноимённые переменные дали бы
+     там самоссылку. Значения одни на весь проект: ни один компонент
+     не пишет box-shadow напрямую. */
+  --elevation-none: none;
+  --elevation-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --elevation-md: 0 4px 20px -2px rgb(0 0 0 / 0.06);
+  --elevation-lg: 0 10px 30px -4px rgb(0 0 0 / 0.08);
+  --elevation-card-hover: 0 12px 32px -4px rgb(0 0 0 / 0.12);
 
   /* --------------------------------------------------------------------
      ДВИЖЕНИЕ
@@ -162,6 +219,14 @@
   --palette-ink-rule: #3a3f38;
 
   --accent-fg: #0f1a14;
+
+  /* Те же тени на тёмном фоне не видно вообще: чёрный с альфой 0.05
+     по тёмной бумаге не даёт разницы. Поднимаем непрозрачность —
+     форма и радиусы теней остаются те же. */
+  --elevation-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --elevation-md: 0 4px 20px -2px rgb(0 0 0 / 0.45);
+  --elevation-lg: 0 10px 30px -4px rgb(0 0 0 / 0.5);
+  --elevation-card-hover: 0 12px 32px -4px rgb(0 0 0 / 0.6);
 }
 
 /* ============================================================================
@@ -175,6 +240,10 @@
   --surface-fg-muted: var(--palette-ink-muted);
   --surface-rule: var(--palette-rule);
   --surface-rule-strong: var(--palette-rule-strong);
+  /* Единственная поверхность, где карточка по умолчанию всё-таки
+     отличается от фона: белый лист поверх тёплой бумаги — это уже есть
+     в базовой палитре, отдельной «глубины» для этого не нужно. */
+  --surface-card: var(--palette-surface);
 }
 
 [data-surface="surface"] {
@@ -183,6 +252,8 @@
   --surface-fg-muted: var(--palette-ink-muted);
   --surface-rule: var(--palette-rule);
   --surface-rule-strong: var(--palette-rule-strong);
+  /* Лист на листе — карточку отделяет тень/рамка, а не цвет */
+  --surface-card: var(--palette-surface);
 }
 
 /* Единственная инверсия в теле страницы — блок кейсов. Акцент здесь не живёт. */
@@ -192,6 +263,14 @@
   --surface-fg-muted: var(--palette-ink-fg-muted);
   --surface-rule: var(--palette-ink-rule);
   --surface-rule-strong: var(--palette-ink-fg-muted);
+  /* На тёмном тень не работает как подъём — карточку приподнимает
+     сам тон: на несколько процентов светлее фона блока. */
+  --surface-card: color-mix(in srgb, var(--palette-ink) 93%, var(--palette-ink-fg));
+  /* Хвойный акцент на графите тонет ровно так же, как focus-ring
+     (см. ниже) — акцентная рамка на тёмном блоке светлеет. */
+  --accent-border: var(--palette-ink-fg-muted);
+  --badge-soft-bg: color-mix(in srgb, var(--palette-ink-fg) 12%, transparent);
+  --badge-soft-fg: var(--palette-ink-fg);
 }
 
 /* Единственная акцентная заливка на странице — CTA. */
@@ -201,6 +280,12 @@
   --surface-fg-muted: color-mix(in srgb, var(--accent-fg) 72%, transparent);
   --surface-rule: color-mix(in srgb, var(--accent-fg) 24%, transparent);
   --surface-rule-strong: color-mix(in srgb, var(--accent-fg) 45%, transparent);
+  --surface-card: color-mix(in srgb, var(--accent) 92%, var(--accent-fg));
+  /* Акцентная рамка на акцентной заливке не читается — здесь ею
+     работает светлый текстовый цвет блока. */
+  --accent-border: var(--surface-rule-strong);
+  --badge-soft-bg: color-mix(in srgb, var(--accent-fg) 16%, transparent);
+  --badge-soft-fg: var(--accent-fg);
 
   /* Акцент на акценте не читается — кнопка внутри CTA инвертируется */
   --btn-primary-bg: var(--accent-fg);

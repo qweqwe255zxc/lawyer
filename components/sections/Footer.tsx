@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
+import { BrandMark } from "@/components/BrandMark";
 import type { ContactsConfig, BrandConfig, FooterConfig } from "@/types/site";
 
 interface FooterProps {
@@ -25,8 +26,8 @@ export function Footer({ brand, contacts, footer, nav }: FooterProps) {
           <Container>
             <div className="grid gap-x-gutter gap-y-10 md:grid-cols-12">
               <div className="md:col-span-4">
-                <p className="font-display text-h3">
-                  <span className="text-accent">{brand.mark}</span>{" "}
+                <p className="flex items-center gap-2 font-display text-h3">
+                  <BrandMark mark={brand.mark} alt={brand.name} />
                   <span>{brand.name}</span>
                 </p>
                 <p className="mt-3 text-small text-fg-muted">{brand.tagline}</p>

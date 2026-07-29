@@ -3,13 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
+import type { SelectOption } from "@/types/site";
 
 interface SelectProps {
   id: string;
   name: string;
   value: string;
   onChange: (value: string) => void;
-  options: string[];
+  /** Всегда пары label/value: простой список строк разворачивает Input. */
+  options: SelectOption[];
   placeholder?: string;
   invalid?: boolean;
   describedBy?: string;
@@ -22,6 +24,7 @@ interface SelectProps {
  *
  * Значение прокидываю в форму через скрытый input с тем же name, чтобы
  * ContactForm видел его как обычное controlled-поле и сам валидировал.
+ * В стейте формы (и в заявке) лежит value, пользователь видит label.
  */
 export function Select({
   id,
@@ -33,9 +36,12 @@ export function Select({
   invalid,
   describedBy,
 }: SelectProps) {
+  const indexOfValue = () => options.findIndex((option) => option.value === value);
+  const selected = options.find((option) => option.value === value);
+
   const [open, setOpen] = useState(false);
   const [highlighted, setHighlighted] = useState(() =>
-    Math.max(0, options.indexOf(value)),
+    Math.max(0, indexOfValue()),
   );
 
   const rootRef = useRef<HTMLDivElement>(null);
@@ -70,7 +76,7 @@ export function Select({
 
   const commit = (index: number) => {
     const option = options[index];
-    if (option) onChange(option);
+    if (option) onChange(option.value);
     setOpen(false);
     buttonRef.current?.focus();
   };
@@ -79,7 +85,7 @@ export function Select({
     if (!open) {
       if (["ArrowDown", "ArrowUp", "Enter", " "].includes(event.key)) {
         event.preventDefault();
-        openAt(Math.max(0, options.indexOf(value)));
+        openAt(Math.max(0, indexOfValue()));
       }
       return;
     }
@@ -121,7 +127,7 @@ export function Select({
         aria-invalid={invalid || undefined}
         aria-describedby={describedBy}
         aria-activedescendant={open ? `${id}-option-${highlighted}` : undefined}
-        onClick={() => (open ? setOpen(false) : openAt(Math.max(0, options.indexOf(value))))}
+        onClick={() => (open ? setOpen(false) : openAt(Math.max(0, indexOfValue())))}
         onKeyDown={handleKeyDown}
         className={cn(
           "flex w-full items-center justify-between gap-3 border-b border-rule-strong bg-transparent",
@@ -130,7 +136,7 @@ export function Select({
           value ? "text-fg" : "text-fg-muted/60",
         )}
       >
-        <span className="truncate">{value || placeholder}</span>
+        <span className="truncate">{selected?.label ?? placeholder}</span>
         <ChevronDown
           aria-hidden="true"
           className={cn(
@@ -158,19 +164,19 @@ export function Select({
           >
             {options.map((option, index) => (
               <li
-                key={option}
+                key={option.value}
                 id={`${id}-option-${index}`}
                 role="option"
-                aria-selected={option === value}
+                aria-selected={option.value === value}
                 onMouseEnter={() => setHighlighted(index)}
                 onClick={() => commit(index)}
                 className={cn(
                   "cursor-pointer border-b border-rule px-4 py-3 text-body last:border-b-0",
                   index === highlighted && "bg-paper",
-                  option === value && "font-medium",
+                  option.value === value && "font-medium",
                 )}
               >
-                {option}
+                {option.label}
               </li>
             ))}
           </ul>

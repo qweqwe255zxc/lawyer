@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { BrandMark } from "@/components/BrandMark";
 import { cn } from "@/lib/cn";
 import type { CtaLink } from "@/types/site";
 
@@ -67,10 +68,10 @@ export function Header({
         <div className="flex h-header items-center justify-between gap-6">
           <Link
             href="#hero"
-            className="font-display text-h3 whitespace-nowrap"
+            className="inline-flex items-center gap-2 font-display text-h3 whitespace-nowrap"
             onClick={() => setMenuOpen(false)}
           >
-            <span className="text-accent">{brandMark}</span>{" "}
+            <BrandMark mark={brandMark} alt={brandName} />
             <span className="hidden sm:inline">{brandName}</span>
           </Link>
 

@@ -1,9 +1,29 @@
+import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { revealDelay } from "@/lib/reveal";
-import type { GallerySection } from "@/types/site";
+import type { CaseItem, GallerySection } from "@/types/site";
+
+/**
+ * Теги кейса — мелкие моноширинные плашки под категорией. Отдельной
+ * колонки не занимают: их количество у разных кейсов разное, и колонка
+ * переменной высоты ломала бы ровные строки реестра.
+ */
+function CaseTags({ tags }: { tags?: CaseItem["tags"] }) {
+  if (!tags || tags.length === 0) return null;
+
+  return (
+    <span className="mt-2.5 flex flex-wrap gap-1.5">
+      {tags.map((tag) => (
+        <Badge key={tag} variant="outline">
+          {tag}
+        </Badge>
+      ))}
+    </span>
+  );
+}
 
 /**
  * Единственный тёмный блок на странице. По умолчанию кейсы верстаем как
@@ -11,6 +31,11 @@ import type { GallerySection } from "@/types/site";
  * и читается как список дел, а не как галерея. Акцента тут нет вообще.
  * variant="grid" — альтернативная раскладка карточками для проектов,
  * где кейсов меньше и построчный реестр смотрится пусто.
+ *
+ * Колонка статуса появляется, только если status задан хотя бы у одного
+ * кейса: без неё раскладка реестра остаётся прежней (3/4/4/1), с ней
+ * ужимается до 3/3/3/2/1 — те же 12 колонок, шапка и строки считают
+ * ширины из одного места.
  */
 export function Gallery(props: GallerySection) {
   const {
@@ -26,6 +51,25 @@ export function Gallery(props: GallerySection) {
   } = props;
 
   const isGrid = variant === "grid";
+  const hasStatus = items.some((item) => item.status);
+
+  // Классы прописаны литералами целиком (а не собраны из кусков) —
+  // иначе сканер Tailwind их не увидит и утилит не будет в сборке.
+  const columns = hasStatus
+    ? {
+        category: "md:col-span-3",
+        problem: "md:col-span-3",
+        result: "md:col-span-3",
+        status: "md:col-span-2",
+        year: "md:col-span-1",
+      }
+    : {
+        category: "md:col-span-3",
+        problem: "md:col-span-4",
+        result: "md:col-span-4",
+        status: "md:col-span-2",
+        year: "md:col-span-1",
+      };
 
   return (
     <Section id={id} surface={surface}>
@@ -66,6 +110,19 @@ export function Gallery(props: GallerySection) {
                         </span>
                         {item.result}
                       </p>
+
+                      {item.status || item.tags?.length ? (
+                        <div className="mt-6 flex flex-wrap items-center gap-1.5">
+                          {item.status ? (
+                            <Badge variant="soft">{item.status}</Badge>
+                          ) : null}
+                          {item.tags?.map((tag) => (
+                            <Badge key={tag} variant="outline">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      ) : null}
                     </div>
                   </Card>
                 </li>
@@ -75,16 +132,31 @@ export function Gallery(props: GallerySection) {
             <>
               {/* Шапка реестра — только на десктопе, на мобильном роль берут подписи */}
               <div className="hidden border-b border-rule pb-4 md:grid md:grid-cols-12 md:gap-x-gutter">
-                <span className="text-caption font-medium uppercase text-fg-muted md:col-span-3">
+                <span
+                  className={`text-caption font-medium uppercase text-fg-muted ${columns.category}`}
+                >
                   Категория
                 </span>
-                <span className="text-caption font-medium uppercase text-fg-muted md:col-span-4">
+                <span
+                  className={`text-caption font-medium uppercase text-fg-muted ${columns.problem}`}
+                >
                   Ситуация
                 </span>
-                <span className="text-caption font-medium uppercase text-fg-muted md:col-span-4">
+                <span
+                  className={`text-caption font-medium uppercase text-fg-muted ${columns.result}`}
+                >
                   Результат
                 </span>
-                <span className="text-right text-caption font-medium uppercase text-fg-muted md:col-span-1">
+                {hasStatus ? (
+                  <span
+                    className={`text-caption font-medium uppercase text-fg-muted ${columns.status}`}
+                  >
+                    Статус
+                  </span>
+                ) : null}
+                <span
+                  className={`text-right text-caption font-medium uppercase text-fg-muted ${columns.year}`}
+                >
                   Год
                 </span>
               </div>
@@ -97,25 +169,36 @@ export function Gallery(props: GallerySection) {
                     style={revealDelay(index, 40)}
                     className="grid gap-y-3 border-b border-rule py-7 md:grid-cols-12 md:gap-x-gutter md:py-6"
                   >
-                    <p className="text-small font-medium md:col-span-3">
-                      {item.category}
-                    </p>
+                    <div className={columns.category}>
+                      <p className="text-small font-medium">{item.category}</p>
+                      <CaseTags tags={item.tags} />
+                    </div>
 
-                    <p className="text-small text-fg-muted md:col-span-4">
+                    <p className={`text-small text-fg-muted ${columns.problem}`}>
                       <span className="mr-2 text-caption uppercase md:hidden">
                         Ситуация:
                       </span>
                       {item.problem}
                     </p>
 
-                    <p className="text-small md:col-span-4">
+                    <p className={`text-small ${columns.result}`}>
                       <span className="mr-2 text-caption uppercase text-fg-muted md:hidden">
                         Результат:
                       </span>
                       {item.result}
                     </p>
 
-                    <p className="tabular text-small text-fg-muted md:col-span-1 md:text-right">
+                    {hasStatus ? (
+                      <div className={columns.status}>
+                        {item.status ? (
+                          <Badge variant="soft">{item.status}</Badge>
+                        ) : null}
+                      </div>
+                    ) : null}
+
+                    <p
+                      className={`tabular text-small text-fg-muted md:text-right ${columns.year}`}
+                    >
                       {item.year}
                     </p>
                   </li>

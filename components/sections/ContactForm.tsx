@@ -3,6 +3,7 @@
 import { useRef, useState, type FormEvent } from "react";
 import { AtSign, Clock, Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Input } from "@/components/ui/Input";
 import { Section } from "@/components/ui/Section";
@@ -25,6 +26,7 @@ export function ContactForm(props: ContactFormProps) {
     id,
     surface = "surface",
     variant = "split",
+    layout = "plain",
     number,
     eyebrow,
     title,
@@ -41,6 +43,9 @@ export function ContactForm(props: ContactFormProps) {
   } = props;
 
   const isStacked = variant === "stacked";
+  const inCard = layout === "cardContainer";
+  /** Колонка формы: в cardContainer её держит обёртка вокруг Card. */
+  const formColumn = isStacked ? undefined : "md:col-span-7";
 
   const formRef = useRef<HTMLFormElement>(null);
   const honeypotRef = useRef<HTMLInputElement>(null);
@@ -146,6 +151,50 @@ export function ContactForm(props: ContactFormProps) {
     { icon: Clock, label: "Часы работы", value: contacts.hours, href: undefined },
   ];
 
+  const formNode = (
+    <form
+      ref={formRef}
+      onSubmit={handleSubmit}
+      noValidate
+      className={inCard ? undefined : formColumn}
+      data-reveal
+    >
+      {/* honeypot: обычный человек это поле не видит и не заполнит */}
+      <div aria-hidden="true" className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden">
+        <label htmlFor="field-company">Компания</label>
+        <input
+          ref={honeypotRef}
+          id="field-company"
+          type="text"
+          name="company"
+          tabIndex={-1}
+          autoComplete="off"
+        />
+      </div>
+
+      <div className="grid gap-x-gutter gap-y-8 sm:grid-cols-2">
+        {fields.map((field) => (
+          <Input
+            key={field.name}
+            field={field}
+            value={values[field.name] ?? ""}
+            onChange={(value) => setField(field.name, value)}
+            error={errors[field.name]}
+            className={field.type === "textarea" ? "sm:col-span-2" : undefined}
+          />
+        ))}
+      </div>
+
+      <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        <Button type="submit" disabled={status === "sending"}>
+          {status === "sending" ? "Отправляем…" : submitLabel}
+        </Button>
+      </div>
+
+      <p className="measure mt-6 text-small text-fg-muted">{consent}</p>
+    </form>
+  );
+
   return (
     <Section id={id} surface={surface}>
       <Container>
@@ -237,50 +286,15 @@ export function ContactForm(props: ContactFormProps) {
             ) : null}
           </div>
 
-          {/* Форма */}
-          <form
-            ref={formRef}
-            onSubmit={handleSubmit}
-            noValidate
-            className={isStacked ? undefined : "md:col-span-7"}
-            data-reveal
-          >
-            {/* honeypot: обычный человек это поле не видит и не заполнит */}
-            <div aria-hidden="true" className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden">
-              <label htmlFor="field-company">Компания</label>
-              <input
-                ref={honeypotRef}
-                id="field-company"
-                type="text"
-                name="company"
-                tabIndex={-1}
-                autoComplete="off"
-              />
+          {/* Форма. В cardContainer колонку держит обёртка, а сама форма
+              лежит внутри поднятой карточки. */}
+          {inCard ? (
+            <div className={formColumn}>
+              <Card variant="elevated">{formNode}</Card>
             </div>
-
-            <div className="grid gap-x-gutter gap-y-8 sm:grid-cols-2">
-              {fields.map((field) => (
-                <Input
-                  key={field.name}
-                  field={field}
-                  value={values[field.name] ?? ""}
-                  onChange={(value) => setField(field.name, value)}
-                  error={errors[field.name]}
-                  className={
-                    field.type === "textarea" ? "sm:col-span-2" : undefined
-                  }
-                />
-              ))}
-            </div>
-
-            <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-              <Button type="submit" disabled={status === "sending"}>
-                {status === "sending" ? "Отправляем…" : submitLabel}
-              </Button>
-            </div>
-
-            <p className="measure mt-6 text-small text-fg-muted">{consent}</p>
-          </form>
+          ) : (
+            formNode
+          )}
         </div>
       </Container>
 

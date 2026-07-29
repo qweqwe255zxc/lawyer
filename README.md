@@ -31,7 +31,7 @@ npm run dev
 | `app/globals.css` | Маппинг Tailwind на переменные (`@theme inline`) + база и reveal |
 | `content/site.config.ts` | Бренд, контакты, SEO, аналитика, массив секций. **Единственный файл под замену на новом проекте** |
 | `types/site.ts` | Формы данных всех секций |
-| `components/ui/` | Button, Card, Input, Accordion, Toast, Container, Section, SectionHeader, RevealRoot |
+| `components/ui/` | Button, Card, Badge, Input, Accordion, Toast, Container, Section, SectionHeader, RevealRoot |
 | `components/sections/` | Hero, Stats, Features, Steps, Gallery, Testimonials, Team, FAQ, Pricing, CTA, ContactForm, Footer |
 | `components/SectionRenderer.tsx` | Реестр: тип секции → компонент |
 | `app/api/contact/route.ts` | Приём формы: Telegram + email, антиспам, фолбэк в лог |
@@ -63,6 +63,13 @@ npm run dev
 По всему проекту: без теней, без градиентов, без декоративной графики
 (кружки, диагонали, перекрывающиеся фигуры), радиус максимум 4px, эмодзи
 не используем.
+
+Это описание **базы (тариф «Эконом»)**, а не всего, что умеет шаблон.
+Слой глубины (тени `--elevation-*`, шкала радиусов до 24px, `Card
+variant="elevated"` / `"bordered-accent"`, `Badge`) в коде есть, но
+по умолчанию не включён нигде: чтобы тень появилась, нужно явно выбрать
+вариант в `site.config.ts`. Как из этого собираются пресеты «Стандарт» —
+`docs/section-system.md`, разделы 5 и 6.
 
 **Поверхности.** У каждой секции есть `data-surface` (`paper` / `surface` /
 `ink` / `accent`), всё внутри само подхватывает цвета через `--surface-*` —

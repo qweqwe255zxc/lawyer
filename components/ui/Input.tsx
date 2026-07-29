@@ -1,7 +1,20 @@
 import { cn } from "@/lib/cn";
 import { formatRuPhone } from "@/lib/phoneMask";
 import { Select } from "@/components/ui/Select";
-import type { ContactFieldConfig } from "@/types/site";
+import type { ContactFieldConfig, SelectOption } from "@/types/site";
+
+/**
+ * Конфиг допускает два вида списка: простые строки (options) и пары
+ * label/value (selectOptions, когда в заявку должно уйти не то же самое,
+ * что видит пользователь). Дальше по коду форма знает только про пары.
+ */
+function selectOptionsOf(field: ContactFieldConfig): SelectOption[] {
+  if (field.selectOptions) return field.selectOptions;
+  return (field.options ?? []).map((option) => ({
+    label: option,
+    value: option,
+  }));
+}
 
 interface InputProps {
   field: ContactFieldConfig;
@@ -58,7 +71,7 @@ export function Input({ field, value, onChange, error, className }: InputProps) 
           name={field.name}
           value={value}
           onChange={onChange}
-          options={field.options ?? []}
+          options={selectOptionsOf(field)}
           placeholder={field.placeholder ?? "Выберите"}
           invalid={Boolean(error)}
           describedBy={describedBy}

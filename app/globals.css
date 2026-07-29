@@ -15,6 +15,10 @@
   --color-rule: var(--surface-rule);
   --color-rule-strong: var(--surface-rule-strong);
 
+  /* Заливка карточек: bg-card. Обычно совпадает с bg-bg своей секции —
+     см. --surface-card в tokens.css. */
+  --color-card: var(--surface-card);
+
   /* Абсолютные цвета палитры — когда нужен именно этот тон */
   --color-paper: var(--palette-paper);
   --color-surface: var(--palette-surface);
@@ -23,6 +27,9 @@
 
   /* Акцент */
   --color-accent: var(--accent);
+  --color-accent-border: var(--accent-border);
+  --color-badge-soft: var(--badge-soft-bg);
+  --color-badge-soft-fg: var(--badge-soft-fg);
   --color-accent-hover: var(--accent-hover);
   --color-accent-active: var(--accent-active);
   --color-accent-fg: var(--accent-fg);
@@ -35,6 +42,7 @@
   --font-display: var(--font-display-stack);
   --font-body: var(--font-body-stack);
   --font-heading: var(--font-heading-stack);
+  --font-mono: var(--font-mono-stack);
 
   /* Типографическая шкала (размер + интерлиньяж + трекинг одним классом) */
   --text-h1: var(--size-h1);
@@ -84,8 +92,30 @@
   --container-page: var(--layout-container);
   --container-narrow: var(--layout-narrow);
 
+  /* Радиусы. --radius-sm/md (2/4px) остаются документными и приезжают
+     сюда под именами rounded-doc-sm / rounded-doc — так исторически
+     свёрстана база. Расширенная шкала (lg/xl/2xl) перекрывает
+     одноимённые значения Tailwind по умолчанию, чтобы «12/16/24» были
+     одни и те же и в утилитах, и в токенах.
+     Самоссылка вида `--radius-lg: var(--radius-lg)` — не опечатка:
+     при `@theme inline` переменная не эмитится в :root, а подставляется
+     в утилиту как есть, и значение приходит из tokens.css (тот же
+     приём, что у --ease-ui ниже). */
   --radius-doc: var(--radius-md);
   --radius-doc-sm: var(--radius-sm);
+  --radius-card: var(--radius-card);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+
+  /* Глубина: shadow-none/sm/md/lg + shadow-card-hover под подъём
+     карточки на hover. Значения — --elevation-* из tokens.css,
+     включая усиленные для тёмной темы. */
+  --shadow-none: var(--elevation-none);
+  --shadow-sm: var(--elevation-sm);
+  --shadow-md: var(--elevation-md);
+  --shadow-lg: var(--elevation-lg);
+  --shadow-card-hover: var(--elevation-card-hover);
 
   --ease-reveal: var(--ease-reveal);
   --ease-ui: var(--ease-ui);

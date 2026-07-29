@@ -1,16 +1,25 @@
 import Image from "next/image";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { cn } from "@/lib/cn";
 import { revealDelay } from "@/lib/reveal";
 import type { HeroSection } from "@/types/site";
 
+/** Полоса прогресса — данные, а не оформление: значение вне 0–100 подрезаем. */
+function progressWidth(value: number): string {
+  return `${Math.min(100, Math.max(0, value))}%`;
+}
+
 /**
  * Самая разреженная секция на сайте, без картинок и графики —
  * держится на крупной серифной типографике и колонтитуле на поле.
  * variant="split" с заданным image — исключение, добавляет фото рядом
  * с заголовком; без image всегда падает обратно на type-only.
+ * widget (карточка с метриками, тариф «Стандарт») включает ту же
+ * двухколоночную раскладку сам, без variant="split".
  */
 export function Hero(props: HeroSection) {
   const {
@@ -24,9 +33,23 @@ export function Hero(props: HeroSection) {
     actions = [],
     facts = [],
     image,
+    widget,
   } = props;
 
-  const isSplit = variant === "split" && Boolean(image);
+  const withImage = variant === "split" && Boolean(image);
+  // Вторая колонка одна на двоих: фото и виджет за неё не дерутся —
+  // фото было раньше и остаётся приоритетным, виджет в этом случае
+  // не рендерится вовсе (тот же приём с dev-предупреждением, что
+  // у Features/Pricing при photo в табличном варианте).
+  const withWidget = Boolean(widget) && !withImage;
+
+  if (process.env.NODE_ENV !== "production" && widget && withImage) {
+    console.warn(
+      `[Hero] Секция "${id}": widget и image заняли бы одну колонку — показано фото, widget пропущен.`,
+    );
+  }
+
+  const isSplit = withImage || withWidget;
 
   return (
     <Section
@@ -43,10 +66,11 @@ export function Hero(props: HeroSection) {
       // конкретную высоту фото, а не самостоятельный токен ритма,
       // заводить новый --space-* под это не нужно. У type-only такой
       // проблемы нет (нет высокого фото, тянущего секцию за собой) —
-      // там ничего не меняется.
-      spacing={isSplit ? "none" : "lg"}
+      // там ничего не меняется. Виджет тоже не меняет: он заметно ниже
+      // фото и в первый экран укладывается при обычном spacing="lg".
+      spacing={withImage ? "none" : "lg"}
       className={
-        isSplit ? "pt-8 pb-[var(--space-section-lg)] md:pt-10 lg:pt-14" : undefined
+        withImage ? "pt-8 pb-[var(--space-section-lg)] md:pt-10 lg:pt-14" : undefined
       }
     >
       <Container>
@@ -188,7 +212,7 @@ export function Hero(props: HeroSection) {
             ) : null}
           </div>
 
-          {isSplit ? (
+          {withImage ? (
             // Текстовая колонка — col-span-6, стартует сразу после
             // укороченного рельса (col-span-1, см. комментарий выше) —
             // rail(1)+text(6)=7, фото начинается с col-start-8 без
@@ -230,6 +254,65 @@ export function Hero(props: HeroSection) {
                   style={revealDelay(1)}
                 />
               </div>
+            </div>
+          ) : null}
+
+          {withWidget && widget ? (
+            // Виджет живёт в той же колонке, что и фото (col-span-5 /
+            // col-start-8), но без явной высоты: карточка ровно такая,
+            // какой её делает содержимое, а по вертикали её центрирует
+            // items-center на строке.
+            // hidden md:block — сознательно: на мобильном грид схлопнут
+            // в одну колонку, и карточка встала бы между лидом и
+            // кнопками, уводя CTA за первый экран. Метрики виджета —
+            // витрина, а не единственный источник этих чисел: если они
+            // нужны и на мобильном, для этого есть facts (ниже) и
+            // секция stats.
+            <div
+              className="hidden md:col-span-5 md:col-start-8 md:block md:pl-8 lg:pl-12"
+              data-reveal
+              style={revealDelay(1)}
+            >
+              <Card variant="elevated">
+                {widget.badge ? (
+                  <Badge variant="soft" className="mb-5">
+                    {widget.badge}
+                  </Badge>
+                ) : null}
+
+                <p className="font-display text-h3">{widget.title}</p>
+
+                <dl className="mt-7 space-y-6">
+                  {widget.metrics.map((metric) => (
+                    <div key={metric.label}>
+                      <div className="flex items-baseline justify-between gap-4">
+                        <dt className="text-small text-fg-muted">
+                          {metric.label}
+                        </dt>
+                        <dd className="tabular font-display text-h3">
+                          {metric.value}
+                        </dd>
+                      </div>
+
+                      {typeof metric.progress === "number" ? (
+                        // Значение продублировано текстом в <dd> выше,
+                        // поэтому полоса — чистая графика (aria-hidden),
+                        // а не progressbar, который скринридер прочитает
+                        // вторым голосом то же самое.
+                        <div
+                          aria-hidden="true"
+                          className="mt-3 h-1 w-full overflow-hidden rounded-doc-sm bg-rule"
+                        >
+                          <span
+                            className="block h-full rounded-doc-sm bg-accent"
+                            style={{ width: progressWidth(metric.progress) }}
+                          />
+                        </div>
+                      ) : null}
+                    </div>
+                  ))}
+                </dl>
+              </Card>
             </div>
           ) : null}
         </div>
