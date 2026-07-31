@@ -32,9 +32,10 @@ npm run dev
 | `lib/preset.ts` | Таблица «тариф → раскладка секции по умолчанию» + dev-проверка плоских вариантов |
 | `content/site.config.ts` | Бренд, контакты, SEO, аналитика, массив секций. **Единственный файл под замену на новом проекте** |
 | `types/site.ts` | Формы данных всех секций |
-| `components/ui/` | Button, Card, Badge, Input, Accordion, Toast, Container, Section, SectionHeader, RevealRoot |
-| `components/sections/` | Секции. Каждая — папка одного устройства: `index.tsx` (роутер по `variant`), `variants/` (файл на дизайн), `parts/` (общие куски) |
+| `components/ui/` | Примитивы: Button, Card, Badge, Input, Select, Accordion, Toast, Container, Section, SectionHeader, BrandMark, ThemeToggle, RevealRoot. Дизайн у них переключается пропом `variant`, а не папкой |
+| `components/sections/` | Все блоки страницы. Каждый — папка одного устройства: `index.tsx` (роутер по `variant`), `variants/` (файл на дизайн), `parts/` (общие куски). Кроме секций из конфига тут же `Header`, `Footer`, `NotFound`, `Privacy` — они не проходят через `SectionRenderer`, но устроены так же |
 | `components/SectionRenderer.tsx` | Реестр: тип секции → компонент |
+| `components/ThemeScript.tsx`, `YandexMetrika.tsx` | Инфраструктура без разметки: анти-вспышка темы и счётчик |
 | `app/api/contact/route.ts` | Приём формы: Telegram + email, антиспам, фолбэк в лог |
 | `lib/seo.ts` | Metadata, JSON-LD (Organization + LegalService), навигация из секций |
 | `docs/presets.md` | Тарифы оформления: как собрать «Стандарт» |
@@ -61,6 +62,16 @@ npm run dev
 union, забытый вариант ломает сборку. Подробно, с примером кода и
 правилами «что в вариант, а что в parts/» — `docs/section-system.md`,
 раздел 7.
+
+### Другой дизайн хедера, футера, 404 или политики
+
+Ровно тот же алгоритм: новый файл в `variants/` соответствующей папки
+(`components/sections/Header/` и т.д.) и строка в её `index.tsx`.
+Разница только в том, что поля `variant` у этих четырёх блоков в
+конфиге пока нет — вариант там один, и роутер выбирает его безусловно.
+Когда появится второй, ручку нужно завести в конфиге и прочитать в
+`index.tsx`. Страницы в `app/` при этом не трогаются вообще: они уже
+только обёртки — `metadata` плюс данные из `site.config.ts`.
 
 ---
 

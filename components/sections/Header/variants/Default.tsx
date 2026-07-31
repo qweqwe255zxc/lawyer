@@ -1,63 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
+import { BrandMark } from "@/components/ui/BrandMark";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { BrandMark } from "@/components/BrandMark";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/cn";
-import type { CtaLink } from "@/types/site";
-
-interface HeaderProps {
-  brandName: string;
-  brandMark: string;
-  nav: { label: string; href: string }[];
-  actions: CtaLink[];
-  showThemeToggle: boolean;
-}
+import { useHeaderState } from "../parts/useHeaderState";
+import type { HeaderProps } from "../types";
 
 /**
- * Sticky-хедер. Чем он отрывается от страницы при скролле, решает пресет
- * тарифа (класс .ui-header + --header-shadow / --header-bg / --header-blur):
+ * Sticky-хедер в одну строку: знак бренда слева, навигация по центру,
+ * кнопка справа, на узких экранах — бургер и выезжающая панель.
+ *
+ * Чем он отрывается от страницы при скролле, решает пресет тарифа
+ * (класс .ui-header + --header-shadow / --header-bg / --header-blur):
  * в «Экономе» это по-прежнему только тонкая линия снизу, теней нет;
  * в «Стандарте» добавляются полупрозрачный фон, backdrop-blur и тень.
  * Якорные ссылки не заезжают под хедер благодаря scroll-margin-top на
  * секциях (см. globals.css).
  */
-export function Header({
+export function Default({
   brandName,
   brandMark,
   nav,
   actions,
   showThemeToggle,
 }: HeaderProps) {
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [menuOpen]);
-
-  useEffect(() => {
-    if (!menuOpen) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMenuOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [menuOpen]);
+  const { scrolled, menuOpen, toggleMenu, closeMenu } = useHeaderState();
 
   return (
     <header
@@ -73,7 +44,7 @@ export function Header({
           <Link
             href="#hero"
             className="inline-flex items-center gap-2 font-display text-h3 whitespace-nowrap"
-            onClick={() => setMenuOpen(false)}
+            onClick={closeMenu}
           >
             <BrandMark mark={brandMark} alt={brandName} />
             <span className="hidden sm:inline">{brandName}</span>
@@ -112,7 +83,7 @@ export function Header({
 
             <button
               type="button"
-              onClick={() => setMenuOpen((open) => !open)}
+              onClick={toggleMenu}
               aria-expanded={menuOpen}
               aria-controls="mobile-nav"
               aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
@@ -159,7 +130,7 @@ export function Header({
                   <li key={item.href} className="border-b border-rule last:border-b-0">
                     <Link
                       href={item.href}
-                      onClick={() => setMenuOpen(false)}
+                      onClick={closeMenu}
                       className="block py-4 text-body text-fg-muted transition-colors hover:text-fg"
                     >
                       {item.label}
@@ -188,4 +159,4 @@ export function Header({
   );
 }
 
-export default Header;
+export default Default;

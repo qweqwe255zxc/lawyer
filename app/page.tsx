@@ -1,6 +1,6 @@
-import { Header } from "@/components/Header";
 import { SectionRenderer } from "@/components/SectionRenderer";
 import { Footer } from "@/components/sections/Footer";
+import { Header } from "@/components/sections/Header";
 import { siteConfig } from "@/content/site.config";
 import { buildJsonLd, buildNav } from "@/lib/seo";
 
