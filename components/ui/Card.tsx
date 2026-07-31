@@ -34,6 +34,18 @@ interface CardProps {
    * в «Экономе» её нет и не должно быть.
    */
   hoverEffect?: boolean;
+  /**
+   * Внутренние отступы карточки. Выключаются там, где содержимое обязано
+   * доходить до края оболочки: панель с медиа во всю ширину, полоса
+   * оправы браузера. Это НЕ способ подобрать отступ на глаз — своих
+   * значений паддинга у карточки два (p-7 / md:p-9), и других быть не
+   * должно; ручка ровно на «есть/нет».
+   *
+   * Отдельным пропом, а не `className="p-0"`: обе утилиты — padding, и
+   * какая победит, решает порядок в собранном CSS, а не порядок в
+   * строке класса.
+   */
+  padded?: boolean;
   className?: string;
 }
 
@@ -60,13 +72,14 @@ export function Card({
   children,
   variant = "cell",
   hoverEffect = false,
+  padded = true,
   className,
 }: CardProps) {
   return (
     <div
       className={cn(
         variants[variant],
-        variant !== "plain" && "p-7 md:p-9",
+        padded && variant !== "plain" && "p-7 md:p-9",
         hoverEffect && "ui-card--interactive cursor-pointer",
         className,
       )}

@@ -393,6 +393,36 @@
   --accent-border: var(--palette-ink-fg-muted);
   --badge-soft-bg: color-mix(in srgb, var(--palette-ink-fg) 12%, transparent);
   --badge-soft-fg: var(--palette-ink-fg);
+
+  /* Сам акцент на графите тонет по той же причине, что рамка и ring:
+     #14452F по #1A1C19 — это тёмное по тёмному, контраст около 1.3:1.
+     Пока акцент на тёмном блоке был только рамкой и плашкой, хватало
+     переопределений выше; с появлением центрированного hero на ink
+     акцентом стала СТРОКА ЗАГОЛОВКА и заливка primary-кнопки, и их
+     тоже нужно осветлить.
+
+     Осветляем подмешиванием текстового цвета блока, а не вторым hex:
+     значение остаётся производным от бренда, и при смене
+     --palette-accent на другой цвет тёмный блок поедет за ним сам.
+     Тот же приём, которым тёмная тема лечит эту же проблему глобально
+     (там --palette-accent подменяется целиком, см. [data-theme="dark"]).
+
+     --btn-primary-* перечислены отдельно: они читают --palette-accent
+     напрямую, а не через --accent, и подмена одного --accent их не
+     задевает. */
+  --accent: color-mix(in srgb, var(--palette-accent) 52%, var(--palette-ink-fg));
+  --btn-primary-bg: var(--accent);
+  --btn-primary-fg: var(--palette-ink);
+  --btn-primary-bg-hover: color-mix(
+    in srgb,
+    var(--palette-accent) 40%,
+    var(--palette-ink-fg)
+  );
+  --btn-primary-bg-active: color-mix(
+    in srgb,
+    var(--palette-accent) 62%,
+    var(--palette-ink-fg)
+  );
 }
 
 /* Единственная акцентная заливка на странице — CTA. */
