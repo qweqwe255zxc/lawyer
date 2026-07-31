@@ -22,7 +22,7 @@ export function MemberContent({ member, avatarClassName }: MemberContentProps) {
     <>
       <div
         className={cn(
-          "ui-media relative mb-7 aspect-[3/4] w-full overflow-hidden bg-rule",
+          "ui-media relative mb-7 aspect-[3/4] w-full shrink-0 overflow-hidden bg-rule",
           avatarClassName,
         )}
       >
@@ -50,7 +50,13 @@ export function MemberContent({ member, avatarClassName }: MemberContentProps) {
         {member.role}
       </p>
       <p className="mt-4 text-body text-fg-muted">{member.focus}</p>
-      <p className="tabular mt-5 text-small text-fg-muted">
+      {/* mt-auto, а не mt-5: в карточной раскладке содержимое сидит во
+          flex-колонке, и строка стажа прижимается к низу — специализации
+          у людей разной длины, а карточки в ряду одной высоты, и без
+          этого стаж висел на разной высоте. В колоночной и построчной
+          раскладках flex-колонки нет, там margin-top: auto равен нулю по
+          спецификации, и отступ держит pt-5 — прежние 20px. */}
+      <p className="tabular mt-auto pt-5 text-small text-fg-muted">
         {member.experience}
       </p>
     </>

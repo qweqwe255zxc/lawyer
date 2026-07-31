@@ -14,6 +14,12 @@ import type { PricingSection } from "@/types/site";
  * Выделенный тариф получает ui-card--featured: рамку
  * --card-featured-border и усиленную тень --card-featured-shadow.
  * В «Экономе» это по-прежнему просто линия --color-fg без тени.
+ *
+ * Цена идёт ступенью `text-h2`, а не `text-stat`: 60px рассчитаны на
+ * широкую колонку табличной раскладки, а в карточке (~300px содержимого)
+ * они ломали цену на две строки. Кнопка тарифа прижата к низу карточки
+ * (`mt-auto` в PlanContent) — списки возможностей у планов разной длины,
+ * а кнопки обязаны стоять на одной линии.
  */
 export function Cards(props: PricingSection) {
   const {
@@ -42,10 +48,17 @@ export function Cards(props: PricingSection) {
             <Card
               key={plan.name}
               variant="framed"
-              className={cn("h-full", plan.featured && "ui-card--featured")}
+              className={cn(
+                "flex h-full flex-col",
+                plan.featured && "ui-card--featured",
+              )}
             >
-              <div data-reveal style={revealDelay(index)}>
-                <PlanContent plan={plan} />
+              <div
+                className="flex flex-1 flex-col"
+                data-reveal
+                style={revealDelay(index)}
+              >
+                <PlanContent plan={plan} priceClassName="text-h2" />
               </div>
             </Card>
           ))}

@@ -21,8 +21,12 @@ export function Grid(props: GallerySection) {
       <ul className="grid gap-gutter sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => (
           <li key={`${item.category}-${item.year}-${index}`}>
-            <Card variant="framed" className="h-full">
-              <div data-reveal style={revealDelay(index % 3, 40)}>
+            <Card variant="framed" className="flex h-full flex-col">
+              <div
+                className="flex flex-1 flex-col"
+                data-reveal
+                style={revealDelay(index % 3, 40)}
+              >
                 <div className="flex items-baseline justify-between gap-4">
                   <p className="text-small font-medium">{item.category}</p>
                   <p className="tabular text-small text-fg-muted">{item.year}</p>
@@ -40,8 +44,11 @@ export function Grid(props: GallerySection) {
                   {item.result}
                 </p>
 
+                {/* mt-auto: фабулы у кейсов разной длины, а карточки в
+                    ряду одной высоты — без этого плашки висели на разной
+                    высоте и нижний край ряда читался рваным. */}
                 {item.status || item.tags?.length ? (
-                  <div className="mt-6 flex flex-wrap items-center gap-1.5">
+                  <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-6">
                     {item.status ? (
                       <Badge variant="soft">{item.status}</Badge>
                     ) : null}

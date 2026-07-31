@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { cn } from "@/lib/cn";
 import { getIcon } from "@/lib/icons";
 import type { FeatureItem } from "@/types/site";
 
@@ -20,8 +21,12 @@ export function FeatureContent({ item }: { item: FeatureItem }) {
 
   return (
     <>
+      {/* shrink-0: в карточной раскладке содержимое сидит во flex-колонке,
+          и бокс с фиксированным aspect-ratio обязан быть неусадочным —
+          иначе в высоком ряду flex-shrink подминает ему высоту и фото
+          перестают быть одного формата. */}
       {item.photo ? (
-        <div className="ui-media relative mb-5 aspect-[4/3] w-full overflow-hidden">
+        <div className="ui-media relative mb-5 aspect-[4/3] w-full shrink-0 overflow-hidden">
           <Image
             src={item.photo}
             alt={item.title}
@@ -38,7 +43,19 @@ export function FeatureContent({ item }: { item: FeatureItem }) {
         </span>
       ) : null}
 
-      <h3 className="mt-5 font-display text-h3">{item.title}</h3>
+      {/* Верхний отступ заголовка нужен только под фото или плашкой иконки.
+          Безусловный mt-5 добавлял его и первому элементу карточки, и в
+          одном ряду карточки с иконкой и без неё начинались на разной
+          высоте — при том, что вертикальный отступ уже даёт паддинг самой
+          карточки. */}
+      <h3
+        className={cn(
+          "font-display text-h3",
+          (item.photo || Icon) && "mt-5",
+        )}
+      >
+        {item.title}
+      </h3>
       <p className="mt-3 max-w-[46ch] text-body text-fg-muted">{item.text}</p>
 
       {item.points && item.points.length > 0 ? (

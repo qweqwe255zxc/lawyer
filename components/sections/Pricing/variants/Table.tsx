@@ -52,7 +52,7 @@ export function Table(props: PricingSection) {
                 index < items.length - 1 && "md:pr-9",
               )}
             >
-              <PlanContent plan={plan} />
+              <PlanContent plan={plan} priceClassName="text-stat" />
             </div>
           ))}
         </div>

@@ -55,7 +55,7 @@ export function Band(props: StatsSection) {
             containerClasses(containerVariant),
           )}
         >
-          <StatItems items={items} cellClassName={bandCell} />
+          <StatItems items={items} cellClassName={bandCell} align="center" />
         </dl>
       </Container>
     </Section>

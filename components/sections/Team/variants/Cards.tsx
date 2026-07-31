@@ -32,11 +32,15 @@ export function Cards(props: TeamSection) {
           lead={lead}
         />
 
-        <ul className="mt-14 grid gap-x-gutter md:mt-20 md:grid-cols-3 gap-gutter">
+        <ul className="mt-14 grid gap-gutter md:mt-20 md:grid-cols-3">
           {items.map((member, index) => (
             <li key={member.name}>
-              <Card variant="framed" className="h-full">
-                <div data-reveal style={revealDelay(index)}>
+              <Card variant="framed" className="flex h-full flex-col">
+                <div
+                  className="flex flex-1 flex-col"
+                  data-reveal
+                  style={revealDelay(index)}
+                >
                   <MemberContent member={member} />
                 </div>
               </Card>

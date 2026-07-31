@@ -45,8 +45,16 @@ export function Cards(props: FeaturesSection) {
           )}
         >
           {items.map((item, index) => (
-            <Card key={item.title} variant="framed" className="h-full">
-              <div data-reveal style={revealDelay(index % columns)}>
+            <Card
+              key={item.title}
+              variant="framed"
+              className="flex h-full flex-col"
+            >
+              <div
+                className="flex flex-1 flex-col"
+                data-reveal
+                style={revealDelay(index % columns)}
+              >
                 <FeatureContent item={item} />
               </div>
             </Card>

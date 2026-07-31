@@ -22,11 +22,16 @@ export function FaqBody({
 }: FaqBodyProps) {
   return (
     <Container width={width}>
+      {/* В узкой колонке (760px) боковое поле шапки — около 170px: номер
+          с колонтитулом там ломались на несколько строк. Поэтому narrow
+          собирает шапку строкой над заголовком, а полноширинный вариант
+          оставляет обычное левое поле. */}
       <SectionHeader
         number={number}
         eyebrow={eyebrow}
         title={title}
         lead={lead}
+        layout={width === "narrow" ? "stacked" : "gutter"}
       />
 
       <div className="mt-12 md:mt-16" data-reveal>

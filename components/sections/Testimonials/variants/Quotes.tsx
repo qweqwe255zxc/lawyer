@@ -46,7 +46,7 @@ export function Quotes(props: TestimonialsSection) {
             >
               <TestimonialBody
                 item={item}
-                quoteClassName="md:col-span-8 md:col-start-4"
+                quoteClassName="text-quote md:col-span-8 md:col-start-4"
                 captionClassName="md:col-span-3 md:col-start-1 md:row-start-1"
               />
             </figure>

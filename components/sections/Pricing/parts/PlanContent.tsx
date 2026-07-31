@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/cn";
 import type { PricingPlan } from "@/types/site";
 
 /**
@@ -8,12 +9,37 @@ import type { PricingPlan } from "@/types/site";
  *
  * Фото — фиксированный бокс aspect-[4/3] с .ui-media, тот же, что в
  * Features: см. docs/section-system.md, раздел 2.
+ *
+ * Кнопка тарифа идёт с `mt-auto pt-8`, а не `mt-8`. В карточной раскладке
+ * содержимое сидит во flex-колонке, и `mt-auto` съедает разницу высот:
+ * списки возможностей у тарифов всегда разной длины, а кнопки обязаны
+ * стоять на одной линии — иначе ряд читается неровным. В табличной
+ * раскладке flex-колонки нет, `margin-top: auto` там по спецификации
+ * равен нулю, и отступ целиком держит `pt-8` — то есть прежние 32px.
  */
-export function PlanContent({ plan }: { plan: PricingPlan }) {
+interface PlanContentProps {
+  plan: PricingPlan;
+  /**
+   * Ступень кегля цены — её обязан передать вариант, базовой тут нет
+   * намеренно (та же причина, что у цитаты в TestimonialBody: две
+   * утилиты font-size в одном className конфликтуют по порядку в
+   * собранном CSS, а не в строке).
+   *
+   * Кегль выбирает тот, кто знает ширину колонки. В табличной раскладке
+   * колонка широкая, и цена идёт крупной цифрой `text-stat` (до 60px).
+   * В карточке содержимое ужимается до ~300px, и та же ступень ломала
+   * цену на две строки: «от 90 000 ₽» переносило рубль на вторую строку,
+   * а «по запросу» занимало полкарточки и перебивало собственное
+   * название тарифа.
+   */
+  priceClassName: string;
+}
+
+export function PlanContent({ plan, priceClassName }: PlanContentProps) {
   return (
     <>
       {plan.photo ? (
-        <div className="ui-media relative mb-5 aspect-[4/3] w-full overflow-hidden">
+        <div className="ui-media relative mb-5 aspect-[4/3] w-full shrink-0 overflow-hidden">
           <Image
             src={plan.photo}
             alt={plan.name}
@@ -25,8 +51,13 @@ export function PlanContent({ plan }: { plan: PricingPlan }) {
       ) : null}
 
       <h3 className="font-display text-h3">{plan.name}</h3>
-      <p className="tabular mt-6 font-display text-stat">
-        {plan.price}
+      {/* whitespace-nowrap на самой цене: строка «от 90 000 ₽ / инстанция»
+          длиннее колонки, и браузер переносил её по последнему пробелу,
+          который влезал, — то есть ВНУТРИ числа, оставляя «₽» на второй
+          строке. Цена — одна лексема, рвать её нельзя; переносится
+          единица измерения, и это правильное место разрыва. */}
+      <p className={cn("tabular mt-6 font-display", priceClassName)}>
+        <span className="whitespace-nowrap">{plan.price}</span>
         {plan.unit ? (
           <span className="ml-2 text-body text-fg-muted">{plan.unit}</span>
         ) : null}
@@ -47,7 +78,7 @@ export function PlanContent({ plan }: { plan: PricingPlan }) {
       </ul>
 
       {plan.action ? (
-        <div className="mt-8">
+        <div className="mt-auto pt-8">
           <Button
             href={plan.action.href}
             variant={plan.action.variant ?? "secondary"}

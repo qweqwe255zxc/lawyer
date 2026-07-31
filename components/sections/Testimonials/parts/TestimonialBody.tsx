@@ -3,7 +3,18 @@ import type { TestimonialItem } from "@/types/site";
 
 interface TestimonialBodyProps {
   item: TestimonialItem;
-  /** Классы цитаты и подписи задаёт вариант: в quotes они сидят в сетке. */
+  /**
+   * Классы цитаты и подписи задаёт вариант: в quotes они сидят в сетке.
+   *
+   * СЮДА ЖЕ вариант обязан передать ступень кегля цитаты (`text-quote` /
+   * `text-lead`) — базового размера тут нет намеренно. Причина
+   * практическая: две утилиты font-size в одном className конфликтуют не
+   * по порядку в строке, а по порядку в собранном CSS, поэтому
+   * «база + переопределение из варианта» давало бы непредсказуемый
+   * результат. Кегль выбирает тот, кто знает ширину колонки: 28px хороши
+   * в широкой колонке quotes и разваливаются в узкой карточке на 1/3
+   * ширины, где та же цитата занимает десять строк.
+   */
   quoteClassName?: string;
   captionClassName?: string;
 }
@@ -20,9 +31,7 @@ export function TestimonialBody({
 }: TestimonialBodyProps) {
   return (
     <>
-      <blockquote
-        className={cn("measure font-display text-quote", quoteClassName)}
-      >
+      <blockquote className={cn("measure font-display", quoteClassName)}>
         {item.quote}
       </blockquote>
 
