@@ -1,6 +1,10 @@
+import { BadgeAvatars } from "./variants/BadgeAvatars";
+import { Bento } from "./variants/Bento";
 import { Cards } from "./variants/Cards";
 import { Columns } from "./variants/Columns";
+import { PhotoCards } from "./variants/PhotoCards";
 import { Rows } from "./variants/Rows";
+import { TagsCards } from "./variants/TagsCards";
 import type { VariantMap } from "../variantMap";
 import type { TeamSection } from "@/types/site";
 
@@ -12,6 +16,10 @@ const variants: VariantMap<TeamSection, NonNullable<TeamSection["variant"]>> = {
   columns: Columns,
   rows: Rows,
   cards: Cards,
+  "photo-cards": PhotoCards,
+  "badge-avatars": BadgeAvatars,
+  "tags-cards": TagsCards,
+  bento: Bento,
 };
 
 export function Team(props: TeamSection) {

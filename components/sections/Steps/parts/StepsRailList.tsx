@@ -1,5 +1,6 @@
 import { revealDelay } from "@/lib/reveal";
 import { cn } from "@/lib/cn";
+import { getIcon } from "@/lib/icons";
 import { StepContent } from "./StepContent";
 import type { StepItem } from "@/types/site";
 
@@ -20,23 +21,31 @@ interface StepsRailListProps {
 export function StepsRailList({ items, columns }: StepsRailListProps) {
   return (
     <ol className={cn("mt-14 grid gap-x-gutter md:mt-20", columns)}>
-      {items.map((item, index) => (
-        <li
-          key={item.number}
-          data-reveal
-          style={revealDelay(index)}
-          className={cn("border-t border-rule pt-7", index > 0 && "mt-10 md:mt-0")}
-        >
-          <span
-            aria-hidden="true"
-            className="tabular block font-display text-stat text-rule-strong"
-          >
-            {item.number}
-          </span>
+      {items.map((item, index) => {
+        const Icon = getIcon(item.icon);
 
-          <StepContent item={item} titleClassName="mt-5" />
-        </li>
-      ))}
+        return (
+          <li
+            key={item.number}
+            data-reveal
+            style={revealDelay(index)}
+            className={cn("border-t border-rule pt-7", index > 0 && "mt-10 md:mt-0")}
+          >
+            {Icon ? (
+              <Icon aria-hidden="true" strokeWidth={1.5} className="mb-4 size-6 text-fg-muted" />
+            ) : null}
+
+            <span
+              aria-hidden="true"
+              className="tabular block font-display text-stat text-rule-strong"
+            >
+              {item.number}
+            </span>
+
+            <StepContent item={item} titleClassName="mt-5" />
+          </li>
+        );
+      })}
     </ol>
   );
 }

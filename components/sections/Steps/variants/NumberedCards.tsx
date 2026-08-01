@@ -1,0 +1,86 @@
+import Image from "next/image";
+import { Card } from "@/components/ui/Card";
+import { Container } from "@/components/ui/Container";
+import { Section } from "@/components/ui/Section";
+import { getIcon } from "@/lib/icons";
+import { cn } from "@/lib/cn";
+import { revealDelay } from "@/lib/reveal";
+import { StepsHeader } from "../parts/StepsHeader";
+import type { StepsSection } from "@/types/site";
+
+/**
+ * Ряд карточек: кружок-номер с соединительной линией, иконка, заголовок,
+ * описание, фото в подвале. `item.featured` переводит карточку на
+ * ink-поверхность — обычно последний шаг («Результат»).
+ */
+export function NumberedCards(props: StepsSection) {
+  const { id, surface = "paper", number, eyebrow, title, lead, items } = props;
+
+  return (
+    <Section id={id} surface={surface}>
+      <Container>
+        <StepsHeader
+          number={number}
+          eyebrow={eyebrow}
+          title={title}
+          lead={lead}
+          className="mb-12 md:mb-16"
+        />
+
+        <ol className="grid gap-x-gutter gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+          {items.map((item, index) => {
+            const Icon = getIcon(item.icon);
+            const isLast = index === items.length - 1;
+
+            return (
+              <li
+                key={item.number}
+                data-reveal
+                style={revealDelay(index)}
+                data-surface={item.featured ? "ink" : undefined}
+                className={item.featured ? "bg-bg text-fg" : undefined}
+              >
+                <Card variant="framed" className="h-full">
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={cn(
+                        "tabular flex size-9 shrink-0 items-center justify-center rounded-full border text-small font-medium",
+                        item.featured ? "border-fg-muted/40 text-fg" : "border-rule text-fg",
+                      )}
+                    >
+                      {item.number}
+                    </span>
+                    {!isLast ? (
+                      <span aria-hidden="true" className="h-px flex-1 bg-rule-strong" />
+                    ) : null}
+                  </div>
+
+                  {Icon ? (
+                    <Icon aria-hidden="true" strokeWidth={1.5} className="mt-5 size-6 text-accent" />
+                  ) : null}
+
+                  <h3 className="mt-4 font-heading text-h4">{item.title}</h3>
+                  <p className="mt-2 text-small text-fg-muted">{item.text}</p>
+
+                  {item.photo ? (
+                    <div className="ui-media relative mt-5 aspect-[4/3] w-full shrink-0 overflow-hidden">
+                      <Image
+                        src={item.photo}
+                        alt={item.title}
+                        fill
+                        sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 90vw"
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : null}
+                </Card>
+              </li>
+            );
+          })}
+        </ol>
+      </Container>
+    </Section>
+  );
+}
+
+export default NumberedCards;

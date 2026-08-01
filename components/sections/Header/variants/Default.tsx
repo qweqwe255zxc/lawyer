@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
 import { BrandMark } from "@/components/ui/BrandMark";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/cn";
+import { BurgerButton } from "../parts/BurgerButton";
+import { MobileNav } from "../parts/MobileNav";
 import { useHeaderState } from "../parts/useHeaderState";
 import type { HeaderProps } from "../types";
 
@@ -81,80 +82,12 @@ export function Default({
               ))}
             </div>
 
-            <button
-              type="button"
-              onClick={toggleMenu}
-              aria-expanded={menuOpen}
-              aria-controls="mobile-nav"
-              aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
-              className="-mr-2 p-2 text-fg-muted transition-colors hover:text-fg lg:hidden"
-            >
-              <span className="relative block size-5">
-                <Menu
-                  aria-hidden="true"
-                  className={cn(
-                    "absolute inset-0 size-5 transition-all duration-200 ease-ui",
-                    menuOpen ? "rotate-45 opacity-0" : "rotate-0 opacity-100",
-                  )}
-                />
-                <X
-                  aria-hidden="true"
-                  className={cn(
-                    "absolute inset-0 size-5 transition-all duration-200 ease-ui",
-                    menuOpen ? "rotate-0 opacity-100" : "-rotate-45 opacity-0",
-                  )}
-                />
-              </span>
-            </button>
+            <BurgerButton open={menuOpen} onClick={toggleMenu} />
           </div>
         </div>
       </Container>
 
-      {/* Мобильное меню: grid-template-rows вместо hidden — панель ужимается
-          до нуля с анимацией, а не пропадает мгновенно. inert убирает её
-          из фокуса и чтения экранным диктором, пока она закрыта. */}
-      <div
-        id="mobile-nav"
-        data-open={menuOpen}
-        inert={!menuOpen}
-        className={cn(
-          "mobile-nav bg-bg lg:hidden",
-          menuOpen ? "border-t border-rule" : "border-t border-transparent",
-        )}
-      >
-        <div className="overflow-hidden">
-          <Container>
-            <nav aria-label="Мобильная навигация">
-              <ul className="py-2">
-                {nav.map((item) => (
-                  <li key={item.href} className="border-b border-rule last:border-b-0">
-                    <Link
-                      href={item.href}
-                      onClick={closeMenu}
-                      className="block py-4 text-body text-fg-muted transition-colors hover:text-fg"
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-
-            <div className="py-6 sm:hidden">
-              {actions.map((action) => (
-                <Button
-                  key={action.href}
-                  href={action.href}
-                  variant={action.variant ?? "primary"}
-                  full
-                >
-                  {action.label}
-                </Button>
-              ))}
-            </div>
-          </Container>
-        </div>
-      </div>
+      <MobileNav nav={nav} actions={actions} menuOpen={menuOpen} closeMenu={closeMenu} />
     </header>
   );
 }

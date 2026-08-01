@@ -2,11 +2,17 @@
 
 import { useId, useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { Badge } from "@/components/ui/Badge";
+import { getIcon, type IconName } from "@/lib/icons";
 import { cn } from "@/lib/cn";
 
 export interface AccordionItem {
   question: string;
   answer: string;
+  /** Плашка с иконкой слева от вопроса (FAQ variant="split-sidebar"/"categorized"). */
+  icon?: IconName;
+  /** Теги под ответом (FAQ variant="split-sidebar"). */
+  tags?: string[];
 }
 
 interface AccordionProps {
@@ -46,6 +52,8 @@ export function Accordion({ items, multiple = false, className }: AccordionProps
         const panelId = `${baseId}-panel-${index}`;
         const buttonId = `${baseId}-button-${index}`;
 
+        const Icon = getIcon(item.icon);
+
         return (
           <div key={item.question} className="ui-accordion-item">
             <h3>
@@ -61,7 +69,14 @@ export function Accordion({ items, multiple = false, className }: AccordionProps
                   isOpen ? "border-accent" : "border-transparent hover:border-rule-strong",
                 )}
               >
-                <span className="font-display text-h3">{item.question}</span>
+                <span className="flex items-center gap-4">
+                  {Icon ? (
+                    <span className="icon-tile shrink-0">
+                      <Icon aria-hidden="true" strokeWidth={1.5} className="size-5" />
+                    </span>
+                  ) : null}
+                  <span className="font-display text-h3">{item.question}</span>
+                </span>
                 <ChevronDown
                   aria-hidden="true"
                   className={cn(
@@ -86,6 +101,16 @@ export function Accordion({ items, multiple = false, className }: AccordionProps
               <div className="overflow-hidden">
                 <div className="border-l-2 border-transparent pb-7 pl-5 pr-10 md:pl-6">
                   <p className="measure text-body text-fg-muted">{item.answer}</p>
+
+                  {item.tags && item.tags.length > 0 ? (
+                    <ul className="mt-4 flex flex-wrap gap-2">
+                      {item.tags.map((tag) => (
+                        <li key={tag}>
+                          <Badge variant="soft">{tag}</Badge>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                 </div>
               </div>
             </div>

@@ -1,3 +1,5 @@
+import { Boxed } from "./variants/Boxed";
+import { Panels } from "./variants/Panels";
 import { Split } from "./variants/Split";
 import { Stacked } from "./variants/Stacked";
 import type { VariantMap } from "../variantMap";
@@ -12,7 +14,8 @@ import type { ContactSection } from "@/types/site";
  *
  * У секции две независимые оси: variant (колонки — сюда) и layout
  * (подложка под формой — parts/FormColumn.tsx). Любая раскладка
- * сочетается с любой подложкой.
+ * сочетается с любой подложкой — panels тоже читает layout и передаёт
+ * его в FormColumn, хотя сама раскладка там уже нестандартная.
  *
  * Как добавить новый дизайн — docs/section-system.md, раздел 7.
  */
@@ -22,6 +25,8 @@ const variants: VariantMap<
 > = {
   split: Split,
   stacked: Stacked,
+  boxed: Boxed,
+  panels: Panels,
 };
 
 export function ContactForm(props: ContactFormProps) {

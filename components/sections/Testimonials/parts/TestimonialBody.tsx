@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cn } from "@/lib/cn";
 import type { TestimonialItem } from "@/types/site";
 
@@ -17,17 +18,21 @@ interface TestimonialBodyProps {
    */
   quoteClassName?: string;
   captionClassName?: string;
+  /** Круглый аватар рядом с именем — только там, где у items есть photo (bento/rated-cards/spotlight). */
+  showPhoto?: boolean;
 }
 
 /**
- * Цитата и подпись автора. Общие для обеих раскладок — отличается только
- * то, где они стоят: в 12-колоночной сетке (quotes) или друг под другом
- * в карточке (cards).
+ * Цитата и подпись автора. Общие для нескольких раскладок — отличается
+ * только то, где они стоят и нужен ли аватар (`showPhoto`): в quotes/
+ * cards его никогда не было, поэтому по умолчанию выключен — старые
+ * варианты не меняют внешний вид, ничего не передавая.
  */
 export function TestimonialBody({
   item,
   quoteClassName,
   captionClassName,
+  showPhoto = false,
 }: TestimonialBodyProps) {
   return (
     <>
@@ -35,18 +40,19 @@ export function TestimonialBody({
         {item.quote}
       </blockquote>
 
-      <figcaption
-        className={cn(
-          "text-caption font-medium uppercase text-fg-muted",
-          captionClassName,
-        )}
-      >
-        {item.author}
-        {item.meta ? (
-          <span className="mt-1.5 block normal-case tracking-normal">
-            {item.meta}
+      <figcaption className={cn("flex items-center gap-3", captionClassName)}>
+        {showPhoto && item.photo ? (
+          <span className="ui-media relative size-10 shrink-0 overflow-hidden rounded-full bg-rule">
+            <Image src={item.photo} alt="" fill sizes="40px" className="object-cover" />
           </span>
         ) : null}
+
+        <span className="text-caption font-medium uppercase text-fg-muted">
+          {item.author}
+          {item.meta ? (
+            <span className="mt-1.5 block normal-case tracking-normal">{item.meta}</span>
+          ) : null}
+        </span>
       </figcaption>
     </>
   );

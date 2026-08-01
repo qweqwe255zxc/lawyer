@@ -22,6 +22,7 @@ export default function HomePage() {
         nav={nav}
         actions={header.actions}
         showThemeToggle={theme.darkModeToggle}
+        variant={header.variant}
       />
 
       <main id="main">

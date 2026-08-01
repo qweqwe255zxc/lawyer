@@ -1,26 +1,40 @@
+import { Bold } from "./variants/Bold";
+import { Centered } from "./variants/Centered";
+import { Classic } from "./variants/Classic";
+import { Compact } from "./variants/Compact";
 import { Default } from "./variants/Default";
+import { Glass } from "./variants/Glass";
+import { Gradient } from "./variants/Gradient";
+import { Split } from "./variants/Split";
+import type { VariantMap } from "../variantMap";
 import type { HeaderProps } from "./types";
+import type { HeaderVariant } from "@/types/site";
 
 /**
- * Роутер хедера.
- *
- * Вариант пока один, и роутер выглядит избыточным — он тут ради
- * единообразия: все блоки в components/sections/ устроены одинаково,
- * поэтому второй дизайн хедера (например, логотип по центру или
- * навигация во всю ширину под линейкой) добавляется тем же алгоритмом,
- * что и второй дизайн любой секции, а не «сначала распилим монолит».
- * Собственного поля variant у хедера нет (его нет в site.config.sections),
- * так что выбирать пока не из чего — когда появится второй вариант,
- * ручку нужно будет завести в siteConfig.header и читать её здесь.
+ * Роутер хедера. Собственного поля variant у site.config.sections нет
+ * (Header не проходит через SectionRenderer), ручка приходит из
+ * siteConfig.header.variant — см. types/site.ts.
  *
  * Сам роутер серверный, клиентский только вариант: стейт меню и слушатель
- * скролла живут в variants/Default.tsx и parts/useHeaderState.ts, поэтому
+ * скролла живут в variants/*.tsx и parts/useHeaderState.ts, поэтому
  * в клиентский бандл не уезжает ничего лишнего.
  *
  * Как добавить новый дизайн — docs/section-system.md, раздел 7.
  */
+const variants: VariantMap<HeaderProps, HeaderVariant> = {
+  default: Default,
+  bold: Bold,
+  classic: Classic,
+  compact: Compact,
+  gradient: Gradient,
+  centered: Centered,
+  glass: Glass,
+  split: Split,
+};
+
 export function Header(props: HeaderProps) {
-  return <Default {...props} />;
+  const Variant = variants[props.variant ?? "default"] ?? Default;
+  return <Variant {...props} />;
 }
 
 export default Header;

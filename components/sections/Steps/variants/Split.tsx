@@ -1,0 +1,84 @@
+import Image from "next/image";
+import { Card } from "@/components/ui/Card";
+import { Container } from "@/components/ui/Container";
+import { Section } from "@/components/ui/Section";
+import { getIcon } from "@/lib/icons";
+import { cn } from "@/lib/cn";
+import { revealDelay } from "@/lib/reveal";
+import type { StepsSection } from "@/types/site";
+
+/**
+ * Фото с заголовком/лидом поверх слева (та же идея, что у
+ * Stats/variants/Photo.tsx), сетка карточек справа. `item.featured`
+ * красит карточку акцентной заливкой — обычно последний шаг («Результат»).
+ * Требует `image`, без него вариант не рендерится (роутер предупреждает).
+ */
+export function Split(props: StepsSection) {
+  const { id, surface = "paper", title, lead, image, items } = props;
+
+  if (!image) return null;
+
+  return (
+    <Section id={id} surface={surface}>
+      <Container>
+        <div className="grid gap-x-gutter gap-y-10 md:grid-cols-2 md:items-stretch">
+          <div className="ui-media-raised relative min-h-[22rem] overflow-hidden md:min-h-0">
+            <Image
+              src={image}
+              alt={title ?? ""}
+              fill
+              sizes="(min-width: 768px) 42vw, 100vw"
+              className="object-cover"
+            />
+
+            {title || lead ? (
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 via-ink/40 to-transparent p-8 pt-20">
+                {title ? <h2 className="font-heading text-h2 text-paper">{title}</h2> : null}
+                {lead ? (
+                  <p className="mt-3 max-w-[42ch] text-small text-paper/80">{lead}</p>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+
+          <ol className="grid grid-cols-2 gap-4">
+            {items.map((item, index) => {
+              const Icon = getIcon(item.icon);
+
+              return (
+                <li
+                  key={item.number}
+                  data-reveal
+                  style={revealDelay(index)}
+                  className={item.featured ? "bg-bg text-fg" : undefined}
+                  data-surface={item.featured ? "accent" : undefined}
+                >
+                  <Card variant="framed" className="relative h-full overflow-hidden">
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        "tabular pointer-events-none absolute -right-1 -top-3 font-display text-h1",
+                        item.featured ? "text-fg/15" : "text-rule",
+                      )}
+                    >
+                      {item.number}
+                    </span>
+
+                    {Icon ? (
+                      <Icon aria-hidden="true" strokeWidth={1.5} className="size-6 text-accent" />
+                    ) : null}
+
+                    <h3 className="relative mt-4 font-heading text-h4">{item.title}</h3>
+                    <p className="relative mt-2 text-small text-fg-muted">{item.text}</p>
+                  </Card>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+export default Split;
