@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
+import { cn } from "@/lib/cn";
 import { revealDelay } from "@/lib/reveal";
 import { GalleryShell } from "../parts/GalleryShell";
 import type { GallerySection } from "@/types/site";
@@ -14,16 +15,26 @@ import type { GallerySection } from "@/types/site";
  * Раньше это чинил хардкод border-rule-strong прямо тут.
  */
 export function Grid(props: GallerySection) {
-  const { items } = props;
+  const { items, align = "left" } = props;
+  const centered = align === "center";
 
   return (
     <GalleryShell {...props}>
       <ul className="grid gap-gutter sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => (
           <li key={`${item.category}-${item.year}-${index}`}>
-            <Card variant="framed" className="h-full">
-              <div data-reveal style={revealDelay(index % 3, 40)}>
-                <div className="flex items-baseline justify-between gap-4">
+            <Card variant="framed" className="flex h-full flex-col">
+              <div
+                className={cn("flex flex-1 flex-col", centered && "items-center text-center")}
+                data-reveal
+                style={revealDelay(index % 3, 40)}
+              >
+                <div
+                  className={cn(
+                    "flex items-baseline justify-between gap-4",
+                    centered && "w-full",
+                  )}
+                >
                   <p className="text-small font-medium">{item.category}</p>
                   <p className="tabular text-small text-fg-muted">{item.year}</p>
                 </div>
@@ -40,8 +51,16 @@ export function Grid(props: GallerySection) {
                   {item.result}
                 </p>
 
+                {/* mt-auto: фабулы у кейсов разной длины, а карточки в
+                    ряду одной высоты — без этого плашки висели на разной
+                    высоте и нижний край ряда читался рваным. */}
                 {item.status || item.tags?.length ? (
-                  <div className="mt-6 flex flex-wrap items-center gap-1.5">
+                  <div
+                    className={cn(
+                      "mt-auto flex flex-wrap items-center gap-1.5 pt-6",
+                      centered && "justify-center",
+                    )}
+                  >
                     {item.status ? (
                       <Badge variant="soft">{item.status}</Badge>
                     ) : null}

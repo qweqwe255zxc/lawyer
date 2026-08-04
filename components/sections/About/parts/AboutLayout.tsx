@@ -4,7 +4,9 @@ import { revealDelay } from "@/lib/reveal";
 import { cn } from "@/lib/cn";
 import type { AboutSection } from "@/types/site";
 
-interface AboutLayoutProps extends AboutSection {
+interface AboutLayoutProps extends Omit<AboutSection, "photo"> {
+  /** В этом варианте photo обязателен — в отличие от type-only, второй колонки без него не бывает. */
+  photo: string;
   /** Фото идёт первой колонкой — единственное, чем отличаются варианты. */
   photoFirst: boolean;
 }

@@ -178,8 +178,18 @@ for (const stale of ["favicon.ico", "apple-touch-icon.png"]) {
   }
 }
 
-/* --- Заготовка политики: текст под нового оператора вычитывает юрист ---- */
-const privacyPath = path.join(target, "app", "privacy", "page.tsx");
+/* --- Заготовка политики: текст под нового оператора вычитывает юрист ----
+ * Сам текст лежит не на странице, а в parts/ блока Privacy: страница —
+ * только metadata и данные из конфига, разметка — в variants/. TODO
+ * вешаем туда, где реально правят текст. ------------------------------- */
+const privacyPath = path.join(
+  target,
+  "components",
+  "sections",
+  "Privacy",
+  "parts",
+  "legalBlocks.ts",
+);
 if (existsSync(privacyPath)) {
   const privacy = await readFile(privacyPath, "utf8");
   await writeFile(

@@ -35,7 +35,7 @@ function bandCell(index: number): string {
  * Вариант по умолчанию в «Экономе».
  */
 export function Band(props: StatsSection) {
-  const { id, surface = "paper", containerVariant = "flat", number, items } = props;
+  const { id, surface = "paper", containerVariant = "flat", number, eyebrow, title, items } = props;
   const isFlat = containerVariant === "flat";
 
   return (
@@ -47,7 +47,7 @@ export function Band(props: StatsSection) {
       className={isFlat ? "border-b border-rule" : undefined}
     >
       <Container>
-        <StatsNumber number={number} />
+        <StatsNumber number={number} eyebrow={eyebrow} title={title} />
 
         <dl
           className={cn(
@@ -55,7 +55,7 @@ export function Band(props: StatsSection) {
             containerClasses(containerVariant),
           )}
         >
-          <StatItems items={items} cellClassName={bandCell} />
+          <StatItems items={items} cellClassName={bandCell} align="center" />
         </dl>
       </Container>
     </Section>

@@ -1,6 +1,6 @@
 import Link from "next/link";
+import { BrandMark } from "@/components/ui/BrandMark";
 import { Container } from "@/components/ui/Container";
-import { BrandMark } from "@/components/BrandMark";
 import type { FooterProps } from "../types";
 
 /**

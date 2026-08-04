@@ -14,6 +14,17 @@ import type { TestimonialsSection } from "@/types/site";
  * Исторически этот вариант менял только число колонок и рисовал те же
  * линейки, что и quotes: «карточки» без карточек, из-за чего секция
  * оставалась плоской в любом тарифе. Теперь это настоящие карточки.
+ *
+ * Две вещи, которые отличают карточку от широкой цитаты:
+ *
+ * 1. Кегль. Цитата тут идёт ступенью `text-lead`, а не `text-quote`:
+ *    28px рассчитаны на широкую колонку quotes, а в карточке на 1/3
+ *    ширины тот же отзыв разваливался на десяток строк и карточка
+ *    превращалась в стену текста.
+ * 2. Подпись автора прижата к низу (`mt-auto` в captionClassName поверх
+ *    flex-колонки). Отзывы всегда разной длины, а карточки в ряду —
+ *    одной высоты; без этого подписи висели на разной высоте, и ряд
+ *    читался неровным.
  */
 export function Cards(props: TestimonialsSection) {
   const {
@@ -43,9 +54,21 @@ export function Cards(props: TestimonialsSection) {
           )}
         >
           {items.map((item, index) => (
-            <Card key={item.author} variant="framed" className="h-full">
-              <figure data-reveal style={revealDelay(index)}>
-                <TestimonialBody item={item} captionClassName="mt-6" />
+            <Card
+              key={`${item.author}-${index}`}
+              variant="framed"
+              className="flex h-full flex-col"
+            >
+              <figure
+                className="flex flex-1 flex-col"
+                data-reveal
+                style={revealDelay(index)}
+              >
+                <TestimonialBody
+                  item={item}
+                  quoteClassName="text-lead"
+                  captionClassName="mt-auto pt-6"
+                />
               </figure>
             </Card>
           ))}

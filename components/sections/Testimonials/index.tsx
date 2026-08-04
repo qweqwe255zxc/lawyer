@@ -1,5 +1,8 @@
+import { Bento } from "./variants/Bento";
 import { Cards } from "./variants/Cards";
 import { Quotes } from "./variants/Quotes";
+import { RatedCards } from "./variants/RatedCards";
+import { Spotlight } from "./variants/Spotlight";
 import type { VariantMap } from "../variantMap";
 import type { TestimonialsSection } from "@/types/site";
 
@@ -13,6 +16,9 @@ const variants: VariantMap<
 > = {
   quotes: Quotes,
   cards: Cards,
+  bento: Bento,
+  "rated-cards": RatedCards,
+  spotlight: Spotlight,
 };
 
 export function Testimonials(props: TestimonialsSection) {

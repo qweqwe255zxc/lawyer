@@ -7,18 +7,18 @@
  * в проекте быть не должно, в компонентах только токены и классы Tailwind.
  */
 export const palette = {
-  paper: "#f7f5f0",
+  paper: "#fafafa",
   surface: "#ffffff",
-  ink: "#1a1a18",
-  inkMuted: "#55584f",
-  rule: "#ddd9d0",
-  accent: "#14452f",
+  ink: "#17181c",
+  inkMuted: "#5b5f6a",
+  rule: "#e4e4e9",
+  accent: "#6d28d9",
 } as const;
 
 export const paletteDark = {
-  paper: "#131512",
-  ink: "#edeae3",
-  accent: "#5ba47d",
+  paper: "#121316",
+  ink: "#f5f5f7",
+  accent: "#a78bfa",
 } as const;
 
 /**

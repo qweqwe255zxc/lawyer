@@ -1,11 +1,9 @@
 import Image from "next/image";
-import { cn } from "@/lib/cn";
+import { getInitials } from "./initials";
 import type { TeamMember } from "@/types/site";
 
 interface MemberContentProps {
   member: TeamMember;
-  /** Ограничение ширины аватара — нужно только раскладке в одну колонку. */
-  avatarClassName?: string;
 }
 
 /**
@@ -13,19 +11,12 @@ interface MemberContentProps {
  * нет: пока фото не задано, в том же боксе стоит заглушка с инициалами.
  * Так карточки с фото и без фото в одной секции остаются одной высоты.
  */
-export function MemberContent({ member, avatarClassName }: MemberContentProps) {
-  const nameParts = member.name.split(" ");
-  const initials =
-    `${nameParts[1]?.[0] ?? ""}${nameParts[0]?.[0] ?? ""}`.toUpperCase();
+export function MemberContent({ member }: MemberContentProps) {
+  const initials = getInitials(member.name);
 
   return (
     <>
-      <div
-        className={cn(
-          "ui-media relative mb-7 aspect-[3/4] w-full overflow-hidden bg-rule",
-          avatarClassName,
-        )}
-      >
+      <div className="ui-media relative mb-7 aspect-[3/4] w-full shrink-0 overflow-hidden bg-rule">
         {member.photo ? (
           <Image
             src={member.photo}
@@ -50,7 +41,12 @@ export function MemberContent({ member, avatarClassName }: MemberContentProps) {
         {member.role}
       </p>
       <p className="mt-4 text-body text-fg-muted">{member.focus}</p>
-      <p className="tabular mt-5 text-small text-fg-muted">
+      {/* mt-auto работает, только если родительский <li> сам flex-column
+          (TeamList включает это через alignExperienceBottom) — иначе
+          margin-top: auto по спецификации равен нулю, и отступ держит
+          pt-5. Карточные раскладки (Cards и т.п.) сами оборачивают этот
+          компонент в flex-колонку, там mt-auto работает всегда. */}
+      <p className="tabular mt-auto pt-5 text-small text-fg-muted">
         {member.experience}
       </p>
     </>

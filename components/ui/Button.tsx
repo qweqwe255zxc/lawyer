@@ -11,6 +11,7 @@ interface CommonProps {
   size?: Size;
   className?: string;
   full?: boolean;
+  onClick?: () => void;
 }
 
 interface LinkProps extends CommonProps {
@@ -35,8 +36,8 @@ type ButtonProps = LinkProps | ActionProps;
  * иначе кнопка перестанет отличаться между тарифами.
  */
 const base =
-  "ui-button inline-flex items-center justify-center text-button font-medium select-none " +
-  "disabled:opacity-55 disabled:pointer-events-none";
+  "ui-button inline-flex shrink-0 items-center justify-center whitespace-nowrap text-button font-medium select-none cursor-pointer " +
+  "disabled:cursor-not-allowed disabled:opacity-55 disabled:pointer-events-none";
 
 const sizes: Record<Size, string> = {
   md: "h-12 px-7",
@@ -64,6 +65,7 @@ export function Button(props: ButtonProps) {
     size = "md",
     className,
     full,
+    onClick,
   } = props;
 
   const classes = cn(
@@ -83,6 +85,7 @@ export function Button(props: ButtonProps) {
         <a
           href={href}
           className={classes}
+          onClick={onClick}
           {...(href.startsWith("http")
             ? { target: "_blank", rel: "noopener noreferrer" }
             : {})}
@@ -93,7 +96,7 @@ export function Button(props: ButtonProps) {
     }
 
     return (
-      <Link href={href} className={classes}>
+      <Link href={href} className={classes} onClick={onClick}>
         {children}
       </Link>
     );
@@ -102,7 +105,7 @@ export function Button(props: ButtonProps) {
   const { type = "button", disabled } = props as ActionProps;
 
   return (
-    <button type={type} disabled={disabled} className={classes}>
+    <button type={type} disabled={disabled} className={classes} onClick={onClick}>
       {children}
     </button>
   );

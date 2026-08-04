@@ -1,14 +1,18 @@
+import { Banner } from "./variants/Banner";
 import { Cards } from "./variants/Cards";
+import { Dark } from "./variants/Dark";
+import { Glass } from "./variants/Glass";
+import { Matrix } from "./variants/Matrix";
+import { Playful } from "./variants/Playful";
+import { Quote } from "./variants/Quote";
+import { Ribbon } from "./variants/Ribbon";
+import { Split } from "./variants/Split";
 import { Table } from "./variants/Table";
 import type { VariantMap } from "../variantMap";
 import type { PricingSection } from "@/types/site";
 
 /**
  * Роутер секции Pricing.
- *
- * Не используется на текущем лендинге (нет в site.config.sections) —
- * оставлена про запас для других проектов на этом шаблоне. Это не
- * забытый мёртвый код.
  *
  * Как и Features, роутер ФОРСИРУЕТ Cards, если хотя бы у одного плана
  * задан photo: табличная сетка с border-top/border-l не умеет выравнивать
@@ -22,6 +26,14 @@ const variants: VariantMap<
 > = {
   table: Table,
   cards: Cards,
+  ribbon: Ribbon,
+  split: Split,
+  dark: Dark,
+  playful: Playful,
+  quote: Quote,
+  glass: Glass,
+  banner: Banner,
+  matrix: Matrix,
 };
 
 export function Pricing(props: PricingSection) {

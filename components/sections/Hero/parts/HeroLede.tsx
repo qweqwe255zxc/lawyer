@@ -1,33 +1,21 @@
-import type { CSSProperties } from "react";
 import { Button } from "@/components/ui/Button";
 import { revealDelay } from "@/lib/reveal";
+import { COMPACT_H1 } from "./headlineScale";
 import type { CtaLink } from "@/types/site";
 
 interface HeroLedeProps {
   headline: string[];
   lead?: string;
   actions?: CtaLink[];
-  /**
-   * Понизить потолок --size-h1 с 96px до 72px. Нужно двухколоночным
-   * раскладкам: даже при col-span-6 (~600px) базовый --size-h1 иногда не
-   * оставляет места двум словам в одной ручной строке («Хороший кофе»),
-   * и она сама переносится внутри уже готовой строки — второй уровень
-   * переноса поверх авторского. --size-h1 — обычная CSS-переменная,
-   * override внутри поддерева меняет её только тут и не трогает токен
-   * глобально (type-only, Team, not-found не затронуты).
-   */
+  /** Понизить потолок --size-h1 с 96px до 72px — см. parts/headlineScale.ts. */
   compact?: boolean;
   /** Ширина колонки на md+ — своя у каждой раскладки. */
   className?: string;
 }
 
-const COMPACT_H1 = {
-  "--size-h1": "clamp(2.125rem, 0.9rem + 4vw, 4.5rem)",
-} as CSSProperties;
-
 /**
  * Заголовок, лид и кнопки — сердце hero, одинаковое во всех раскладках.
- * Последняя строка headline всегда идёт курсивом в акценте: это одно из
+ * Последняя строка headline всегда в акцентном цвете: это одно из
  * шести мест, где акцент вообще появляется.
  */
 export function HeroLede({
@@ -42,14 +30,14 @@ export function HeroLede({
       {/* Ручные переносы включаются только с md: на узком экране они дают
           висячие строки, там заголовок верстается потоком. */}
       <h1
-        className="font-heading text-h1"
+        className="font-heading text-h1 break-words"
         style={compact ? COMPACT_H1 : undefined}
         data-reveal
       >
         {headline.map((line, index) => (
-          <span key={line} className="md:block">
+          <span key={index} className="md:block">
             {index === headline.length - 1 ? (
-              <span className="font-heading italic text-accent">{line}</span>
+              <span className="text-accent">{line}</span>
             ) : (
               line
             )}
@@ -74,9 +62,9 @@ export function HeroLede({
           data-reveal
           style={revealDelay(2)}
         >
-          {actions.map((action) => (
+          {actions.map((action, index) => (
             <Button
-              key={action.href}
+              key={index}
               href={action.href}
               variant={action.variant ?? "primary"}
             >

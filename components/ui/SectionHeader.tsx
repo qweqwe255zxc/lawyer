@@ -7,6 +7,19 @@ interface SectionHeaderProps {
   lead?: string;
   /** Линейка во всю ширину над шапкой — базовый разделитель разделов. */
   rule?: boolean;
+  /**
+   * Как стоят номер с колонтитулом относительно заголовка.
+   *
+   * gutter (по умолчанию) — на левом поле, в 3 колонки из 12: обычная
+   * шапка раздела на широком контейнере (1240px).
+   *
+   * stacked — строкой над заголовком, во всю ширину. Нужен узкому
+   * контейнеру (`Container width="narrow"`, 760px): там 3/12 — это около
+   * 170px, и колонтитул вроде «Вопросы и ответы» рвался на три строки,
+   * а рядом с ним пустовало поле. Это не другой дизайн шапки, а та же
+   * шапка в колонке, где боковое поле физически не помещается.
+   */
+  layout?: "gutter" | "stacked";
   className?: string;
 }
 
@@ -20,21 +33,31 @@ export function SectionHeader({
   title,
   lead,
   rule = true,
+  layout = "gutter",
   className,
 }: SectionHeaderProps) {
   if (!number && !eyebrow && !title && !lead) return null;
 
+  const stacked = layout === "stacked";
+  const hasKicker = Boolean(number || eyebrow);
+
   return (
     <header
       className={cn(
-        "grid gap-x-gutter gap-y-6 md:grid-cols-12",
+        "grid gap-x-gutter gap-y-6",
+        !stacked && "md:grid-cols-12",
         rule && "border-t border-rule pt-7 md:pt-9",
         className,
       )}
       data-reveal
     >
-      {(number || eyebrow) && (
-        <div className="flex items-baseline gap-4 md:col-span-3 md:flex-col md:gap-3">
+      {hasKicker && (
+        <div
+          className={cn(
+            "flex items-baseline gap-4",
+            !stacked && "md:col-span-3 md:flex-col md:gap-3",
+          )}
+        >
           {number ? (
             <span className="tabular text-caption font-medium uppercase text-fg-muted">
               {number}
@@ -48,7 +71,11 @@ export function SectionHeader({
         </div>
       )}
 
-      <div className={cn(number || eyebrow ? "md:col-span-9" : "md:col-span-12")}>
+      <div
+        className={cn(
+          !stacked && (hasKicker ? "md:col-span-9" : "md:col-span-12"),
+        )}
+      >
         {title ? (
           <h2 className="max-w-[22ch] font-heading text-h2">{title}</h2>
         ) : null}

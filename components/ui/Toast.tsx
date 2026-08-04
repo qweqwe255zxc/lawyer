@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, X } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -24,11 +24,18 @@ export function Toast({ toast, onClose, duration = 6000 }: ToastProps) {
   const [content, setContent] = useState(toast);
   const [visible, setVisible] = useState(false);
 
+  // onClose — через ref, не в deps: вызывающая сторона (useContactForm)
+  // создаёт closeToast заново на каждый рендер, и тот же тост при любом
+  // ре-рендере формы (например, при вводе в поле после ошибки) заново
+  // получал бы полный duration — таймер копился бы, а не отсчитывался.
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
   useEffect(() => {
     if (!toast || duration === 0) return;
-    const timer = window.setTimeout(onClose, duration);
+    const timer = window.setTimeout(() => onCloseRef.current(), duration);
     return () => window.clearTimeout(timer);
-  }, [toast, duration, onClose]);
+  }, [toast, duration]);
 
   // Тост появляется: контент монтируется сразу, но класс "visible"
   // навешивается кадром позже, чтобы transition успел сработать.

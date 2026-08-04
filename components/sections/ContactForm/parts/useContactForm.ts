@@ -5,11 +5,10 @@ import { isRuPhoneComplete } from "@/lib/phoneMask";
 import type { ContactFieldConfig } from "@/types/site";
 import type { ToastState } from "@/components/ui/Toast";
 
-/** Если форму заполнили быстрее — почти наверняка бот. */
-const MIN_FILL_MS = 3000;
-
 const REQUIRED_MESSAGE = "Обязательное поле";
 const PHONE_INCOMPLETE_MESSAGE = "Введите номер полностью";
+const EMAIL_INVALID_MESSAGE = "Введите корректный email";
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 interface UseContactFormArgs {
   fields: ContactFieldConfig[];
@@ -73,6 +72,13 @@ export function useContactForm({
       if (field.type === "tel" && value && !isRuPhoneComplete(value)) {
         nextErrors[field.name] = PHONE_INCOMPLETE_MESSAGE;
       }
+
+      // <form noValidate> глушит и нативную проверку type="email" —
+      // без этого "asdf" в обязательном email проходило и на клиенте,
+      // и на сервере (там только trim непустой строки).
+      if (field.type === "email" && value && !EMAIL_PATTERN.test(value)) {
+        nextErrors[field.name] = EMAIL_INVALID_MESSAGE;
+      }
     }
 
     return nextErrors;
@@ -103,10 +109,10 @@ export function useContactForm({
         body: JSON.stringify({
           ...values,
           // honeypot шлём как есть, время заполнения считаем на клиенте
-          // и перепроверяем на сервере
-          company: honeypotRef.current?.value ?? "",
+          // и перепроверяем на сервере — порог (MIN_FILL_MS) сервер
+          // берёт из своей константы, не из этого запроса.
+          _gotcha: honeypotRef.current?.value ?? "",
           elapsed: Date.now() - mountedAt.current,
-          minFill: MIN_FILL_MS,
         }),
       });
 

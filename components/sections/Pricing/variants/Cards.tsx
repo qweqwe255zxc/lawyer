@@ -5,6 +5,10 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { revealDelay } from "@/lib/reveal";
 import { cn } from "@/lib/cn";
 import { PlanContent } from "../parts/PlanContent";
+import { PricingClosing } from "../parts/PricingClosing";
+import { PricingComparisonTable } from "../parts/PricingComparisonTable";
+import { PricingFootnotes } from "../parts/PricingFootnotes";
+import { PricingQuoteBlock } from "../parts/PricingQuoteBlock";
 import type { PricingSection } from "@/types/site";
 
 /**
@@ -14,6 +18,12 @@ import type { PricingSection } from "@/types/site";
  * Выделенный тариф получает ui-card--featured: рамку
  * --card-featured-border и усиленную тень --card-featured-shadow.
  * В «Экономе» это по-прежнему просто линия --color-fg без тени.
+ *
+ * Цена идёт ступенью `text-h2`, а не `text-stat`: 60px рассчитаны на
+ * широкую колонку табличной раскладки, а в карточке (~300px содержимого)
+ * они ломали цену на две строки. Кнопка тарифа прижата к низу карточки
+ * (`mt-auto` в PlanContent) — списки возможностей у планов разной длины,
+ * а кнопки обязаны стоять на одной линии.
  */
 export function Cards(props: PricingSection) {
   const {
@@ -25,6 +35,10 @@ export function Cards(props: PricingSection) {
     lead,
     items,
     note,
+    footnotes = [],
+    closing,
+    quote,
+    comparison,
   } = props;
 
   return (
@@ -42,10 +56,17 @@ export function Cards(props: PricingSection) {
             <Card
               key={plan.name}
               variant="framed"
-              className={cn("h-full", plan.featured && "ui-card--featured")}
+              className={cn(
+                "flex h-full flex-col",
+                plan.featured && "ui-card--featured",
+              )}
             >
-              <div data-reveal style={revealDelay(index)}>
-                <PlanContent plan={plan} />
+              <div
+                className="flex flex-1 flex-col"
+                data-reveal
+                style={revealDelay(index)}
+              >
+                <PlanContent plan={plan} priceClassName="text-h2" />
               </div>
             </Card>
           ))}
@@ -54,6 +75,18 @@ export function Cards(props: PricingSection) {
         {note ? (
           <p className="mt-10 max-w-[62ch] text-small text-fg-muted">{note}</p>
         ) : null}
+
+        {footnotes.length > 0 ? (
+          <PricingFootnotes items={footnotes} className="mt-12 md:mt-16" />
+        ) : null}
+
+        {quote ? <PricingQuoteBlock quote={quote} className="mt-14 md:mt-20" /> : null}
+
+        {comparison ? (
+          <PricingComparisonTable comparison={comparison} className="mt-14 md:mt-20" />
+        ) : null}
+
+        {closing ? <PricingClosing closing={closing} className="mt-14 md:mt-20" /> : null}
       </Container>
     </Section>
   );

@@ -39,14 +39,14 @@ export function Quotes(props: TestimonialsSection) {
         <div className={cn(title ? "mt-14 md:mt-20" : "pb-section")}>
           {items.map((item, index) => (
             <figure
-              key={item.author}
+              key={`${item.author}-${index}`}
               data-reveal
               style={revealDelay(index)}
               className="grid gap-x-gutter gap-y-5 border-t border-rule py-8 pt-8 md:grid-cols-12"
             >
               <TestimonialBody
                 item={item}
-                quoteClassName="md:col-span-8 md:col-start-4"
+                quoteClassName="text-quote md:col-span-8 md:col-start-4"
                 captionClassName="md:col-span-3 md:col-start-1 md:row-start-1"
               />
             </figure>

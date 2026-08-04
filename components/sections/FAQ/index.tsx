@@ -1,5 +1,7 @@
+import { Categorized } from "./variants/Categorized";
 import { Narrow } from "./variants/Narrow";
-import { Split } from "./variants/Split";
+import { SplitSidebar } from "./variants/SplitSidebar";
+import { Wide } from "./variants/Wide";
 import type { VariantMap } from "../variantMap";
 import type { FaqSection } from "@/types/site";
 
@@ -9,7 +11,9 @@ import type { FaqSection } from "@/types/site";
  */
 const variants: VariantMap<FaqSection, NonNullable<FaqSection["variant"]>> = {
   narrow: Narrow,
-  split: Split,
+  wide: Wide,
+  "split-sidebar": SplitSidebar,
+  categorized: Categorized,
 };
 
 export function FAQ(props: FaqSection) {

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Golos_Text, Playfair_Display, Source_Serif_4 } from "next/font/google";
+import { Golos_Text, Onest, Unbounded } from "next/font/google";
 import { RevealRoot } from "@/components/ui/RevealRoot";
 import { ThemeScript } from "@/components/ThemeScript";
 import { YandexMetrika } from "@/components/YandexMetrika";
@@ -9,12 +9,14 @@ import { palette, paletteDark } from "@/theme/palette";
 import "./globals.css";
 
 // Display-шрифт для заголовков, крупных цифр и цитат, с нормальной кириллицей.
-// Body — кириллица-first гротеск. Больше шрифтов в проекте нет.
-const sourceSerif = Source_Serif_4({
+// Body — кириллица-first гротеск. IT/SaaS-ниша: современный гротеск вместо
+// серифа (см. CLAUDE.md, §1.2) — Syne/Space Grotesk из таблицы там кириллицу
+// не поддерживают вовсе, поэтому пара Unbounded/Onest.
+const onest = Onest({
   subsets: ["cyrillic", "latin"],
-  weight: ["400", "600"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
-  variable: "--font-source-serif",
+  variable: "--font-onest",
 });
 
 const golos = Golos_Text({
@@ -24,14 +26,13 @@ const golos = Golos_Text({
   variable: "--font-golos",
 });
 
-// Вторая серифная гарнитура — только для h1 и h2, для акцентной
+// Вторая гротескная гарнитура — только для h1 и h2, для акцентной
 // декоративной типографики (см. font-heading в theme/tokens.css).
-const playfair = Playfair_Display({
+const unbounded = Unbounded({
   subsets: ["cyrillic", "latin"],
-  weight: ["400", "600"],
-  style: ["normal", "italic"],
+  weight: ["600", "700", "800"],
   display: "swap",
-  variable: "--font-playfair",
+  variable: "--font-unbounded",
 });
 
 export const metadata: Metadata = buildMetadata(siteConfig);
@@ -56,7 +57,7 @@ export default function RootLayout({
     <html
       lang="ru"
       data-preset={siteConfig.theme.preset ?? "econom"}
-      className={`${sourceSerif.variable} ${golos.variable} ${playfair.variable}`}
+      className={`${onest.variable} ${golos.variable} ${unbounded.variable}`}
       suppressHydrationWarning
     >
       <head>

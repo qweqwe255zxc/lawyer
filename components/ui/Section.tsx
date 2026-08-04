@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
-import type { Surface } from "@/types/site";
+import type { IconShape, Surface } from "@/types/site";
 
 interface SectionProps {
   id: string;
@@ -18,6 +18,8 @@ interface SectionProps {
    * в «Стандарте». Ставит его один Hero, остальным секциям не нужно.
    */
   tint?: "section" | "hero";
+  /** Форма .icon-tile для потомков — уже резолвлена SectionRenderer'ом (section.iconShape ?? theme.iconShape). */
+  iconShape?: IconShape;
   className?: string;
 }
 
@@ -40,6 +42,7 @@ export function Section({
   spacing = "default",
   ruleTop = false,
   tint = "section",
+  iconShape,
   className,
 }: SectionProps) {
   return (
@@ -48,6 +51,7 @@ export function Section({
       data-section
       data-surface={surface}
       data-tint={tint}
+      data-icon-shape={iconShape}
       className={cn(
         "bg-bg text-fg",
         spacingMap[spacing],

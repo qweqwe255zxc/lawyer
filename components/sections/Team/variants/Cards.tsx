@@ -4,6 +4,7 @@ import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { revealDelay } from "@/lib/reveal";
 import { MemberContent } from "../parts/MemberContent";
+import { TeamBannerBlock } from "../parts/TeamBannerBlock";
 import type { TeamSection } from "@/types/site";
 
 /**
@@ -20,6 +21,7 @@ export function Cards(props: TeamSection) {
     title,
     lead,
     items,
+    banner,
   } = props;
 
   return (
@@ -32,17 +34,23 @@ export function Cards(props: TeamSection) {
           lead={lead}
         />
 
-        <ul className="mt-14 grid gap-x-gutter md:mt-20 md:grid-cols-3 gap-gutter">
+        <ul className="mt-14 grid gap-gutter md:mt-20 md:grid-cols-3 xl:grid-cols-4">
           {items.map((member, index) => (
             <li key={member.name}>
-              <Card variant="framed" className="h-full">
-                <div data-reveal style={revealDelay(index)}>
+              <Card variant="framed" className="flex h-full flex-col">
+                <div
+                  className="flex flex-1 flex-col"
+                  data-reveal
+                  style={revealDelay(index)}
+                >
                   <MemberContent member={member} />
                 </div>
               </Card>
             </li>
           ))}
         </ul>
+
+        {banner ? <TeamBannerBlock banner={banner} tone="soft" className="mt-12 md:mt-16" /> : null}
       </Container>
     </Section>
   );

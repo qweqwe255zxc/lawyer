@@ -5,13 +5,15 @@ import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Toast } from "@/components/ui/Toast";
 import { ContactDetails } from "../parts/ContactDetails";
+import { ContactMap } from "../parts/ContactMap";
 import { FormColumn } from "../parts/FormColumn";
 import { useContactForm } from "../parts/useContactForm";
 import type { ContactFormProps } from "../types";
 
 /**
  * Реквизиты слева (5/12), форма справа (7/12). Вариант по умолчанию во
- * всех тарифах.
+ * всех тарифах. Карта — не в узкой колонке реквизитов, а отдельной
+ * полосой во всю ширину блока под ним, см. parts/ContactMap.tsx.
  */
 export function Split(props: ContactFormProps) {
   const {
@@ -31,6 +33,7 @@ export function Split(props: ContactFormProps) {
     errorText,
     contacts,
     mapSrc,
+    showMap = true,
   } = props;
 
   const form = useContactForm({
@@ -54,7 +57,6 @@ export function Split(props: ContactFormProps) {
           <ContactDetails
             contacts={contacts}
             detailsTitle={detailsTitle}
-            mapSrc={mapSrc}
             className="md:col-span-5"
           />
 
@@ -67,6 +69,8 @@ export function Split(props: ContactFormProps) {
             columnClassName="md:col-span-7"
           />
         </div>
+
+        {showMap && mapSrc ? <ContactMap mapSrc={mapSrc} /> : null}
       </Container>
 
       <Toast toast={form.toast} onClose={form.closeToast} />

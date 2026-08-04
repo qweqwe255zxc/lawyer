@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 export type CardVariant =
@@ -8,7 +8,7 @@ export type CardVariant =
   | "bordered-accent"
   | "plain";
 
-interface CardProps {
+interface CardProps extends Omit<ComponentPropsWithoutRef<"div">, "className" | "children"> {
   children: ReactNode;
   /**
    * cell            — ячейка табличной сетки: границы рисует родитель, у карточки их нет.
@@ -34,6 +34,18 @@ interface CardProps {
    * в «Экономе» её нет и не должно быть.
    */
   hoverEffect?: boolean;
+  /**
+   * Внутренние отступы карточки. Выключаются там, где содержимое обязано
+   * доходить до края оболочки: панель с медиа во всю ширину, полоса
+   * оправы браузера. Это НЕ способ подобрать отступ на глаз — своих
+   * значений паддинга у карточки два (p-7 / md:p-9), и других быть не
+   * должно; ручка ровно на «есть/нет».
+   *
+   * Отдельным пропом, а не `className="p-0"`: обе утилиты — padding, и
+   * какая победит, решает порядок в собранном CSS, а не порядок в
+   * строке класса.
+   */
+  padded?: boolean;
   className?: string;
 }
 
@@ -60,16 +72,23 @@ export function Card({
   children,
   variant = "cell",
   hoverEffect = false,
+  padded = true,
   className,
+  ...rest
 }: CardProps) {
   return (
     <div
       className={cn(
         variants[variant],
-        variant !== "plain" && "p-7 md:p-9",
+        padded && variant !== "plain" && "p-7 md:p-9",
         hoverEffect && "ui-card--interactive cursor-pointer",
         className,
       )}
+      // ...rest — только для сквозных атрибутов вроде data-reveal, style,
+      // aria-*: без спреда они молча терялись бы (Card раньше принимал
+      // только перечисленные пропы), а карточка с data-reveal переставала
+      // участвовать в scroll-reveal без единой ошибки или предупреждения.
+      {...rest}
     >
       {children}
     </div>

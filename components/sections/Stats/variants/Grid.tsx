@@ -12,7 +12,7 @@ import type { StatsSection } from "@/types/site";
  * это метрики продукта в поднятом блоке, а не строгий бухгалтерский ряд.
  */
 export function Grid(props: StatsSection) {
-  const { id, surface = "paper", containerVariant = "flat", number, items } = props;
+  const { id, surface = "paper", containerVariant = "flat", number, eyebrow, title, items } = props;
   const isFlat = containerVariant === "flat";
 
   return (
@@ -24,7 +24,7 @@ export function Grid(props: StatsSection) {
       className={isFlat ? "border-b border-rule" : undefined}
     >
       <Container>
-        <StatsNumber number={number} />
+        <StatsNumber number={number} eyebrow={eyebrow} title={title} />
 
         <dl
           className={cn(

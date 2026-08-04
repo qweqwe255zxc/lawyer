@@ -1,3 +1,5 @@
+import { Boxed } from "./variants/Boxed";
+import { Panels } from "./variants/Panels";
 import { Split } from "./variants/Split";
 import { Stacked } from "./variants/Stacked";
 import type { VariantMap } from "../variantMap";
@@ -12,7 +14,8 @@ import type { ContactSection } from "@/types/site";
  *
  * У секции две независимые оси: variant (колонки — сюда) и layout
  * (подложка под формой — parts/FormColumn.tsx). Любая раскладка
- * сочетается с любой подложкой.
+ * сочетается с любой подложкой — panels тоже читает layout и передаёт
+ * его в FormColumn, хотя сама раскладка там уже нестандартная.
  *
  * Как добавить новый дизайн — docs/section-system.md, раздел 7.
  */
@@ -22,9 +25,31 @@ const variants: VariantMap<
 > = {
   split: Split,
   stacked: Stacked,
+  boxed: Boxed,
+  panels: Panels,
 };
 
+/**
+ * Служебные имена полей — те же, что app/api/contact/route.ts вычитает
+ * из тела запроса как не введённые пользователем (SERVICE_FIELDS) плюс
+ * honeypot. Поле конфига с таким name затирается при отправке молча —
+ * лучше сказать об этом в dev, чем оставить необъяснимо пропадающее поле.
+ */
+const RESERVED_FIELD_NAMES = new Set(["_gotcha", "elapsed"]);
+
 export function ContactForm(props: ContactFormProps) {
+  if (process.env.NODE_ENV !== "production") {
+    const reserved = props.fields.filter((field) => RESERVED_FIELD_NAMES.has(field.name));
+    if (reserved.length > 0) {
+      console.warn(
+        `[ContactForm] Секция "${props.id}": имя поля ` +
+          `${reserved.map((field) => `"${field.name}"`).join(", ")} зарезервировано ` +
+          `под служебные данные (honeypot/таймер) и будет затёрто при отправке. ` +
+          `Переименуйте поле в конфиге.`,
+      );
+    }
+  }
+
   const Variant = variants[props.variant ?? "split"] ?? Split;
   return <Variant {...props} />;
 }

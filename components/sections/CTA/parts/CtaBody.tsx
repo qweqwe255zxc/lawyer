@@ -22,10 +22,14 @@ export function CtaBody({ title, lead, actions = [], note }: CtaSection) {
 
         {actions.length > 0 ? (
           <div className="md:col-span-5 md:justify-self-end" data-reveal>
-            <div className="flex flex-col gap-4 sm:flex-row md:justify-end">
-              {actions.map((action) => (
+            {/* items-baseline, не items-center/stretch по умолчанию:
+                variant="quiet" — текстовая ссылка без паддингов (h-auto),
+                рядом с обычной кнопкой (h-12) центр по боксу вместо
+                текста ставил подпись ссылки заметно выше подписи кнопки. */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-baseline md:justify-end">
+              {actions.map((action, index) => (
                 <Button
-                  key={action.href}
+                  key={index}
                   href={action.href}
                   variant={action.variant ?? "primary"}
                 >
