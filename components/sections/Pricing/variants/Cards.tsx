@@ -5,6 +5,10 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { revealDelay } from "@/lib/reveal";
 import { cn } from "@/lib/cn";
 import { PlanContent } from "../parts/PlanContent";
+import { PricingClosing } from "../parts/PricingClosing";
+import { PricingComparisonTable } from "../parts/PricingComparisonTable";
+import { PricingFootnotes } from "../parts/PricingFootnotes";
+import { PricingQuoteBlock } from "../parts/PricingQuoteBlock";
 import type { PricingSection } from "@/types/site";
 
 /**
@@ -31,6 +35,10 @@ export function Cards(props: PricingSection) {
     lead,
     items,
     note,
+    footnotes = [],
+    closing,
+    quote,
+    comparison,
   } = props;
 
   return (
@@ -67,6 +75,18 @@ export function Cards(props: PricingSection) {
         {note ? (
           <p className="mt-10 max-w-[62ch] text-small text-fg-muted">{note}</p>
         ) : null}
+
+        {footnotes.length > 0 ? (
+          <PricingFootnotes items={footnotes} className="mt-12 md:mt-16" />
+        ) : null}
+
+        {quote ? <PricingQuoteBlock quote={quote} className="mt-14 md:mt-20" /> : null}
+
+        {comparison ? (
+          <PricingComparisonTable comparison={comparison} className="mt-14 md:mt-20" />
+        ) : null}
+
+        {closing ? <PricingClosing closing={closing} className="mt-14 md:mt-20" /> : null}
       </Container>
     </Section>
   );

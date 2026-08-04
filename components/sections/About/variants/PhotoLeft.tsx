@@ -8,11 +8,16 @@ import type { AboutSection } from "@/types/site";
  * на мобильном (одна колонка) текст обязан идти первым в обоих вариантах.
  */
 export function PhotoLeft(props: AboutSection) {
-  const { id, surface = "paper" } = props;
+  const { id, surface = "paper", photo } = props;
+
+  if (process.env.NODE_ENV !== "production" && !photo) {
+    console.warn(`[About] Секция "${id}": variant="photo-left" требует photo.`);
+  }
+  if (!photo) return null;
 
   return (
     <Section id={id} surface={surface}>
-      <AboutLayout {...props} photoFirst />
+      <AboutLayout {...props} photo={photo} photoFirst />
     </Section>
   );
 }

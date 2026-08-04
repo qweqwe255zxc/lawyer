@@ -28,7 +28,7 @@ export function GalleryHeader({
   action,
   className,
 }: GalleryHeaderProps) {
-  if (!eyebrow && !title && !lead) return null;
+  if (!number && !eyebrow && !title && !lead) return null;
 
   return (
     <div

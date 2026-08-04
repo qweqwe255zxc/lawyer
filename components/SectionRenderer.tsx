@@ -12,13 +12,21 @@ import { Steps } from "@/components/sections/Steps";
 import { Team } from "@/components/sections/Team";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { presetDefaults, warnFlatVariant } from "@/lib/preset";
-import type { ContactsConfig, Preset, Section, SectionType } from "@/types/site";
+import type {
+  ContactsConfig,
+  IconShape,
+  Preset,
+  Section,
+  SectionType,
+} from "@/types/site";
 
 /** Данные сайта, которые нужны секциям помимо их собственных. */
 export interface RenderContext {
   contacts: ContactsConfig;
   /** Тариф оформления: от него зависит раскладка секции по умолчанию. */
   preset: Preset;
+  /** Сайтвайдный дефолт формы .icon-tile (theme.iconShape) — см. SectionBase.iconShape. */
+  iconShape: IconShape;
 }
 
 type Renderer<K extends SectionType> = (
@@ -76,28 +84,35 @@ const registry: { [K in SectionType]: Renderer<K> } = {
   hero: (section, { preset }) => (
     <Hero {...section} variant={section.variant ?? presetDefaults(preset).hero} />
   ),
-  stats: (section, { preset }) => (
+  stats: (section, { preset, iconShape }) => (
     <Stats
       {...section}
       variant={section.variant ?? presetDefaults(preset).stats}
       containerVariant={
         section.containerVariant ?? presetDefaults(preset).statsContainer
       }
+      iconShape={section.iconShape ?? iconShape}
     />
   ),
-  features: (section, { preset }) => (
+  features: (section, { preset, iconShape }) => (
     <Features
       {...section}
       variant={section.variant ?? presetDefaults(preset).features}
+      iconShape={section.iconShape ?? iconShape}
     />
   ),
-  steps: (section, { preset }) => (
-    <Steps {...section} variant={section.variant ?? presetDefaults(preset).steps} />
+  steps: (section, { preset, iconShape }) => (
+    <Steps
+      {...section}
+      variant={section.variant ?? presetDefaults(preset).steps}
+      iconShape={section.iconShape ?? iconShape}
+    />
   ),
-  gallery: (section, { preset }) => (
+  gallery: (section, { preset, iconShape }) => (
     <Gallery
       {...section}
       variant={section.variant ?? presetDefaults(preset).gallery}
+      iconShape={section.iconShape ?? iconShape}
     />
   ),
   testimonials: (section, { preset }) => (
@@ -109,23 +124,31 @@ const registry: { [K in SectionType]: Renderer<K> } = {
   team: (section, { preset }) => (
     <Team {...section} variant={section.variant ?? presetDefaults(preset).team} />
   ),
-  about: (section) => <About {...section} />,
-  faq: (section, { preset }) => (
-    <FAQ {...section} variant={section.variant ?? presetDefaults(preset).faq} />
+  about: (section, { iconShape }) => (
+    <About {...section} iconShape={section.iconShape ?? iconShape} />
   ),
-  pricing: (section, { preset }) => (
+  faq: (section, { preset, iconShape }) => (
+    <FAQ
+      {...section}
+      variant={section.variant ?? presetDefaults(preset).faq}
+      iconShape={section.iconShape ?? iconShape}
+    />
+  ),
+  pricing: (section, { preset, iconShape }) => (
     <Pricing
       {...section}
       variant={section.variant ?? presetDefaults(preset).pricing}
+      iconShape={section.iconShape ?? iconShape}
     />
   ),
   cta: (section) => <CTA {...section} />,
-  contact: (section, { contacts, preset }) => (
+  contact: (section, { contacts, preset, iconShape }) => (
     <ContactForm
       {...section}
       variant={section.variant ?? presetDefaults(preset).contact}
       layout={section.layout ?? presetDefaults(preset).contactLayout}
       contacts={contacts}
+      iconShape={section.iconShape ?? iconShape}
     />
   ),
 };

@@ -19,7 +19,8 @@ import type { GallerySection } from "@/types/site";
  * «Бизнес — SaaS», docs/section-system.md, раздел 6).
  */
 export function PhotoBento(props: GallerySection) {
-  const { id, surface = "surface", number, eyebrow, title, lead, action, items } = props;
+  const { id, surface = "surface", number, eyebrow, title, lead, action, items, align = "left" } = props;
+  const centered = align === "center";
   const [first, ...rest] = items;
 
   return (
@@ -38,7 +39,12 @@ export function PhotoBento(props: GallerySection) {
           <Card
             variant="framed"
             padded={false}
-            className="mb-6 grid overflow-hidden md:grid-cols-2"
+            className={cn(
+              "mb-6 grid overflow-hidden",
+              // md:grid-cols-2 только когда есть фото на вторую колонку —
+              // без него сетка резервировала пустую правую половину карточки.
+              first.photo && "md:grid-cols-2",
+            )}
             data-reveal
           >
             {first.photo ? (
@@ -53,7 +59,12 @@ export function PhotoBento(props: GallerySection) {
               </div>
             ) : null}
 
-            <div className="flex flex-col justify-center p-7 md:p-10">
+            <div
+              className={cn(
+                "flex flex-col justify-center p-7 md:p-10",
+                centered && "items-center text-center",
+              )}
+            >
               <p className="text-caption font-medium uppercase text-accent">
                 {first.category}
               </p>
@@ -61,7 +72,12 @@ export function PhotoBento(props: GallerySection) {
               <p className="mt-4 text-body text-fg-muted">{first.problem}</p>
 
               {first.stats && first.stats.length > 0 ? (
-                <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-4">
+                <dl
+                  className={cn(
+                    "mt-6 flex flex-wrap gap-x-8 gap-y-4",
+                    centered && "justify-center",
+                  )}
+                >
                   {first.stats.map((stat) => (
                     <div key={stat.label}>
                       <dt className="text-caption font-medium uppercase text-fg-muted">
@@ -108,7 +124,13 @@ export function PhotoBento(props: GallerySection) {
                   </div>
                 ) : null}
 
-                <div className={cn("flex flex-1 flex-col", item.photo && "p-7 md:p-9")}>
+                <div
+                  className={cn(
+                    "flex flex-1 flex-col",
+                    item.photo && "p-7 md:p-9",
+                    centered && "items-center text-center",
+                  )}
+                >
                   <p className="text-caption font-medium uppercase text-fg-muted">
                     {item.category}
                   </p>

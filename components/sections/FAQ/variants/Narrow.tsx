@@ -8,10 +8,10 @@ import type { FaqSection } from "@/types/site";
  * растягивать на 1240px, строка становится нечитаемой.
  */
 export function Narrow(props: FaqSection) {
-  const { id, surface = "surface" } = props;
+  const { id, surface = "surface", iconShape } = props;
 
   return (
-    <Section id={id} surface={surface}>
+    <Section id={id} surface={surface} iconShape={iconShape}>
       <FaqBody {...props} width="narrow" />
     </Section>
   );

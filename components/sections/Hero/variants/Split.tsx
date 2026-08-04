@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
+import { cn } from "@/lib/cn";
 import { revealDelay } from "@/lib/reveal";
 import { HeroFacts } from "../parts/HeroFacts";
 import { HeroLede } from "../parts/HeroLede";
@@ -39,6 +40,7 @@ export function Split(props: HeroSection) {
     facts = [],
     image,
     widget,
+    hideMediaOnMobile,
   } = props;
 
   const { withImage, withWidget } = resolveHeroLayout(props);
@@ -56,10 +58,18 @@ export function Split(props: HeroSection) {
       // подгон под конкретную высоту фото, а не самостоятельный токен
       // ритма. Виджет заметно ниже фото и в первый экран укладывается
       // при обычном spacing="lg".
+      //
+      // Хедер теперь fixed поверх hero (не резервирует высоту в потоке —
+      // до скролла он прозрачный и лежит прямо над этой секцией), поэтому
+      // к прежним pt-8/10/14 обязательно прибавлен --header-height:
+      // раньше эти же 72px давал сам хедер своим местом в потоке, теперь
+      // их даёт только этот отступ.
       spacing={withImage ? "none" : "lg"}
       tint="hero"
       className={
-        withImage ? "pt-8 pb-[var(--space-section-lg)] md:pt-10 lg:pt-14" : undefined
+        withImage
+          ? "pt-[calc(var(--header-height)+2rem)] pb-[var(--space-section-lg)] md:pt-[calc(var(--header-height)+2.5rem)] lg:pt-[calc(var(--header-height)+3.5rem)]"
+          : undefined
       }
     >
       <Container>
@@ -90,8 +100,13 @@ export function Split(props: HeroSection) {
             // фото (плюс стандартный gap-x-gutter). Паддинг на внешнем
             // grid-элементе, overflow-hidden на внутреннем боксе, чтобы
             // паддинг не резал скругление.
-            <div className="mt-10 md:col-span-5 md:col-start-8 md:mt-0 md:pl-8 lg:pl-12">
-              <div className="ui-media-raised relative aspect-square w-full overflow-hidden md:aspect-auto md:h-[34rem] lg:h-[40rem]">
+            <div
+              className={cn(
+                "mt-10 md:col-span-5 md:col-start-8 md:mt-0 md:pl-10 lg:pl-16",
+                hideMediaOnMobile && "hidden md:block",
+              )}
+            >
+              <div className="ui-media-raised relative aspect-[4/3] w-full overflow-hidden md:aspect-auto md:h-[34rem] lg:h-[40rem]">
                 <Image
                   src={image as string}
                   alt={headline.join(" ")}
@@ -115,7 +130,7 @@ export function Split(props: HeroSection) {
             // единственный источник этих чисел: для мобильного есть facts
             // ниже и секция stats.
             <div
-              className="hidden md:col-span-5 md:col-start-8 md:block md:pl-8 lg:pl-12"
+              className="hidden md:col-span-5 md:col-start-8 md:block md:pl-10 lg:pl-16"
               data-reveal
               style={revealDelay(1)}
             >

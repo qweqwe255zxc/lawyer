@@ -1,496 +1,815 @@
 import type { SiteConfig } from "@/types/site";
 
 // Весь контент сайта живёт здесь, компоненты только рендерят.
-// Под нового клиента правится в основном этот файл: бренд, контакты,
-// SEO, аналитика и массив sections ниже (порядок в массиве = порядок на странице).
 //
-// Сейчас тут плейсхолдер для портфолио. Перед сдачей реальному клиенту
-// поменять: contacts, seo.siteUrl, analytics.yandexMetrikaId, цифры в stats,
-// кейсы и состав команды.
+// Это ДЕМО-КОНФИГ шаблона «Модуль» — вымышленный SaaS-бренд «конструктор
+// сайтов», собранный нарочно так, чтобы у каждой секции были заполнены
+// ВСЕ опциональные поля, которые читает выбранный variant. Цель — не
+// продакшен-лендинг, а рабочий стенд для сравнения раскладок: над каждым
+// полем `variant` (и над двумя вторыми осями — Stats.containerVariant и
+// ContactForm.layout) стоит комментарий со списком всех допустимых значений
+// из types/site.ts — меняете строку, сохраняете, смотрите разницу.
 //
-// Хотите добавить новый блок (не из списка ниже) — см. README, раздел
-// "Добавить новую секцию".
+// Под реального клиента: см. алгоритм в CLAUDE.md, §5 (ниша → палитра/шрифты
+// → варианты секций → ритм поверхностей → пресет), затем полностью
+// переписать бренд/контакты/SEO и контент секций под него.
 export const siteConfig: SiteConfig = {
-  brand: {
-    name: "Ковалёв и партнёры",
-    mark: "К&П",
-    legalName: "Юридическое бюро «Ковалёв и партнёры»",
-    tagline: "Семейное и жилищное право",
-    description:
-      "Юридическое бюро в Москве: развод, раздел имущества, споры о детях, алименты, жилищные и наследственные дела.",
-  },
+    brand: {
+        name: "Модуль",
+        mark: "М",
+        legalName: "ООО «Модуль Студио»",
+        tagline: "Конструктор сайтов на готовых блоках",
+        description:
+            "«Модуль» — конструктор лендингов для агентств и фрилансеров: готовые секции, три тарифа оформления, вёрстка на токенах вместо хардкода.",
+    },
 
-  contacts: {
-    phone: "+7 495 123-45-67",
-    phoneHref: "tel:+74951234567",
-    email: "info@kovalev-partners.ru",
-    telegram: "@kovalev_partners",
-    telegramHref: "https://t.me/kovalev_partners",
-    address: "119034, Москва, ул. Пречистенка, 12/2, офис 8",
-    addressShort: "ул. Пречистенка, 12/2, офис 8",
-    postalCode: "119034",
-    city: "Москва",
-    country: "RU",
-    geo: { lat: 55.7423, lng: 37.5972 },
-    hours: "Пн–Пт, 09:00–19:00",
-    hoursSchema: "Mo-Fr 09:00-19:00",
-    inn: "7704123456",
-    ogrn: "1077746123456",
-  },
+    contacts: {
+        phone: "+7 495 000-11-22",
+        phoneHref: "tel:+74950001122",
+        email: "hello@modul.site",
+        telegram: "@modul_team",
+        telegramHref: "https://t.me/modul_team",
+        // whatsapp/whatsappHref, instagram/instagramHref — опциональны в
+        // ContactsConfig, но заполнены: без *Href строка не становится
+        // ссылкой (см. docs/section-system.md, раздел про ContactForm).
+        whatsapp: "+7 495 000-11-22",
+        whatsappHref: "https://wa.me/74950001122",
+        instagram: "@modul.site",
+        instagramHref: "https://instagram.com/modul.site",
+        address: "125009, Москва, Тверская ул., 22, БЦ «Северный», офис 401",
+        addressShort: "Тверская ул., 22, офис 401",
+        postalCode: "125009",
+        city: "Москва",
+        country: "RU",
+        geo: { lat: 55.7601, lng: 37.6064 },
+        hours: "Пн–Пт, 10:00–19:00",
+        hoursSchema: "Mo-Fr 10:00-19:00",
+        inn: "7701234567",
+        ogrn: "1157746012345",
+    },
 
-  seo: {
-    siteUrl: "https://kovalev-partners.ru",
-    title: "Ковалёв и партнёры — семейное и жилищное право в Москве",
-    titleTemplate: "%s — Ковалёв и партнёры",
-    description:
-      "Юридическое бюро «Ковалёв и партнёры»: развод, раздел имущества, споры о детях, алименты, жилищные и наследственные дела. Первая консультация 45 минут — бесплатно.",
-    keywords: [
-      "семейный юрист Москва",
-      "адвокат по разводам",
-      "раздел имущества",
-      "споры о детях",
-      "алименты",
-      "жилищный юрист",
-      "наследственные споры",
+    seo: {
+        siteUrl: "https://modul.site",
+        title: "Модуль — конструктор сайтов для агентств и фрилансеров",
+        titleTemplate: "%s — Модуль",
+        description:
+            "Демо-шаблон «Модуль»: 12 типов секций, 63 варианта раскладок и три тарифа оформления — econom, standard, premium. Меняете site.config.ts, а не компоненты.",
+        keywords: [
+            "конструктор сайтов",
+            "шаблон лендинга",
+            "next.js шаблон",
+            "варианты секций",
+            "econom standard premium",
+            "site.config.ts",
+            "готовые блоки для лендинга",
+        ],
+        locale: "ru_RU",
+        ogImageAlt: "Модуль — конструктор сайтов на готовых блоках",
+        ogHeadline: "Соберите лендинг из готовых секций за один день",
+        priceRange: "₽₽",
+    },
+
+    theme: {
+        // Включён нарочно: демо-конфиг должен проверять и светлую, и тёмную
+        // тему одной кнопкой в хедере.
+        darkModeToggle: true,
+        // defaultMode: "light" | "dark"
+        defaultMode: "light",
+        faviconGlyph: "М",
+        // Тариф оформления — одна ручка на весь сайт.
+        // "econom"   — плоско и документно: линейки вместо карточек, теней нет.
+        // "standard" — глубина: карточки, тени, крупные скругления,
+        //              подсветка секций, плашки под иконками, живой hover;
+        //              заодно все секции без явного variant переключаются
+        //              на карточные раскладки.
+        // "premium"  — дорого через воздух и акцентную рамку, без теней.
+        // Что именно меняется и как собирать «Стандарт» — docs/presets.md.
+        preset: "standard",
+        // Форма .icon-tile по умолчанию для всего сайта — одна ручка на
+        // все секции сразу (Features, Stats, Steps, Gallery, Pricing,
+        // Contact, FAQ, About). Любая секция может переопределить своим
+        // iconShape. "circle" | "squircle" | "bare".
+        iconShape: "bare",
+    },
+
+    analytics: {
+        // Вписать ID Яндекс.Метрики — скрипт подключится сам. null = метрики нет.
+        // На демо-стенде намеренно null: подделывать чужой ID счётчика незачем.
+        yandexMetrikaId: null,
+    },
+
+    header: {
+        // variant: "default" | "bold" | "classic" | "compact" | "monogram" |
+        //          "centered" | "glass" | "split"
+        variant: "split",
+        actions: [
+            { label: "Смотреть демо", href: "#hero", variant: "secondary" },
+            { label: "Начать бесплатно", href: "#contact", variant: "primary" },
+        ],
+    },
+
+    footer: {
+        // variant: "default" | "bold" | "classic" | "compact" | "monogram" |
+        //          "centered" | "split"
+        variant: "monogram",
+        // monogramBackground: "gradient" | "surface" — только для variant: "monogram".
+        monogramBackground: "gradient",
+        note: "Это демо-конфиг шаблона «Модуль»: тексты, цифры и кейсы вымышленные — для сравнения вариантов секций, а не продакшен-лендинг.",
+        legal: [
+            "ООО «Модуль Студио»",
+            "ИНН 7701234567 · ОГРН 1157746012345",
+        ],
+        links: [{ label: "Политика конфиденциальности", href: "/privacy" }],
+        // columns/social/newsletter читают bold/classic/monogram —
+        // без них колончатые варианты просто не рисуют этот блок.
+        columns: [
+            {
+                title: "Продукт",
+                links: [
+                    { label: "Возможности", href: "#services" },
+                    { label: "Тарифы оформления", href: "#pricing" },
+                    { label: "Кейсы на шаблоне", href: "#cases" },
+                ],
+            },
+            {
+                title: "Компания",
+                links: [
+                    { label: "О шаблоне", href: "#about" },
+                    { label: "Команда", href: "#team" },
+                    { label: "Контакты", href: "#contact" },
+                ],
+            },
+            {
+                title: "Документы",
+                links: [
+                    { label: "Политика конфиденциальности", href: "/privacy" },
+                    { label: "Публичная оферта", href: "/privacy#oferta" },
+                ],
+            },
+        ],
+        social: [
+            { icon: "messageCircle", href: "https://t.me/modul_team", label: "Telegram" },
+            { icon: "mail", href: "mailto:hello@modul.site", label: "Почта" },
+            { icon: "globe", href: "https://modul.site", label: "Сайт" },
+        ],
+        newsletter: {
+            title: "Новые варианты секций — на почту",
+            text: "Раз в месяц присылаем, что добавили в шаблон и какие ниши закрыли новыми пресетами.",
+            placeholder: "you@company.com",
+            submitLabel: "Подписаться",
+            action: "/api/subscribe",
+        },
+    },
+
+    // Секции страницы, по порядку. surface у каждой — просто фон
+    // (paper/surface/ink/accent), чередуем их по схеме из CLAUDE.md §3:
+    // paper → surface → paper → surface → paper → ink → surface → paper →
+    // surface → paper → accent → surface.
+    sections: [
+        {
+            id: "hero",
+            type: "hero",
+            surface: "paper",
+            // variant: "type-only" | "split" | "centered" | "showcase" |
+            //          "poster" | "service"
+            variant: "service",
+            // rail читают только type-only/split/centered — showcase его
+            // игнорирует (номер/рельс уступают место badge). Оставлено
+            // заполненным для быстрого переключения variant.
+            rail: "Конструктор сайтов · демо-сборка",
+            headline: ["Это шаблон", "конструктора,", "а не готовый сайт"],
+            lead: "Демо-сборка «Модуль»: та же вёрстка, те же токены, что получит ваш клиент. Переключайте variant у любой секции ниже — данные и раскладка уже на месте.",
+            badge: "Демо-сборка · 63 варианта секций",
+            // frame: "plain" | "browser" — оправа медиа-панели, без image не используется.
+            frame: "browser",
+            image: "/images/hero-product.jpg",
+            actions: [
+                { label: "Смотреть возможности", href: "#services", variant: "primary" },
+                { label: "Как собрать лендинг", href: "#process", variant: "secondary" },
+            ],
+            facts: [
+                { value: "63", label: "готовых варианта секций" },
+                { value: "3 тарифа", label: "econom / standard / premium" },
+                { value: "0 строк кода", label: "чтобы собрать первый лендинг" },
+            ],
+            proof: {
+                avatars: [
+                    "/images/testimonial-1.jpg",
+                    "/images/testimonial-2.jpg",
+                    "/images/testimonial-3.jpg",
+                    "/images/testimonial-4.jpg",
+                ],
+                text: "Уже используют 120+ студий и фрилансеров",
+            },
+        },
+
+        {
+            id: "stats",
+            type: "stats",
+            surface: "surface",
+            // variant: "band" | "grid" | "badge" | "rows" | "bento" | "photo" | "plain"
+            variant: "plain",
+            // containerVariant: "flat" | "elevated" | "bordered" — читают
+            // только band/grid, для photo не применяется.
+            number: "01",
+            eyebrow: "Цифры",
+            title: "Шаблон в цифрах",
+            lead: "Коротко — почему агентства выбирают «Модуль» для клиентских лендингов вместо вёрстки с нуля.",
+            image: "/images/stats-photo.jpg",
+            items: [
+                { value: "120", suffix: "+", label: "студий и агентств", icon: "globe" },
+                { value: "63", label: "варианта секций", icon: "check" },
+                { value: "15", suffix: "", label: "минут на сборку прототипа", icon: "clock" },
+                { value: "4.9", label: "средняя оценка на маркетплейсе", icon: "star" },
+            ],
+        },
+
+        {
+            id: "services",
+            type: "features",
+            surface: "paper",
+            // variant: "table" | "cards" | "cards-cta" | "table-links" | "bento"
+            variant: "bento",
+            number: "02",
+            nav: "Возможности",
+            eyebrow: "Возможности",
+            title: "Из чего собран шаблон",
+            lead: "12 типов секций, у каждой — несколько независимых раскладок. Меняется variant в конфиге, компоненты трогать не нужно.",
+            items: [
+                {
+                    icon: "globe",
+                    title: "63 варианта раскладки",
+                    text: "У Hero — 6 вариантов, у Stats — 9, у Steps — 8. Переключаются одним полем variant в site.config.ts, без правки компонентов.",
+                    points: [
+                        "Каждый вариант — законченный React-компонент",
+                        "Дефолт зависит от тарифа, если variant не задан",
+                        "Явный variant в конфиге всегда главнее дефолта",
+                    ],
+                    tags: ["Hero", "Stats", "Features", "Steps", "Gallery"],
+                    link: { label: "Смотреть кейсы", href: "#cases", variant: "quiet" },
+                },
+                {
+                    icon: "check",
+                    title: "3 тарифа оформления",
+                    text: "econom — плоско и документно. standard — карточки, тени, живой hover. premium — глубина через рамку и воздух, без теней.",
+                    points: [
+                        "Одна ручка theme.preset на весь сайт",
+                        "Дефолтные раскладки секций переключаются вместе с тарифом",
+                        "dev-warning, если раскладка не может показать глубину тарифа",
+                    ],
+                    link: { label: "Сравнить тарифы", href: "#pricing", variant: "quiet" },
+                },
+                {
+                    icon: "clock",
+                    title: "Готово за один день",
+                    text: "Палитра, шрифты и состав секций — по нише клиента за один проход: см. алгоритм в CLAUDE.md.",
+                    points: [
+                        "Таблицы палитр и шрифтов на 10 ниш",
+                        "Правило ритма поверхностей — paper/surface/ink/accent",
+                        "Чек-лист сборки «Стандарта» в docs/presets.md",
+                    ],
+                    link: { label: "Как собрать лендинг", href: "#process", variant: "quiet" },
+                },
+                {
+                    icon: "shieldCheck",
+                    title: "Честные предупреждения в консоли",
+                    text: "Если конфиг просит невозможное — фото в табличной раскладке, плоский вариант в дорогом тарифе — dev-режим скажет об этом вслух.",
+                    points: [
+                        "Нет молчаливых пустых блоков",
+                        "Готовая замена в тексте предупреждения",
+                        "В проде проверки не выполняются вообще",
+                    ],
+                    link: { label: "Частые вопросы", href: "#faq", variant: "quiet" },
+                },
+                {
+                    icon: "star",
+                    title: "SEO и OG-картинка из коробки",
+                    text: "Метатеги, хлебные крошки и OG-изображение собираются из того же site.config.ts — второй раз содержимое вводить не нужно.",
+                    points: [
+                        "OG-картинка рендерится через next/og",
+                        "JSON-LD для организации и контактов",
+                        "Дубли палитры для рантайма без CSS — theme/palette.ts",
+                    ],
+                    link: { label: "Задать вопрос", href: "#contact", variant: "quiet" },
+                },
+            ],
+        },
+
+        {
+            id: "about",
+            type: "about",
+            surface: "surface",
+            // variant: "photo-right" | "photo-left" | "type-only" | "split-actions" |
+            //          "quiet-split" | "panel"
+            variant: "panel",
+            number: "03",
+            eyebrow: "Наш подход",
+            title: "Гибкость поверх строгой системы",
+            text: [
+                "Мы убираем трение между дизайном и вёрсткой: инженерим правила, чтобы решения оставались за вами, а не за компонентом.",
+            ],
+            actions: [
+                { label: "Изучить возможности", href: "#services", variant: "primary" },
+                { label: "Скачать site.config.ts", href: "#contact" },
+            ],
+            photo: "/images/about-team.jpg",
+            photoAlt: "Команда студии «Модуль» за работой",
+        },
+
+        {
+            id: "process",
+            type: "steps",
+            surface: "paper",
+            // variant: "rail" | "stack" | "timeline-vertical" | "cards" | "cascade" |
+            //          "timeline-horizontal" | "split" | "numbered-cards"
+            variant: "cards",
+            number: "04",
+            nav: "Как собрать",
+            eyebrow: "Процесс",
+            title: "Как за один день собрать лендинг из этого шаблона",
+            lead: "Тот же порядок, что в CLAUDE.md, §5 — только применённый к самому шаблону.",
+            items: [
+                {
+                    number: "01",
+                    title: "Выберите нишу",
+                    text: "Определяете нишу клиента и берёте стартовую пару фон+акцент из таблицы CLAUDE.md — 10 готовых направлений.",
+                    meta: "5 минут",
+                    icon: "search",
+                    photo: "/images/steps-1.jpg",
+                },
+                {
+                    number: "02",
+                    title: "Соберите тон",
+                    text: "Переписываете 4 токена палитры и шрифтовую пару в theme/tokens.css, подключаете шрифты в app/layout.tsx.",
+                    meta: "токены + шрифты",
+                    icon: "check",
+                    photo: "/images/steps-2.jpg",
+                },
+                {
+                    number: "03",
+                    title: "Подберите варианты",
+                    text: "Проставляете variant каждой секции из каталога в CLAUDE.md, §2 — не оставляете дефолты пресета везде подряд.",
+                    meta: "63 варианта секций",
+                    icon: "globe",
+                    photo: "/images/steps-3.jpg",
+                },
+                {
+                    number: "04",
+                    title: "Замените данные",
+                    text: "Переписываете site.config.ts под контент клиента: бренд, контакты, SEO, содержимое секций — как в этом демо-файле.",
+                    meta: "полностью готово",
+                    icon: "shieldCheck",
+                    photo: "/images/steps-4.jpg",
+                    featured: true,
+                },
+            ],
+        },
+
+        {
+            id: "cases",
+            type: "gallery",
+            surface: "ink",
+            // variant: "table" | "grid" | "cards-icon" | "photo-grid" |
+            //          "photo-bento"
+            variant: "photo-grid",
+            number: "05",
+            nav: "Кейсы",
+            eyebrow: "Реестр кейсов",
+            title: "Что уже собрано на этом шаблоне",
+            lead: "Фабулы для демо-стенда — реальные проекты студий, которые используют «Модуль», обезличены до формата кейса.",
+            items: [
+                {
+                    category: "SaaS-платформа",
+                    title: "Личный кабинет для агентства недвижимости",
+                    problem: "Агентству нужен был лендинг под запуск личного кабинета за две недели, без верстальщика в штате.",
+                    result: "Собрали на тарифе standard, заменили только контент и палитру под бренд агентства.",
+                    year: "2025",
+                    status: "Запущено",
+                    tags: ["Next.js", "standard"],
+                    photo: "/images/gallery-1.jpg",
+                    link: { label: "Обсудить похожий проект", href: "#contact", variant: "quiet" },
+                    stats: [
+                        { value: "3 недели", label: "от брифа до продакшена" },
+                        { value: "96", label: "баллов Lighthouse" },
+                    ],
+                },
+                {
+                    category: "Лендинг",
+                    title: "Промо-страница фитнес-марафона",
+                    problem: "Нужен был яркий одностраничник под разовую акцию с ограниченным бюджетом.",
+                    result: "Взяли тариф econom, вариант poster для Hero — без теней, но с ярким фоновым фото.",
+                    year: "2025",
+                    status: "В работе",
+                    tags: ["econom", "poster"],
+                    photo: "/images/gallery-2.jpg",
+                    link: { label: "Обсудить похожий проект", href: "#contact", variant: "quiet" },
+                },
+                {
+                    category: "Каталог услуг",
+                    title: "Сайт стоматологической клиники",
+                    problem: "Клинике нужна была спокойная, «медицинская» подача без продуктового глянца.",
+                    result: "Палитра Медицина из CLAUDE.md, Features variant=table, Hero variant=split с фото врача.",
+                    year: "2024",
+                    status: "Запущено",
+                    tags: ["premium", "table"],
+                    photo: "/images/gallery-3.jpg",
+                    link: { label: "Обсудить похожий проект", href: "#contact", variant: "quiet" },
+                },
+                {
+                    category: "Портфолио",
+                    title: "Витрина архитектурного бюро",
+                    problem: "Бюро хотело имиджевый сайт без единой тени — воздух и рамка вместо карточек.",
+                    result: "Тариф premium, Hero variant=showcase с фото проекта в рамке browser.",
+                    year: "2024",
+                    status: "Запущено",
+                    tags: ["standard", "showcase"],
+                    photo: "/images/gallery-4.jpg",
+                    link: { label: "Обсудить похожий проект", href: "#contact", variant: "quiet" },
+                },
+            ],
+            note: "Фабулы обезличены и частично изменены для демонстрации — детали конкретных проектов охраняются NDA студий.",
+        },
+
+        {
+            id: "testimonials",
+            type: "testimonials",
+            surface: "surface",
+            // variant: "quotes" | "cards" | "bento" | "rated-cards" | "spotlight"
+            variant: "spotlight",
+            number: "06",
+            nav: "Отзывы",
+            eyebrow: "Отзывы",
+            title: "Что говорят те, кто уже собирал на «Модуле»",
+            lead: "Тоже демо-контент — но фразы списаны с реальных сообщений в поддержку, только имена изменены.",
+            items: [
+                {
+                    quote: "Взяли шаблон под лендинг марафона за день до старта продаж. Успели — потому что не пришлось спорить с версткой, только с текстами.",
+                    author: "Марина Соколова",
+                    meta: "арт-директор студии «Формат»",
+                    photo: "/images/testimonial-1.jpg",
+                    rating: 5,
+                },
+                {
+                    quote: "Раньше на лендинг под клиента уходила неделя. На «Модуле» — день на контент и полдня на палитру с шрифтами.",
+                    author: "Дмитрий Ковалёв",
+                    meta: "фрилансер, лендинги под ключ",
+                    photo: "/images/testimonial-2.jpg",
+                    rating: 5,
+                },
+                {
+                    quote: "Понравилось, что тариф — это буквально одна строчка в конфиге, а не три разных проекта на поддержке.",
+                    author: "Анна Гареева",
+                    meta: "продюсер digital-агентства «Северный полюс»",
+                    photo: "/images/testimonial-3.jpg",
+                    rating: 4,
+                },
+                {
+                    quote: "Дал джуну задачу собрать посадочную по этому шаблону — справился за смену, включая замену палитры под нишу клиента.",
+                    author: "Тимур Ким",
+                    meta: "тимлид фронтенда, аутсорс-команда",
+                    photo: "/images/testimonial-4.jpg",
+                    rating: 5,
+                    featured: true,
+                },
+            ],
+            trust: {
+                text: "Каждую неделю на шаблоне собирают 10+ новых лендингов",
+                items: [
+                    { label: "Агентства", icon: "briefcase" },
+                    { label: "Фрилансеры", icon: "users" },
+                    { label: "Продуктовые команды", icon: "globe" },
+                ],
+            },
+        },
+
+        {
+            id: "team",
+            type: "team",
+            surface: "paper",
+            // variant: "columns" | "rows" | "cards" | "photo-cards" |
+            //          "badge-avatars" | "tags-cards" | "bento"
+            variant: "bento",
+            number: "07",
+            nav: "Команда",
+            eyebrow: "Команда",
+            title: "Кто делает «Модуль»",
+            lead: "Дело ведёт конкретный человек, а не абстрактный отдел поддержки шаблона.",
+            items: [
+                {
+                    name: "Ковалёв Илья",
+                    role: "Основатель, продукт",
+                    focus: "Архитектура секций, токенов и системы пресетов",
+                    experience: "9 лет в вебе",
+                    photo: "/images/team-1.jpg",
+                    tags: ["Design systems", "Next.js", "Tailwind"],
+                    link: { label: "Написать", href: "#contact", variant: "quiet" },
+                },
+                {
+                    name: "Светлана Орлова",
+                    role: "Арт-директор",
+                    focus: "Палитры и типографика под нишу клиента",
+                    experience: "7 лет в брендинге",
+                    photo: "/images/team-2.jpg",
+                    tags: ["Брендинг", "Типографика"],
+                    link: { label: "Написать", href: "#contact", variant: "quiet" },
+                },
+                {
+                    name: "Артём Белов",
+                    role: "Frontend-инженер",
+                    focus: "Компоненты и пресеты econom / standard / premium",
+                    experience: "6 лет на React",
+                    photo: "/images/team-3.jpg",
+                    tags: ["React", "Server Components"],
+                    link: { label: "Написать", href: "#contact", variant: "quiet" },
+                },
+                {
+                    name: "Полина Чернова",
+                    role: "Контент-стратег",
+                    focus: "Тексты и структура секций под клиентский бриф",
+                    experience: "5 лет в копирайтинге",
+                    photo: "/images/team-4.jpg",
+                    tags: ["UX-копирайтинг", "SEO"],
+                    link: { label: "Написать", href: "#contact", variant: "quiet" },
+                },
+            ],
+            banner: {
+                title: "Хотите такой же конструктор для своей студии?",
+                text: "Пришлите бриф — соберём фирменный шаблон под вашу нишу за 5 рабочих дней.",
+                action: { label: "Обсудить проект", href: "#contact", variant: "primary" },
+            },
+        },
+
+        {
+            id: "faq",
+            type: "faq",
+            surface: "surface",
+            // variant: "narrow" | "wide" | "split-sidebar" | "categorized"
+            variant: "categorized",
+            number: "08",
+            nav: "Вопросы",
+            eyebrow: "Вопросы и ответы",
+            title: "Что чаще всего спрашивают про шаблон",
+            items: [
+                {
+                    question: "Сколько стоит лицензия на шаблон?",
+                    answer: "Тарифы в разделе «Тарифы» — это тарифы ОФОРМЛЕНИЯ (глубина карточек, тени, радиусы), а не число доступных секций: все 12 типов секций и все 63 варианта доступны в любом из трёх. Цена лицензии считается отдельно, по брифу.",
+                    icon: "handCoins",
+                    category: "Тарифы",
+                    tags: ["Тарифы", "Оплата"],
+                },
+                {
+                    question: "Как переключить вариант секции?",
+                    answer: "Одно поле variant в объекте секции в site.config.ts. Если поле не задано — подставляется дефолт текущего тарифа (lib/preset.ts). Явно указанный variant всегда главнее дефолта.",
+                    icon: "check",
+                    category: "Настройка",
+                    tags: ["Варианты", "Конфиг"],
+                },
+                {
+                    question: "Что делать, если раскладка выглядит плоско на тарифе standard?",
+                    answer: "Скорее всего, у секции явно указан табличный variant (table/quotes/columns) — в дорогом тарифе тени и радиусы физически некуда положить, глубину показывает только карточка. Уберите variant совсем или поставьте карточный вариант — dev-режим подскажет какой именно.",
+                    icon: "shieldCheck",
+                    category: "Настройка",
+                    tags: ["Поддержка", "Пресеты"],
+                },
+                {
+                    question: "На чём хостить готовый сайт?",
+                    answer: "Шаблон — обычное Next.js App Router приложение, без специфичных зависимостей от одной платформы. Деплоится куда угодно, где есть Node.js-рантайм.",
+                    icon: "globe",
+                    category: "Технические",
+                    tags: ["Хостинг", "Деплой"],
+                },
+                {
+                    question: "Сколько времени уходит на адаптацию под нишу?",
+                    answer: "По чек-листу из CLAUDE.md — палитра, шрифты, варианты секций и ритм поверхностей — обычно укладываются в один рабочий день, без учёта написания контента.",
+                    icon: "clock",
+                    category: "Настройка",
+                    tags: ["Сроки"],
+                },
+                {
+                    question: "Есть ли SEO и OG-картинка из коробки?",
+                    answer: "Да: метатеги, JSON-LD для организации и адреса, а также OG-изображение собираются из того же site.config.ts через lib/seo.ts — второй раз вводить контент не нужно.",
+                    icon: "search",
+                    category: "Технические",
+                    tags: ["SEO", "OG"],
+                },
+            ],
+            support: {
+                icon: "mail",
+                title: "Не нашли ответ?",
+                text: "Опишите задачу — подскажем, какой пресет и какие варианты секций подойдут под вашу нишу.",
+                action: { label: "Написать в Telegram", href: "https://t.me/modul_team", variant: "primary" },
+            },
+        },
+
+        {
+            id: "pricing",
+            type: "pricing",
+            surface: "paper",
+            // variant: "table" | "cards" | "ribbon" | "split" | "dark" | "playful" |
+            //          "quote" | "glass" | "banner" | "matrix"
+            variant: "matrix",
+            number: "09",
+            nav: "Тарифы",
+            eyebrow: "Тарифы оформления",
+            title: "econom / standard / premium — в чём разница",
+            lead: "Тариф — это глубина и пластика (тени, радиусы, подсветка), а не количество доступных секций: все три открывают полный каталог.",
+            items: [
+                {
+                    name: "Econom",
+                    tag: "СТАРТ",
+                    icon: "search",
+                    price: "0 ₽",
+                    unit: "/ навсегда",
+                    text: "Для первого прототипа и учебных лендингов.",
+                    features: [
+                        "Плоские раскладки без теней",
+                        "Все 12 типов секций",
+                        { text: "Поддержка в Telegram", excluded: true },
+                    ],
+                    action: { label: "Скачать шаблон", href: "#contact", variant: "secondary" },
+                },
+                {
+                    name: "Standard",
+                    tag: "ВЫБОР СТУДИЙ",
+                    icon: "star",
+                    badge: "MOST POPULAR",
+                    price: "14 900 ₽",
+                    unit: "/ проект",
+                    text: "То, что выбирает большинство студий по умолчанию.",
+                    features: [
+                        "Карточки, тени, живой hover",
+                        "Карточные дефолты вариантов секций",
+                        "Поддержка в Telegram 30 дней",
+                    ],
+                    featured: true,
+                    action: { label: "Взять тариф", href: "#contact", variant: "primary" },
+                },
+                {
+                    name: "Premium",
+                    tag: "ИМИДЖ",
+                    icon: "landmark",
+                    price: "29 900 ₽",
+                    unit: "/ проект",
+                    text: "Для имиджевых брендов и люксовых ниш.",
+                    features: [
+                        "Глубина через рамку и воздух, без теней",
+                        "Индивидуальная палитра и шрифтовая пара",
+                        "Личный менеджер запуска",
+                    ],
+                    action: { label: "Обсудить", href: "#contact", variant: "secondary" },
+                },
+            ],
+            note: "Тариф можно сменить в любой момент — это одна строка theme.preset, а не пересборка секций.",
+            trust: "Больше 60 студий уже собрали лендинг на «Модуле»",
+            footnotes: [
+                {
+                    title: "Нужен свой пресет?",
+                    text: "Соберём индивидуальную палитру и шрифтовую пару под нишу клиента.",
+                    tone: "accent",
+                },
+                {
+                    icon: "shieldCheck",
+                    title: "Честная поддержка",
+                    text: "Отвечаем в Telegram в течение рабочего дня.",
+                },
+                {
+                    icon: "clock",
+                    title: "Быстрый старт",
+                    text: "Лендинг на шаблоне собирается за один день.",
+                },
+            ],
+            closing: {
+                title: "Не знаете, какой тариф выбрать?",
+                text: "Опишите нишу клиента — подскажем пресет, варианты секций и палитру за 15 минут.",
+                actions: [
+                    { label: "Написать в Telegram", href: "https://t.me/modul_team", variant: "primary" },
+                    { label: "Сравнить тарифы", href: "#pricing", variant: "secondary" },
+                ],
+            },
+            quote: {
+                text: "«Модуль» избавил нас от вёрстки с нуля — теперь лендинг клиента это конфиг, а не спринт.",
+                author: "Дарья Волкова, студия «Полынь»",
+                photo: "/images/stats-photo.jpg",
+            },
+            comparison: {
+                columns: ["Econom", "Standard", "Premium"],
+                highlightColumn: 1,
+                groups: [
+                    {
+                        title: "Пластика",
+                        rows: [
+                            { label: "Тени карточек", values: [false, true, false] },
+                            { label: "Радиус карточки", values: ["2–4px", "16px", "2px"], highlight: true },
+                            { label: "Подсветка секций", values: [false, true, false] },
+                        ],
+                    },
+                    {
+                        title: "Поддержка",
+                        rows: [
+                            { label: "Telegram 30 дней", values: [false, true, true] },
+                            { label: "Личный менеджер", values: [false, false, true] },
+                        ],
+                    },
+                ],
+            },
+        },
+
+        {
+            id: "cta",
+            type: "cta",
+            surface: "accent",
+            // variant: "band" | "quiet" | "centered" | "left" | "boxed" | "panel"
+            variant: "panel",
+            eyebrow: "Следующий шаг",
+            title: "Клонируйте шаблон и замените site.config.ts",
+            lead: "Компоненты трогать не нужно — только тексты, картинки в public/images и поле variant у каждой секции.",
+            actions: [
+                { label: "Открыть репозиторий", href: "https://github.com/modul-team/site-template", variant: "primary" },
+                { label: "Документация по секциям", href: "#faq", variant: "secondary" },
+                { label: "Написать в Telegram", href: "https://t.me/modul_team", variant: "quiet" },
+            ],
+            note: "Правки в site.config.ts не требуют трогать компоненты — только тексты, картинки и variant.",
+        },
+
+        {
+            id: "contact",
+            type: "contact",
+            surface: "surface",
+            // variant: "split" | "stacked" | "boxed" | "panels"
+            variant: "panels",
+            // layout: "plain" | "cardContainer" — подложка под самой формой,
+            // отдельная ось от variant (раскладки колонок).
+            layout: "cardContainer",
+            // showMap: false — скрыть карту, даже если mapSrc задан. По умолчанию true.
+            number: "10",
+            nav: "Контакты",
+            eyebrow: "Контакты",
+            title: "Расскажите, что собираете",
+            lead: "Опишите задачу в двух словах — подскажем тариф, варианты секций и сроки под вашу нишу.",
+            detailsTitle: "Как с нами связаться",
+            mapSrc: "https://yandex.ru/map-widget/v1/?ll=37.6064,55.7601&z=16&pt=37.6064,55.7601,pm2rdm",
+            fields: [
+                {
+                    name: "name",
+                    label: "Как к вам обращаться",
+                    type: "text",
+                    placeholder: "Мария",
+                    required: true,
+                },
+                {
+                    name: "phone",
+                    label: "Телефон",
+                    type: "tel",
+                    placeholder: "+7 900 000-00-00",
+                    required: true,
+                },
+                {
+                    name: "email",
+                    label: "Почта",
+                    type: "email",
+                    placeholder: "you@company.com",
+                    required: true,
+                },
+                {
+                    name: "topic",
+                    label: "Что нужно собрать",
+                    type: "select",
+                    required: true,
+                    // options — подпись и отправляемое значение совпадают
+                    options: [
+                        "Лендинг под продукт",
+                        "Сайт-визитка",
+                        "Каталог услуг",
+                        "Портфолио",
+                        "Другое",
+                    ],
+                },
+                {
+                    name: "budget",
+                    label: "Ориентировочный бюджет",
+                    type: "select",
+                    // selectOptions — приоритетнее options, если заданы оба;
+                    // пользователь видит label, в заявку уходит value.
+                    selectOptions: [
+                        { label: "До 50 000 ₽", value: "lt50" },
+                        { label: "50 000 – 150 000 ₽", value: "50-150" },
+                        { label: "150 000 ₽ и выше", value: "gt150" },
+                    ],
+                },
+                {
+                    name: "message",
+                    label: "Кратко о задаче",
+                    type: "textarea",
+                    placeholder: "Что за проект и когда нужен запуск",
+                },
+            ],
+            submitLabel: "Отправить заявку",
+            consent: "Нажимая кнопку, вы соглашаетесь на обработку персональных данных.",
+            successTitle: "Заявка отправлена",
+            successText: "Ответим в рабочие часы в течение 30 минут.",
+            errorText: "Не удалось отправить заявку. Напишите нам в Telegram — это быстрее, чем разбираться с формой.",
+        },
     ],
-    locale: "ru_RU",
-    ogImageAlt: "Ковалёв и партнёры — семейное и жилищное право",
-    ogHeadline: "Ведём семейные и жилищные дела до решения суда",
-    priceRange: "₽₽",
-  },
-
-  theme: {
-    darkModeToggle: false,
-    defaultMode: "light",
-    faviconGlyph: "К",
-    // Тариф оформления — одна ручка на весь сайт.
-    // "econom"   — плоско и документно (текущий лендинг).
-    // "standard" — глубина: карточки, тени, крупные скругления,
-    //              подсветка секций, плашки под иконками, живой hover;
-    //              заодно все секции без явного variant переключаются
-    //              на карточные раскладки.
-    // "premium"  — дорого через воздух и акцентную рамку, без теней.
-    // Что именно меняется и как собирать «Стандарт» — docs/presets.md.
-    preset: "standard",
-  },
-
-  analytics: {
-    // Вписать ID Яндекс.Метрики — скрипт подключится сам. null = метрики нет.
-    yandexMetrikaId: null,
-  },
-
-  header: {
-    actions: [{ label: "Консультация", href: "#contact", variant: "primary" }],
-  },
-
-  footer: {
-    note: "Информация на сайте не является публичной офертой и не заменяет юридическую консультацию.",
-    legal: [
-      "Юридическое бюро «Ковалёв и партнёры»",
-      "ИНН 7704123456 · ОГРН 1077746123456",
-    ],
-    links: [{ label: "Политика конфиденциальности", href: "/privacy" }],
-  },
-
-  // Секции страницы, по порядку. surface у каждой — просто фон
-  // (paper/surface/ink/accent), чередуем их, чтобы страница не была
-  // визуально плоской: paper → paper → surface → paper → ink → surface →
-  // paper → accent → surface.
-  sections: [
-    {
-      id: "hero",
-      type: "hero",
-      surface: "paper",
-      variant: "type-only",
-      number: "01",
-      rail: "Семейное и жилищное право · Москва",
-      headline: ["Ведём семейные", "и жилищные дела", "до решения суда"],
-      lead: "Развод, раздел имущества, споры о детях, алименты и жильё. Берёмся за дела, где вторая сторона не готова договариваться.",
-      actions: [
-        {
-          label: "Записаться на консультацию",
-          href: "#contact",
-          variant: "primary",
-        },
-        { label: "Смотреть дела", href: "#cases", variant: "secondary" },
-      ],
-      facts: [
-        {
-          value: "Фиксированная цена",
-          label: "по договору, без доплат по ходу дела",
-        },
-        {
-          value: "Ведём под ключ",
-          label: "вы приходите в суд только по желанию",
-        },
-        { value: "Первая консультация", label: "45 минут, бесплатно" },
-      ],
-    },
-
-    {
-      id: "stats",
-      type: "stats",
-      surface: "paper",
-      variant: "band",
-      number: "02",
-      items: [
-        { value: "18", label: "лет средний стаж партнёров" },
-        { value: "640", label: "дел доведено до решения" },
-        { value: "87", suffix: "%", label: "выиграно в первой инстанции" },
-        { value: "4", label: "юриста в постоянной команде" },
-      ],
-    },
-
-    {
-      id: "services",
-      type: "features",
-      surface: "surface",
-      variant: "table",
-      columns: 2,
-      number: "03",
-      nav: "Услуги",
-      eyebrow: "Практика",
-      title: "Что ведём",
-      lead: "Работаем по двум направлениям и не берём дела за их пределами — так глубина позиции выше, чем у универсальной конторы.",
-      items: [
-        {
-          icon: "fileSignature",
-          title: "Расторжение брака",
-          text: "Развод через ЗАГС и суд, в том числе при несогласии второй стороны и при наличии несовершеннолетних детей.",
-          points: [
-            "Развод без присутствия доверителя",
-            "Одновременно с разделом имущества",
-            "Расторжение брака с иностранным элементом",
-          ],
-        },
-        {
-          icon: "scale",
-          title: "Раздел имущества",
-          text: "Раздел совместно нажитого, выделение долей, защита добрачных активов и оспаривание сделок, выведших имущество из массы.",
-          points: [
-            "Оспаривание брачного договора",
-            "Раздел бизнеса и долей в ООО",
-            "Ипотечная квартира и материнский капитал",
-          ],
-        },
-        {
-          icon: "users",
-          title: "Споры о детях",
-          text: "Определение места жительства ребёнка, порядок общения с отдельно проживающим родителем, ограничение и лишение родительских прав.",
-          points: [
-            "Определение места жительства",
-            "График общения и участие бабушек и дедушек",
-            "Вывоз ребёнка за границу без согласия",
-          ],
-        },
-        {
-          icon: "handCoins",
-          title: "Алименты",
-          text: "Взыскание в долях и в твёрдой сумме, изменение размера, задолженность и неустойка, оспаривание и установление отцовства.",
-          points: [
-            "Взыскание задолженности и неустойки",
-            "Алименты на супруга и на родителей",
-            "Розыск скрытого дохода должника",
-          ],
-        },
-        {
-          icon: "home",
-          title: "Жилищные споры",
-          text: "Вселение и выселение, определение порядка пользования, признание права собственности, споры с соседями и управляющей компанией.",
-          points: [
-            "Выселение бывшего члена семьи",
-            "Залив, перепланировка, самовольная постройка",
-            "Оспаривание кадастровой стоимости",
-          ],
-        },
-        {
-          icon: "landmark",
-          title: "Наследство и приватизация",
-          text: "Вступление в наследство через суд, восстановление пропущенных сроков, оспаривание завещания, приватизация и деприватизация жилья.",
-          points: [
-            "Восстановление срока принятия наследства",
-            "Оспаривание завещания и отказа от наследства",
-            "Приватизация служебного жилья",
-          ],
-        },
-      ],
-    },
-
-    {
-      id: "process",
-      type: "steps",
-      surface: "paper",
-      variant: "rail",
-      number: "04",
-      nav: "Как работаем",
-      eyebrow: "Порядок работы",
-      title: "Четыре шага от обращения до исполнительного листа",
-      items: [
-        {
-          number: "01",
-          title: "Консультация",
-          text: "Разбираем ситуацию, называем реальную перспективу и сроки. Если дело бесперспективное — говорим об этом сразу.",
-          meta: "45 минут, бесплатно",
-        },
-        {
-          number: "02",
-          title: "Правовая позиция",
-          text: "Собираем документы, формируем стратегию и письменный план действий с фиксированной стоимостью по договору.",
-          meta: "2–5 рабочих дней",
-        },
-        {
-          number: "03",
-          title: "Ведение дела",
-          text: "Иск, ходатайства, экспертизы, представительство во всех инстанциях. Вы присутствуете на заседаниях только по желанию.",
-          meta: "от 2 месяцев",
-        },
-        {
-          number: "04",
-          title: "Результат",
-          text: "Получаем решение и исполнительный лист, при необходимости сопровождаем взыскание у приставов.",
-          meta: "включено в договор",
-        },
-      ],
-    },
-
-    {
-      id: "cases",
-      type: "gallery",
-      surface: "ink",
-      variant: "register",
-      number: "05",
-      nav: "Дела",
-      eyebrow: "Реестр дел",
-      title: "Что уже решено",
-      lead: "Фабулы обезличены, состав участников изменён. Детали по каждому делу готовы показать на консультации.",
-      items: [
-        {
-          category: "Раздел имущества",
-          problem: "Супруг переоформил квартиру на мать в период брака",
-          result: "Сделка признана недействительной, доля возвращена в массу",
-          year: "2024",
-        },
-        {
-          category: "Место жительства ребёнка",
-          problem: "Отец удерживал ребёнка и ограничил общение с матерью",
-          result: "Место жительства определено с матерью, график общения утверждён",
-          year: "2024",
-        },
-        {
-          category: "Алименты",
-          problem: "Задолженность 1,4 млн ₽, должник скрывал реальный доход",
-          result: "Взысканы долг и неустойка, возбуждено исполнительное производство",
-          year: "2023",
-        },
-        {
-          category: "Жилищный спор",
-          problem: "Иск о выселении бывшего члена семьи собственника",
-          result: "В иске отказано, право пользования сохранено на три года",
-          year: "2025",
-        },
-        {
-          category: "Наследство",
-          problem: "Пропущен срок принятия наследства на два года",
-          result: "Срок восстановлен, право собственности признано судом",
-          year: "2023",
-        },
-        {
-          category: "Приватизация",
-          problem: "Отказ в приватизации служебной квартиры",
-          result: "Отказ признан незаконным, договор передачи заключён",
-          year: "2024",
-        },
-      ],
-      note: "Результат по конкретному делу зависит от обстоятельств и не гарантируется одной лишь практикой бюро.",
-    },
-
-    {
-      id: "faq",
-      type: "faq",
-      surface: "surface",
-      variant: "split-sidebar",
-      number: "06",
-      nav: "Вопросы",
-      eyebrow: "Вопросы и ответы",
-      title: "О чём спрашивают чаще всего",
-      support: {
-        icon: "mail",
-        title: "Не нашли ответ?",
-        text: "Напишите нам напрямую — ответим в течение рабочего дня.",
-        action: { label: "Написать", href: "#contact" },
-      },
-      items: [
-        {
-          question: "Сколько стоит ведение дела?",
-          answer:
-            "Стоимость фиксируется в договоре после консультации и не меняется по ходу дела. Она зависит от инстанции, объёма документов и необходимости экспертиз. Первая консультация — 45 минут, бесплатно; на ней мы называем вилку до подписания чего-либо.",
-          icon: "handCoins",
-          tags: ["Оплата", "Договор"],
-          category: "Общее",
-        },
-        {
-          question: "Можно ли развестись, если супруг против?",
-          answer:
-            "Да. При несогласии одного из супругов брак расторгается судом. Суд вправе дать срок для примирения до трёх месяцев, но при повторном обращении расторжение происходит и без согласия второй стороны. Исключение — беременность жены и ребёнок до года: в этот период муж не может подать иск без её согласия.",
-          icon: "fileSignature",
-          category: "Развод",
-        },
-        {
-          question: "Обязательно ли мне приходить в суд?",
-          answer:
-            "Нет. По доверенности мы представляем ваши интересы на всех заседаниях. Личное присутствие обычно требуется только по спорам о детях, где суд хочет услышать родителя напрямую, — об этом мы предупреждаем заранее.",
-        },
-        {
-          question: "Как делится квартира, купленная в ипотеку до брака?",
-          answer:
-            "Добрачная квартира остаётся личной собственностью, но платежи по ипотеке из общих средств в браке дают второму супругу право на компенсацию, а иногда — на признание доли. Считается доля выплат, приходящаяся на период брака, поэтому исход зависит от того, что удастся подтвердить документально.",
-        },
-        {
-          question: "Что делать, если бывший супруг не платит алименты?",
-          answer:
-            "Взыскиваем задолженность и неустойку 0,1% за каждый день просрочки, подключаем приставов, добиваемся ограничения выезда и водительских прав, при злостном уклонении — привлечения к ответственности. Параллельно можем перевести алименты из долей в твёрдую сумму, если доход скрывается.",
-        },
-        {
-          question: "Вы работаете только по Москве?",
-          answer:
-            "Ведём дела в Москве и Московской области очно, в других регионах — дистанционно через представителей и видео-конференц-связь. Консультация возможна в офисе, по телефону или в Telegram.",
-        },
-      ],
-    },
-
-    {
-      id: "team",
-      type: "team",
-      surface: "paper",
-      variant: "columns",
-      number: "07",
-      nav: "Команда",
-      eyebrow: "Команда",
-      title: "Кто ведёт ваше дело",
-      lead: "Дело ведёт конкретный юрист, а не абстрактный отдел: вы знаете, кому звонить, с первого дня и до исполнительного листа.",
-      items: [
-        {
-          name: "Ковалёв Андрей Игоревич",
-          role: "Управляющий партнёр",
-          focus: "Раздел имущества, расторжение брака, оспаривание сделок",
-          experience: "18 лет практики",
-        },
-        {
-          name: "Соколова Марина Витальевна",
-          role: "Партнёр",
-          focus: "Жилищные и наследственные споры, приватизация",
-          experience: "14 лет практики",
-        },
-        {
-          name: "Гареев Тимур Рустамович",
-          role: "Старший юрист",
-          focus: "Алименты, споры о детях, исполнительное производство",
-          experience: "9 лет практики",
-        },
-      ],
-    },
-
-    {
-      id: "testimonials",
-      type: "testimonials",
-      surface: "paper",
-      variant: "quotes",
-      number: "",
-      items: [
-        {
-          quote:
-            "Развод шёл полтора года, бывший муж выводил активы. Мне объяснили порядок действий на первой же встрече и потом ни разу не поменяли план. Квартиру вернули в раздел.",
-          author: "Елена М.",
-          meta: "раздел имущества, 2024",
-        },
-        {
-          quote:
-            "Я боялась суда больше, чем самого спора. В итоге была на одном заседании из семи — на остальных был юрист. Порядок общения с сыном утвердили в том виде, который просили.",
-          author: "Анна К.",
-          meta: "спор о детях, 2024",
-        },
-        {
-          quote:
-            "Сказали прямо, что по одному из требований шансов почти нет, и отговорили тратить деньги. По остальным выиграли. Такой честности я, честно говоря, не ожидал.",
-          author: "Дмитрий Р.",
-          meta: "жилищный спор, 2023",
-        },
-      ],
-    },
-
-    {
-      id: "cta",
-      type: "cta",
-      surface: "accent",
-      variant: "band",
-      number: "08",
-      title: "Расскажите, что случилось",
-      lead: "45 минут, бесплатно, без обязательств. Скажем честно, есть ли перспектива, и что делать в ближайшую неделю.",
-      actions: [
-        { label: "Записаться на консультацию", href: "#contact", variant: "primary" },
-      ],
-      note: "Отвечаем в рабочие часы в течение 30 минут.",
-    },
-
-    {
-      id: "contact",
-      type: "contact",
-      surface: "surface",
-      variant: "split",
-      number: "09",
-      nav: "Контакты",
-      eyebrow: "Контакты",
-      title: "Записаться на консультацию",
-      lead: "Опишите ситуацию в двух словах — перезвоним и назначим встречу в офисе или онлайн.",
-      detailsTitle: "Реквизиты и связь",
-      mapSrc:
-        "https://yandex.ru/map-widget/v1/?ll=37.5972,55.7423&z=16&pt=37.5972,55.7423,pm2rdm",
-      fields: [
-        {
-          name: "name",
-          label: "Как к вам обращаться",
-          type: "text",
-          placeholder: "Елена",
-          required: true,
-        },
-        {
-          name: "phone",
-          label: "Телефон",
-          type: "tel",
-          placeholder: "+7 900 000-00-00",
-          required: true,
-        },
-        {
-          name: "topic",
-          label: "Категория дела",
-          type: "select",
-          required: true,
-          options: [
-            "Расторжение брака",
-            "Раздел имущества",
-            "Спор о детях",
-            "Алименты",
-            "Жилищный спор",
-            "Наследство",
-            "Другое",
-          ],
-        },
-        {
-          name: "message",
-          label: "Кратко о ситуации",
-          type: "textarea",
-          placeholder: "Что произошло и чего вы хотите добиться",
-        },
-      ],
-      submitLabel: "Отправить заявку",
-      consent:
-        "Нажимая кнопку, вы соглашаетесь на обработку персональных данных. Сведения, которые вы сообщаете, охраняются адвокатской тайной.",
-      successTitle: "Заявка отправлена",
-      successText: "Перезвоним в рабочие часы в течение 30 минут.",
-      errorText:
-        "Не удалось отправить заявку. Позвоните нам — это быстрее, чем разбираться с формой.",
-    },
-  ],
 };
 
 export default siteConfig;

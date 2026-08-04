@@ -6,7 +6,7 @@ interface FooterColumnsProps {
 }
 
 /**
- * Сетка сгруппированных колонок ссылок (Bold/Classic/Gradient/Glass).
+ * Сетка сгруппированных колонок ссылок (Bold/Classic/Monogram).
  * Число колонок приходит из данных (footer.columns.length), а не из
  * design-токена — поэтому grid-template-columns считается инлайном, а
  * не берётся из фиксированного набора Tailwind-классов md:grid-cols-N.

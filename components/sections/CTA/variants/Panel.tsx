@@ -18,11 +18,16 @@ export function Panel(props: CtaSection) {
     <Section id={id} surface={surface} spacing="lg">
       <Container>
         <div className="grid gap-x-gutter gap-y-10 md:grid-cols-12 md:items-center">
-          <div className="md:col-span-6" data-reveal>
+          {/* min-w-0: 12-колоночный grid по умолчанию не даёт ячейке
+              сжаться уже её контента (min-width: auto у грид-элементов) —
+              длинное слово в заголовке распирало 6/12-колонку и наезжало
+              на карточку с кнопками справа. break-words — подстраховка
+              на случай, если слово всё равно не влезает. */}
+          <div className="min-w-0 md:col-span-6" data-reveal>
             <CtaEyebrow eyebrow={eyebrow} variant="dot" />
 
             {title ? (
-              <h2 className={`max-w-[16ch] font-heading text-h1 ${eyebrow ? "mt-4" : ""}`}>
+              <h2 className={`max-w-[16ch] font-heading text-h1 break-words ${eyebrow ? "mt-4" : ""}`}>
                 {title}
               </h2>
             ) : null}
@@ -35,9 +40,9 @@ export function Panel(props: CtaSection) {
           {actions.length > 0 ? (
             <div className="md:col-span-6" data-reveal>
               <Card variant="elevated" className="flex flex-col gap-4">
-                {actions.map((action) => (
+                {actions.map((action, index) => (
                   <Button
-                    key={action.href}
+                    key={index}
                     href={action.href}
                     variant={action.variant ?? "primary"}
                     full

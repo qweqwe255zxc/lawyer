@@ -17,8 +17,12 @@ import type { TestimonialsSection } from "@/types/site";
  * нишу «Бизнес — SaaS», docs/section-system.md, раздел 6).
  */
 export function Bento(props: TestimonialsSection) {
-  const { id, surface = "paper", number, eyebrow, title, lead, trust, items } = props;
-  const [first, ...rest] = items;
+  const { id, surface = "paper", number, eyebrow, title, lead, trust, items, headerAlign } = props;
+  // item.featured выбирает, кто получает крупную карточку — без пометки
+  // (или без совпадений) крупным остаётся первый по порядку, как раньше.
+  const featuredIndex = items.findIndex((item) => item.featured);
+  const first = featuredIndex >= 0 ? items[featuredIndex] : items[0];
+  const rest = items.filter((_, index) => index !== (featuredIndex >= 0 ? featuredIndex : 0));
 
   return (
     <Section id={id} surface={surface}>
@@ -28,26 +32,29 @@ export function Bento(props: TestimonialsSection) {
           eyebrow={eyebrow}
           title={title}
           lead={lead}
+          align={headerAlign}
           className="mb-12 md:mb-16"
         />
 
         {first ? (
           <div className="mb-6" data-reveal>
             <Card variant="framed">
-              <RatingStars rating={first.rating} />
-              <TestimonialBody
-                item={first}
-                showPhoto
-                quoteClassName="mt-4 text-quote md:max-w-[42ch]"
-                captionClassName="mt-6"
-              />
+              <figure>
+                <RatingStars rating={first.rating} />
+                <TestimonialBody
+                  item={first}
+                  showPhoto
+                  quoteClassName="mt-4 text-quote md:max-w-[42ch]"
+                  captionClassName="mt-6"
+                />
+              </figure>
             </Card>
           </div>
         ) : null}
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {rest.map((item, index) => (
-            <div key={item.author} data-reveal style={revealDelay(index)}>
+            <div key={`${item.author}-${index}`} data-reveal style={revealDelay(index)}>
               <Card variant="framed" className="flex h-full flex-col">
                 <figure className="flex flex-1 flex-col">
                   <RatingStars rating={item.rating} />

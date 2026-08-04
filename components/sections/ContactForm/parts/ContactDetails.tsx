@@ -9,36 +9,27 @@ import {
   Phone,
   Send,
 } from "lucide-react";
-import { cn } from "@/lib/cn";
+import { yandexMapsHref } from "./yandexMapsHref";
 import type { ContactsConfig } from "@/types/site";
 
 interface ContactDetailsProps {
   contacts: ContactsConfig;
   detailsTitle?: string;
-  /** URL embed-iframe карты. Без него карта не рендерится. */
-  mapSrc?: string;
   /** Классы колонки реквизитов. */
   className?: string;
-  /**
-   * Ограничить ширину карты. Нужно только раскладке в одну колонку:
-   * там колонка реквизитов растягивается на весь контейнер (~1240px), и
-   * iframe с aspectRatio 4/3 превращается в полосу 930px высотой на весь
-   * экран. В split колонка и так узкая (5/12).
-   */
-  mapClassName?: string;
 }
 
 /**
- * Реквизиты сторон: телефон, почта, мессенджеры, адрес, часы, ИНН/ОГРН и
- * карта. Строки мессенджеров рендерятся, только если соответствующее поле
+ * Реквизиты сторон: телефон, почта, мессенджеры, адрес, часы, ИНН/ОГРН.
+ * Строки мессенджеров рендерятся, только если соответствующее поле
  * задано в contacts; без *Href строка выводится текстом, а не ссылкой.
+ * Карта сюда не входит — она полосой во всю ширину под этим блоком и
+ * формой, см. parts/ContactMap.tsx.
  */
 export function ContactDetails({
   contacts,
   detailsTitle,
-  mapSrc,
   className,
-  mapClassName,
 }: ContactDetailsProps) {
   const details: {
     icon: typeof Phone;
@@ -84,7 +75,12 @@ export function ContactDetails({
           },
         ]
       : []),
-    { icon: MapPin, label: "Офис", value: contacts.address, href: undefined },
+    {
+      icon: MapPin,
+      label: "Офис",
+      value: contacts.address,
+      href: yandexMapsHref(contacts),
+    },
     {
       icon: Clock,
       label: "Часы работы",
@@ -145,23 +141,6 @@ export function ContactDetails({
             .filter(Boolean)
             .join(" · ")}
         </p>
-      ) : null}
-
-      {mapSrc ? (
-        <div
-          className={cn(
-            "ui-media-raised mt-6 overflow-hidden border border-rule",
-            mapClassName,
-          )}
-        >
-          <iframe
-            src={mapSrc}
-            loading="lazy"
-            title="Карта проезда"
-            className="block w-full grayscale transition-[filter] duration-500 hover:grayscale-0"
-            style={{ border: 0, aspectRatio: "4 / 3" }}
-          />
-        </div>
       ) : null}
     </div>
   );

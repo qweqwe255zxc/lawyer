@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { revealDelay } from "@/lib/reveal";
 import { MemberSocial } from "../parts/MemberSocial";
+import { TeamBannerBlock } from "../parts/TeamBannerBlock";
 import type { TeamSection } from "@/types/site";
 
 /**
@@ -16,7 +17,7 @@ import type { TeamSection } from "@/types/site";
  * section-system.md, раздел 6).
  */
 export function Bento(props: TeamSection) {
-  const { id, surface = "paper", number, eyebrow, title, lead, image, items } = props;
+  const { id, surface = "paper", number, eyebrow, title, lead, image, items, banner } = props;
   const [first, ...rest] = items;
 
   return (
@@ -61,7 +62,16 @@ export function Bento(props: TeamSection) {
 
         {first ? (
           <div className="mt-10 md:mt-14" data-reveal>
-            <Card variant="framed" padded={false} className="relative aspect-[16/9] overflow-hidden">
+            <Card
+              variant="framed"
+              padded={false}
+              className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/9]"
+              // Без фото имя/роль (жёстко светлый text-paper поверх
+              // градиента) остаются на обычной светлой поверхности карточки —
+              // data-surface="ink" даёт тёмный --card-bg, на котором этот
+              // текст читается так же, как поверх фото.
+              data-surface={first.photo ? undefined : "ink"}
+            >
               {first.photo ? (
                 <Image
                   src={first.photo}
@@ -83,10 +93,15 @@ export function Bento(props: TeamSection) {
           </div>
         ) : null}
 
-        <ul className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {rest.map((member, index) => (
             <li key={member.name} data-reveal style={revealDelay(index)}>
-              <Card variant="framed" padded={false} className="relative aspect-[3/4] overflow-hidden">
+              <Card
+                variant="framed"
+                padded={false}
+                className="relative aspect-[3/4] overflow-hidden"
+                data-surface={member.photo ? undefined : "ink"}
+              >
                 {member.photo ? (
                   <Image
                     src={member.photo}
@@ -106,6 +121,8 @@ export function Bento(props: TeamSection) {
             </li>
           ))}
         </ul>
+
+        {banner ? <TeamBannerBlock banner={banner} tone="quote" className="mt-12 md:mt-16" /> : null}
       </Container>
     </Section>
   );

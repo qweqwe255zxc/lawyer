@@ -14,25 +14,28 @@ import type { FeaturesSection } from "@/types/site";
  * (`item.link`) и опциональной кнопкой под сеткой (`action`).
  */
 export function CardsCta(props: FeaturesSection) {
-  const { id, surface = "surface", number, eyebrow, title, lead, action, items } = props;
+  const { id, surface = "surface", number, eyebrow, title, lead, action, items, iconShape, headerAlign } = props;
 
   return (
-    <Section id={id} surface={surface}>
+    <Section id={id} surface={surface} iconShape={iconShape}>
       <Container>
         <FeaturesHeader
           number={number}
           eyebrow={eyebrow}
           title={title}
           lead={lead}
+          align={headerAlign}
           className="mb-12 md:mb-16"
         />
 
-        <div className="grid gap-x-gutter gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+        {/* 3 в ряд, не 4: на четырёх колонках карточке едва хватало ширины
+            под заголовок и текст описания, всё выглядело зажатым. */}
+        <div className="grid gap-x-gutter gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, index) => (
             <div key={item.title} data-reveal style={revealDelay(index)}>
               <Card variant="framed" className="flex h-full flex-col">
                 <div className="flex flex-1 flex-col">
-                  <FeatureContent item={item} />
+                  <FeatureContent item={item} iconLayout="inline" />
 
                   {item.link ? (
                     <Link

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 export type CardVariant =
@@ -8,7 +8,7 @@ export type CardVariant =
   | "bordered-accent"
   | "plain";
 
-interface CardProps {
+interface CardProps extends Omit<ComponentPropsWithoutRef<"div">, "className" | "children"> {
   children: ReactNode;
   /**
    * cell            — ячейка табличной сетки: границы рисует родитель, у карточки их нет.
@@ -74,6 +74,7 @@ export function Card({
   hoverEffect = false,
   padded = true,
   className,
+  ...rest
 }: CardProps) {
   return (
     <div
@@ -83,6 +84,11 @@ export function Card({
         hoverEffect && "ui-card--interactive cursor-pointer",
         className,
       )}
+      // ...rest — только для сквозных атрибутов вроде data-reveal, style,
+      // aria-*: без спреда они молча терялись бы (Card раньше принимал
+      // только перечисленные пропы), а карточка с data-reveal переставала
+      // участвовать в scroll-reveal без единой ошибки или предупреждения.
+      {...rest}
     >
       {children}
     </div>

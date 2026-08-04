@@ -7,12 +7,18 @@ import type { StepsSection } from "@/types/site";
 /**
  * Та же линейка, но в две колонки — для длинных описаний шагов, которым
  * в четырёх колонках тесно.
+ *
+ * sm:grid-cols-2, а не md: — Rail (4 колонки на md:grid-cols-4) и Stack
+ * до md оба были голой единой колонкой и визуально не отличались друг
+ * от друга на мобильном/планшетном экране. С sm Stack уходит в две
+ * колонки на 640px, на полторы сотни пикселей раньше Rail — разница
+ * читается уже на телефонах в альбомной ориентации и на узких планшетах.
  */
 export function Stack(props: StepsSection) {
-  const { id, surface = "paper", number, eyebrow, title, lead, items } = props;
+  const { id, surface = "paper", number, eyebrow, title, lead, items, iconShape } = props;
 
   return (
-    <Section id={id} surface={surface}>
+    <Section id={id} surface={surface} iconShape={iconShape}>
       <Container>
         <SectionHeader
           number={number}
@@ -20,7 +26,7 @@ export function Stack(props: StepsSection) {
           title={title}
           lead={lead}
         />
-        <StepsRailList items={items} columns="md:grid-cols-2" />
+        <StepsRailList items={items} columns="sm:grid-cols-2" />
       </Container>
     </Section>
   );

@@ -3,8 +3,7 @@ import { Centered } from "./variants/Centered";
 import { Classic } from "./variants/Classic";
 import { Compact } from "./variants/Compact";
 import { Default } from "./variants/Default";
-import { Glass } from "./variants/Glass";
-import { Gradient } from "./variants/Gradient";
+import { Monogram } from "./variants/Monogram";
 import { Split } from "./variants/Split";
 import type { VariantMap } from "../variantMap";
 import type { FooterProps } from "./types";
@@ -22,9 +21,8 @@ const variants: VariantMap<FooterProps, FooterVariant> = {
   bold: Bold,
   classic: Classic,
   compact: Compact,
-  gradient: Gradient,
+  monogram: Monogram,
   centered: Centered,
-  glass: Glass,
   split: Split,
 };
 

@@ -7,25 +7,32 @@ import { StepsHeader } from "../parts/StepsHeader";
 import type { StepsSection } from "@/types/site";
 
 /**
- * Заголовок пилюлей по центру, дальше — ряд карточек: круглая плашка
- * под иконкой, «N. Заголовок» одной строкой (номер шага в заголовке, а
- * не отдельным элементом — так короче), описание.
+ * Заголовок пилюлей по центру, дальше — ряд карточек: плашка .icon-tile
+ * под иконкой (форма — ThemeConfig.iconShape/iconShape секции), «N.
+ * Заголовок» одной строкой (номер шага в заголовке, а не отдельным
+ * элементом — так короче), описание.
  */
 export function Cards(props: StepsSection) {
-  const { id, surface = "paper", number, eyebrow, title, lead, items } = props;
+  const { id, surface = "paper", number, eyebrow, title, lead, items, headerAlign, iconShape } =
+    props;
 
   return (
-    <Section id={id} surface={surface}>
+    <Section id={id} surface={surface} iconShape={iconShape}>
       <Container>
         <StepsHeader
           number={number}
           eyebrow={eyebrow}
           title={title}
           lead={lead}
+          align={headerAlign}
           className="mb-12 md:mb-16"
         />
 
-        <ol className="grid gap-x-gutter gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+        {/* lg (1024px) — 3 колонки, не 4: на планшетных/небольших десктопных
+            экранах 4 колонки сжимали заголовок с описанием до нечитаемой
+            ширины. 4 колонки появляются только на xl (1280px+), где на
+            каждую карточку остаётся достаточно места. */}
+        <ol className="grid gap-x-gutter gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {items.map((item, index) => {
             const Icon = getIcon(item.icon);
 
@@ -33,12 +40,12 @@ export function Cards(props: StepsSection) {
               <li key={item.number} data-reveal style={revealDelay(index)}>
                 <Card variant="framed" className="h-full">
                   {Icon ? (
-                    <div className="mb-4 flex size-11 items-center justify-center rounded-full bg-badge-soft text-accent">
+                    <span className="icon-tile mb-4">
                       <Icon aria-hidden="true" strokeWidth={1.5} className="size-5" />
-                    </div>
+                    </span>
                   ) : null}
 
-                  <h3 className="font-heading text-h3">
+                  <h3 className="max-w-[22ch] font-heading text-h3">
                     {item.number}. {item.title}
                   </h3>
                   <p className="mt-3 text-body text-fg-muted">{item.text}</p>

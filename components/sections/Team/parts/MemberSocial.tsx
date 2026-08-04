@@ -1,16 +1,25 @@
+import { cn } from "@/lib/cn";
 import { getIcon } from "@/lib/icons";
 import type { TeamMember } from "@/types/site";
 
 interface MemberSocialProps {
   items?: TeamMember["social"];
+  /**
+   * По умолчанию просто mt-5. В карточках, где ряд иконок должен
+   * прижиматься к низу (flex-колонка), сюда передают "mt-auto pt-5" —
+   * САМ компонент возвращает null при пустом items, поэтому класс не
+   * может жить на обёртке вызывающего файла: такая обёртка остаётся в
+   * разметке (со своим паддингом) даже когда внутри пусто.
+   */
+  className?: string;
 }
 
 /** Ряд иконок-ссылок под описанием человека. Общий для нескольких карточных вариантов. */
-export function MemberSocial({ items }: MemberSocialProps) {
+export function MemberSocial({ items, className = "mt-5" }: MemberSocialProps) {
   if (!items || items.length === 0) return null;
 
   return (
-    <ul className="mt-5 flex items-center gap-3">
+    <ul className={cn("flex items-center gap-3", className)}>
       {items.map((item) => {
         const Icon = getIcon(item.icon);
         if (!Icon) return null;

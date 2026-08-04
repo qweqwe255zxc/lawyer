@@ -9,10 +9,10 @@ import type { StepsSection } from "@/types/site";
  * «Экономе»: плотно, без карточек, без теней.
  */
 export function Rail(props: StepsSection) {
-  const { id, surface = "paper", number, eyebrow, title, lead, items } = props;
+  const { id, surface = "paper", number, eyebrow, title, lead, items, iconShape } = props;
 
   return (
-    <Section id={id} surface={surface}>
+    <Section id={id} surface={surface} iconShape={iconShape}>
       <Container>
         <SectionHeader
           number={number}

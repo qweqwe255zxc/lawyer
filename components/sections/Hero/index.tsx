@@ -1,7 +1,7 @@
 import { resolveHeroLayout } from "./parts/resolveHeroLayout";
-import { Billboard } from "./variants/Billboard";
 import { Centered } from "./variants/Centered";
-import { Search } from "./variants/Search";
+import { Poster } from "./variants/Poster";
+import { Service } from "./variants/Service";
 import { Showcase } from "./variants/Showcase";
 import { Split } from "./variants/Split";
 import { TypeOnly } from "./variants/TypeOnly";
@@ -26,8 +26,8 @@ const variants: VariantMap<HeroSection, NonNullable<HeroSection["variant"]>> = {
   split: Split,
   centered: Centered,
   showcase: Showcase,
-  billboard: Billboard,
-  search: Search,
+  poster: Poster,
+  service: Service,
 };
 
 /** Варианты без второй колонки: image и widget им положить некуда. */
@@ -36,28 +36,40 @@ const SINGLE_COLUMN: NonNullable<HeroSection["variant"]>[] = ["centered"];
 /** Варианты, которым вторая колонка нужна: без неё половина экрана пуста. */
 const NEEDS_MEDIA: NonNullable<HeroSection["variant"]>[] = [
   "showcase",
-  "billboard",
-  "search",
+  "poster",
+  "service",
 ];
 
 /** Варианты без рельса на левом поле: number и rail в них не рендерятся. */
 const NO_RAIL: NonNullable<HeroSection["variant"]>[] = [
   "showcase",
-  "billboard",
-  "search",
+  "poster",
+  "service",
 ];
 
 /** Варианты, которые умеют показать только фото, но не виджет метрик. */
 const IMAGE_ONLY: NonNullable<HeroSection["variant"]>[] = [
-  "billboard",
-  "search",
+  "poster",
+  "service",
+];
+
+/**
+ * Варианты, где image и widget делят одну колонку и image побеждает
+ * (см. resolveHeroLayout для split, HeroSection.tsx:73-83 для showcase —
+ * `image ? <HeroPanel> : widget ? <HeroWidget> : null` в обоих случаях).
+ * poster/service сюда не входят: у них своё предупреждение ниже —
+ * widget в них не рендерится вообще, независимо от image.
+ */
+const IMAGE_BEATS_WIDGET: NonNullable<HeroSection["variant"]>[] = [
+  "split",
+  "showcase",
 ];
 
 export function Hero(props: HeroSection) {
-  const { withImage, resolved } = resolveHeroLayout(props);
+  const { resolved } = resolveHeroLayout(props);
 
   if (process.env.NODE_ENV !== "production") {
-    if (props.widget && withImage) {
+    if (props.widget && props.image && IMAGE_BEATS_WIDGET.includes(resolved)) {
       console.warn(
         `[Hero] Секция "${props.id}": widget и image заняли бы одну колонку — показано фото, widget пропущен.`,
       );
@@ -79,7 +91,7 @@ export function Hero(props: HeroSection) {
       );
     }
 
-    if (IMAGE_ONLY.includes(resolved) && props.widget && !props.image) {
+    if (IMAGE_ONLY.includes(resolved) && props.widget) {
       console.warn(
         `[Hero] Секция "${props.id}": variant="${resolved}" показывает только фото — ` +
           `widget в этой раскладке не рендерится (карточка метрик на полноэкранной ` +

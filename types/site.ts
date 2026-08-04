@@ -23,6 +23,14 @@ export type Surface = "paper" | "surface" | "ink" | "accent";
  */
 export type Preset = "econom" | "standard" | "premium";
 
+/**
+ * Форма плашки .icon-tile: circle — круглая, squircle — скруглённый
+ * квадрат (роль --radius-control, не зависит от тарифа), bare — голая
+ * иконка без плашки/фона. Ставится сайтвайд в ThemeConfig.iconShape и
+ * может переопределяться per-секцию через SectionBase.iconShape.
+ */
+export type IconShape = "circle" | "squircle" | "bare";
+
 export interface SectionBase {
   /** Используется как anchor и как key, плюс scroll-margin-top под sticky-хедер. */
   id: string;
@@ -35,6 +43,41 @@ export interface SectionBase {
   lead?: string;
   /** Если задано — пункт появляется в навигации хедера. */
   nav?: string;
+  /**
+   * Переопределяет форму .icon-tile (см. IconShape) для этой секции.
+   * Без поля секция берёт сайтвайдный дефолт из ThemeConfig.iconShape —
+   * его резолвит SectionRenderer (`section.iconShape ?? context.iconShape`)
+   * до того, как проп доедет до компонента, поэтому здесь почти всегда
+   * можно ничего не указывать: одну ручку в site.config.ts достаточно
+   * покрутить один раз на весь сайт.
+   * Читают все секции, где есть .icon-tile: Features (все варианты),
+   * Gallery cards-icon, About panel, Pricing (matrix/dark/playful),
+   * Contact panels, FAQ (все варианты), Stats (badge/bento/photo/rows),
+   * Steps (rail/stack/cards/cascade/split/numbered-cards). Не читают:
+   * Stats plain (голая иконка — это сама суть варианта, отличающая его
+   * от badge) и Steps timeline-horizontal (круглая нода на оси таймлайна
+   * — непрозрачный фон там нужен, чтобы нода перекрывала линию, bare
+   * сломал бы саму метафору). Тоже не читают инлайновые иконки-глифы
+   * рядом с текстом, которые не являются самостоятельной плашкой: Hero/
+   * Testimonials trust-row, About badge (пилюля-эйброу), Pricing
+   * чек-листы, соцсети Footer/Team, рейтинг звёздами — это не «иконка
+   * item.icon в контейнере», а часть другого элемента интерфейса.
+   */
+  iconShape?: IconShape;
+  /**
+   * Переопределяет положение центрированной пилюли-шапки (номер+колонтитул
+   *+заголовок+лид) там, где она есть: center — прежний вид по умолчанию,
+   * left — колонтитул и заголовок прижимаются к левому краю, без
+   * mx-auto/text-center. Читают только карточные шапки, у которых это
+   * центрирование в принципе есть (Features cards-cta/bento, Steps
+   * cards/cascade/timeline/split/numbered-cards, Testimonials bento/
+   * rated-cards/spotlight, Team photo-cards/badge-avatars/tags-cards,
+   * Pricing dark/playful/glass/banner/matrix) — обычный `SectionHeader`
+   * (колонтитул на левом поле) эту ось не читает, ему уже некуда
+   * центрироваться. Смысл поля — не плодить варианты, различающиеся
+   * только тем, где стоит шапка.
+   */
+  headerAlign?: "left" | "center";
 }
 
 export interface CtaLink {
@@ -91,7 +134,7 @@ export interface HeroWidget {
   chart?: HeroWidgetChart;
 }
 
-/** Поисковая строка в hero (variant="search"). */
+/** Поисковая строка в hero (variant="service"). */
 export interface HeroSearch {
   /** Подпись над полем — она же <label> поля, а не плейсхолдер. */
   label: string;
@@ -103,14 +146,14 @@ export interface HeroSearch {
   name?: string;
 }
 
-/** Строка «нам доверяют» с логотипами-иконками (variant="search"). */
+/** Строка «нам доверяют» с логотипами-иконками (variant="service"). */
 export interface HeroTrust {
   text: string;
   items: { label: string; icon?: IconName }[];
 }
 
 /**
- * Отзыв, лежащий поверх фото в первом экране (variant="search").
+ * Отзыв, лежащий поверх фото в первом экране (variant="service").
  * rating — число закрашенных звёзд из пяти; значения вне 0–5 подрезаются.
  */
 export interface HeroOverlay {
@@ -143,10 +186,10 @@ export interface HeroSection extends SectionBase {
    *             (image и widget в ней не рендерятся).
    * showcase  — витрина продукта 6/6: плашка над заголовком, медиа в
    *             поднятой панели справа, рельса нет (number/rail не читаются).
-   * billboard — афиша во всю ширину окна: акцентная панель с текстом
+   * poster    — афиша во всю ширину окна: акцентная панель с текстом
    *             слева, фото встык к краю экрана справа. Без Container,
    *             number/rail и widget не читаются, image обязателен.
-   * search    — первый экран сервиса: поисковая строка вместо кнопок,
+   * service   — первый экран сервиса: поисковая строка вместо кнопок,
    *             ряд доверия, фото с отзывом поверх. actions не читаются,
    *             image обязателен.
    */
@@ -155,8 +198,8 @@ export interface HeroSection extends SectionBase {
     | "split"
     | "centered"
     | "showcase"
-    | "billboard"
-    | "search";
+    | "poster"
+    | "service";
   /**
    * Плашка-анонс над заголовком («Версия 2.0», «Набор открыт»).
    * Читает только showcase — в остальных раскладках её место занимает
@@ -176,7 +219,7 @@ export interface HeroSection extends SectionBase {
    */
   proof?: HeroProof;
   /**
-   * Поисковая строка в первом экране. Читает только variant="search".
+   * Поисковая строка в первом экране. Читает только variant="service".
    * Это НАСТОЯЩАЯ форма method="get", а не декорация: значение уходит
    * на `action` обычным параметром запроса, без JS. Поэтому `action`
    * обязателен — страницу, которая примет запрос, должен предоставить
@@ -184,9 +227,9 @@ export interface HeroSection extends SectionBase {
    * молча съедает введённое, в шаблоне быть не должно.
    */
   search?: HeroSearch;
-  /** Строка «нам доверяют» с логотипами. Читает только variant="search". */
+  /** Строка «нам доверяют» с логотипами. Читает только variant="service". */
   trust?: HeroTrust;
-  /** Отзыв поверх фото. Читает только variant="search". */
+  /** Отзыв поверх фото. Читает только variant="service". */
   overlay?: HeroOverlay;
   /** Строки заголовка, переносы расставляем вручную. */
   headline: string[];
@@ -203,6 +246,14 @@ export interface HeroSection extends SectionBase {
    * На мобильном виджет скрыт: он не должен уводить кнопки за экран.
    */
   widget?: HeroWidget;
+  /**
+   * Скрыть фото на мобильном (<md) и показывать только с md+. Читают
+   * split/showcase/poster/service — там, где фото идёт полноширинным
+   * блоком и на маленьком экране заметно отодвигает кнопки/действия
+   * вниз. poster/service требуют image — при true с ним же первый
+   * экран на мобильном становится чистой типографикой без второй колонки.
+   */
+  hideMediaOnMobile?: boolean;
 }
 
 // Stats
@@ -221,29 +272,38 @@ export interface StatItem {
   icon?: IconName;
   /** Более длинное описание под числом. Читают bento, rows; для остальных не нужно. */
   text?: string;
+  /**
+   * Оправа карточки в variant="bento": accent — акцентная рамка, tint —
+   * мягкая тонировка фона (темнее в светлой теме, светлее в тёмной).
+   * Не задано — обычная framed-карточка. Без явного значения bento
+   * по умолчанию красит первый item accent, последний — tint (прежнее
+   * поведение по позиции), но явный highlight на любом item всегда
+   * главнее позиции.
+   */
+  highlight?: "accent" | "tint";
 }
 
 export interface StatsSection extends SectionBase {
   type: "stats";
   /**
-   * band/grid — исходные плоские раскладки, без заголовка секции.
+   * band/grid — исходные плоские раскладки: номер + title строкой (без
+   *             lead — это осталась бы полноценная шапка, а не лёгкая строка).
    * badge     — пилюля-эйробров + крупный заголовок в две строки + лид,
    *             карточки с круглой плашкой под иконкой.
    * rows      — заголовок слева, плоские колонки на линейках: иконка и
    *             подпись сверху, крупная фраза (value+suffix), описание
    *             (text) снизу.
-   * bento     — заголовок по центру, асимметричная сетка 2×2: первая
-   *             карточка с акцентной рамкой, последняя — на ink-поверхности.
+   * bento     — заголовок по центру, сетка карточек; оправу каждой решает
+   *             item.highlight ("accent" — рамка, "tint" — тонировка фона),
+   *             без него — дефолт по позиции (первая accent, последняя tint).
    * photo     — фото с заголовком/лидом поверх слева, сетка 2×2 карточек
    *             справа (image обязателен, иначе фото нечем закрыть).
-   * playful   — заголовок по центру, круглая плашка под иконкой (тот же
-   *             акцент, что и у badge — раскраска по item в шаблоне не
-   *             используется, см. parts/StatCard.tsx).
    * plain     — заголовок по центру, голая иконка без плашки, компактные
-   *             карточки.
-   * dark      — тот же состав, что и plain, но на surface="ink".
+   *             карточки. Тёмный блок — тот же variant с surface="ink"
+   *             (раньше был отдельным вариантом dark, отличавшимся только
+   *             этим полем, которое и так есть у любой секции).
    */
-  variant?: "band" | "grid" | "badge" | "rows" | "bento" | "photo" | "playful" | "plain" | "dark";
+  variant?: "band" | "grid" | "badge" | "rows" | "bento" | "photo" | "plain";
   /**
    * Подложка под цифрами: flat — полоса во всю ширину с линейками
    * сверху/снизу (база), elevated — единый блок с тенью,
@@ -266,7 +326,7 @@ export interface FeatureItem {
   text: string;
   points?: string[];
   photo?: string;
-  /** Ссылка «Подробнее» на элементе. Читают cards-cta, grid-links, bento. */
+  /** Ссылка «Подробнее» на элементе. Читают cards-cta, table-links, bento. */
   link?: CtaLink;
   /** Короткие теги-плашки под описанием. Читает только bento. */
   tags?: string[];
@@ -278,14 +338,14 @@ export interface FeaturesSection extends SectionBase {
    * table/cards      — исходные раскладки.
    * cards-cta        — заголовок пилюлей по центру, карточки со ссылкой
    *                    `item.link`, опциональная кнопка `action` под сеткой.
-   * grid-links       — заголовок в две колонки (title слева, lead справа),
+   * table-links      — заголовок в две колонки (title слева, lead справа),
    *                    сетка 2 колонки на линейках (без карточек — рамки
    *                    рисует grid, как в table) со стрелкой-ссылкой.
    * bento            — заголовок пилюлей по центру, асимметричная
    *                    двухколоночная сетка карточек; `item.tags` — плашки
    *                    под описанием первого элемента.
    */
-  variant?: "table" | "cards" | "cards-cta" | "grid-links" | "bento";
+  variant?: "table" | "cards" | "cards-cta" | "table-links" | "bento";
   columns?: 2 | 3;
   /** Кнопка под сеткой карточек. Читает только cards-cta. */
   action?: CtaLink;
@@ -299,7 +359,7 @@ export interface StepItem {
   title: string;
   text: string;
   meta?: string;
-  /** Иконка шага. Читают cards, cascade, timeline, split, numbered-cards, а также rail/stack — если задана. */
+  /** Иконка шага. Читают cards, cascade, timeline-horizontal, split, numbered-cards, а также rail/stack — если задана. */
   icon?: IconName;
   /** Фото шага, локальный путь `/images/...` (см. раздел 2 section-system.md). Читают cascade, split, numbered-cards. */
   photo?: string;
@@ -310,32 +370,33 @@ export interface StepItem {
 export interface StepsSection extends SectionBase {
   type: "steps";
   /**
-   * rail            — 4 колонки на общей линейке, stack — 2 колонки.
-   * numbered-nodes  — вертикальный таймлайн: номера-бейджи на оси,
-   *                   карточки шагов расходятся по сторонам.
-   * cards           — простой ряд карточек: круглая плашка под иконкой,
-   *                   «N. Заголовок» одной строкой, описание.
-   * cascade         — карточки каскадом (каждая следующая ниже и правее
-   *                   предыдущей), номер — бейдж на углу карточки. С
-   *                   `surface="ink"` и `photo` у items — тёмный вариант
-   *                   с фото в подвале карточки; без них — светлый и без фото.
-   * timeline        — горизонтальная линия с круглыми нодами-иконками,
-   *                   заголовок и описание под каждой нодой, первая нода
-   *                   выделена акцентным кольцом.
-   * split           — фото с заголовком/лидом поверх слева (как
-   *                   Stats variant="photo"), сетка 2×2 карточек справа;
-   *                   `featured` красит карточку акцентной заливкой.
-   * numbered-cards  — ряд карточек: кружок-номер + соединительная линия,
-   *                   иконка, заголовок, описание, фото в подвале;
-   *                   `featured` — карточка на тёмной поверхности.
+   * rail                — 4 колонки на общей линейке, stack — 2 колонки.
+   * timeline-vertical   — вертикальный таймлайн: номера-бейджи на оси,
+   *                       карточки шагов расходятся по сторонам.
+   * cards               — простой ряд карточек: круглая плашка под иконкой,
+   *                       «N. Заголовок» одной строкой, описание.
+   * cascade             — карточки каскадом (каждая следующая ниже и правее
+   *                       предыдущей), номер — бейдж на углу карточки. С
+   *                       `surface="ink"` и `photo` у items — тёмный вариант
+   *                       с фото в подвале карточки; без них — светлый и без фото.
+   * timeline-horizontal — горизонтальная линия с круглыми нодами-иконками,
+   *                       заголовок и описание под каждой нодой, первая нода
+   *                       выделена акцентным кольцом. (Пара с timeline-vertical —
+   *                       тот же приём таймлайна в другой ориентации.)
+   * split               — фото с заголовком/лидом поверх слева (как
+   *                       Stats variant="photo"), сетка 2×2 карточек справа;
+   *                       `featured` красит карточку акцентной заливкой.
+   * numbered-cards      — ряд карточек: кружок-номер + соединительная линия,
+   *                       иконка, заголовок, описание, фото в подвале;
+   *                       `featured` — карточка на тёмной поверхности.
    */
   variant?:
     | "rail"
     | "stack"
-    | "numbered-nodes"
+    | "timeline-vertical"
     | "cards"
     | "cascade"
-    | "timeline"
+    | "timeline-horizontal"
     | "split"
     | "numbered-cards";
   /** Фото для variant="split" — эйброу/заголовок/лид ложатся поверх него. Без него вариант не рендерится. */
@@ -375,20 +436,26 @@ export interface CaseItem {
 export interface GallerySection extends SectionBase {
   type: "gallery";
   /**
-   * register/grid — исходные раскладки, построчный реестр и карточки.
-   * cards-icon    — заголовок пилюлей, карточки с иконкой в плашке,
-   *                 категорией-ссылкой и ссылкой `link`.
-   * photo-grid    — заголовок пилюлей, ряд карточек с фото (категория —
-   *                 плашка поверх фото), ссылка `link` + `date` внизу.
-   * photo-bento   — заголовок пилюлей, асимметричная сетка: первый
-   *                 элемент — крупный, с фото и `stats`, остальные —
-   *                 обычная сетка (фото — если задано, иначе плашка).
+   * table/grid — исходные раскладки, построчный реестр и карточки.
+   * cards-icon — заголовок пилюлей, карточки с иконкой в плашке,
+   *              категорией-ссылкой и ссылкой `link`.
+   * photo-grid — заголовок пилюлей, ряд карточек с фото (категория —
+   *              плашка поверх фото), ссылка `link` + `date` внизу.
+   * photo-bento — заголовок пилюлей, асимметричная сетка: первый
+   *              элемент — крупный, с фото и `stats`, остальные —
+   *              обычная сетка (фото — если задано, иначе плашка).
    */
-  variant?: "register" | "grid" | "cards-icon" | "photo-grid" | "photo-bento";
+  variant?: "table" | "grid" | "cards-icon" | "photo-grid" | "photo-bento";
   items: CaseItem[];
   note?: string;
   /** Кнопка в шапке секции. Читает только cards-icon. */
   action?: CtaLink;
+  /**
+   * Выключка текста в карточке: left (по умолчанию) или center. Читают
+   * все варианты, кроме table — там реестр строками, выключка не
+   * применима.
+   */
+  align?: "left" | "center";
 }
 
 // Testimonials
@@ -403,7 +470,12 @@ export interface TestimonialItem {
   rating?: number;
   /** Короткая строка результата с иконкой («Сделка закрыта на 1,4 млрд»). Читает только spotlight. */
   result?: string;
-  /** Выделенная (тёмная) карточка. Читают bento, rated-cards — обычно последний отзыв. */
+  /**
+   * Выбирает, какой отзыв получает крупное место: в bento/spotlight —
+   * кто становится крупной карточкой/колонкой (без пометки — первый по
+   * порядку), в rated-cards — кто переходит на тёмную поверхность
+   * (обычно последний отзыв).
+   */
   featured?: boolean;
 }
 
@@ -484,18 +556,83 @@ export interface TeamSection extends SectionBase {
   /** Фото для шапки variant="bento". Без него шапка остаётся текстовой. */
   image?: string;
   banner?: TeamBanner;
+  /**
+   * Прижимает строку стажа (experience) к низу карточки (mt-auto) — так
+   * она стоит на одной высоте у всех людей в ряду независимо от длины
+   * focus. Читает только columns: строки там не в flex-колонке, и без
+   * этого прижать стаж к низу нечем. rows/cards уже делают это сами.
+   */
+  alignExperienceBottom?: boolean;
 }
 
 // About ("о нас" / "о месте")
 
+export interface AboutHighlight {
+  icon?: IconName;
+  title: string;
+  text: string;
+}
+
+/** Боковая карточка со статами рядом с фото (variant="panel"). */
+export interface AboutPanel {
+  title: string;
+  text: string;
+  stats?: { value: string; label: string }[];
+  link?: CtaLink;
+}
+
 export interface AboutSection extends SectionBase {
   type: "about";
-  /** Какая колонка занята фото — вторая колонка всегда 7/12, текстовая 5/12. */
-  variant?: "photo-right" | "photo-left";
+  /**
+   * photo-right/photo-left — исходные, фото 7/12.
+   * type-only    — econom: центрированная типографика, без фото и кнопок.
+   * split-actions — текст 5/12 + кнопки, фото 7/12 в приподнятой карточке.
+   *                Колонтитул — подпись с тире (number/eyebrow) либо
+   *                пилюля (badge/badgeIcon), смотря что задано в конфиге —
+   *                раньше это были четыре отдельных файла (split-actions/
+   *                badge-split/playful/dark), различавшихся только тем,
+   *                какие из этих полей прокидывались дальше и каким был
+   *                surface по умолчанию. Тёмная поверхность — это
+   *                split-actions с surface="ink" (+ обычно frame="browser"),
+   *                не отдельный variant: surface уже своё независимое поле
+   *                (SectionBase.surface) у любой секции.
+   * quiet-split  — то же, что split-actions, но вторая кнопка — текстовая ссылка.
+   * panel        — заголовок+реплика сверху, фото с плашкой снизу, боковая
+   *                карточка со статами справа, ряд иконка+текст под фото.
+   */
+  variant?:
+    | "photo-right"
+    | "photo-left"
+    | "type-only"
+    | "split-actions"
+    | "quiet-split"
+    | "panel";
   /** Абзацы, один <p> на элемент массива. */
   text: string[];
-  photo: string;
+  /** Не читает только type-only — там второй колонки нет вовсе. */
+  photo?: string;
   photoAlt?: string;
+  /** Кнопки под текстом. Читают все варианты кроме photo-right/photo-left/type-only/panel. */
+  actions?: CtaLink[];
+  /**
+   * Пилюля вместо обычной подписи-колонтитула над заголовком.
+   * Читает только split-actions; без неё — обычная подпись с тире (number/eyebrow).
+   */
+  badge?: string;
+  /** Иконка в пилюле. Читает только split-actions. */
+  badgeIcon?: IconName;
+  /** Акцентные пятна за фото (декоративные, `-z-10`). Читает только split-actions. */
+  decorative?: boolean;
+  /** Оправа медиа-панели — как у Hero showcase. Читает только split-actions. */
+  frame?: "plain" | "browser";
+  /** Короткая реплика рядом с заголовком, отделённая линией. Читает только panel. */
+  aside?: string;
+  /** Плашка поверх фото снизу слева. Читает только panel. */
+  photoCaption?: { eyebrow: string; title: string };
+  /** Боковая карточка со статами и ссылкой рядом с фото. Читает только panel. */
+  panel?: AboutPanel;
+  /** Ряд иконка+заголовок+текст под фото. Читает только panel. */
+  highlights?: AboutHighlight[];
 }
 
 // FAQ
@@ -505,7 +642,7 @@ export interface FaqItem {
   answer: string;
   /** Иконка в плашке слева от вопроса. Читают split-sidebar, categorized. */
   icon?: IconName;
-  /** Теги под ответом. Читает только split-sidebar. */
+  /** Теги под ответом. Рендерятся в Accordion независимо от variant. */
   tags?: string[];
   /** Категория для фильтра-пилюль. Читает только categorized; без него у всех items пилюли не рендерятся. */
   category?: string;
@@ -522,14 +659,14 @@ export interface FaqSupport {
 export interface FaqSection extends SectionBase {
   type: "faq";
   /**
-   * narrow/split    — исходные, одна колонка на 760/1240px.
+   * narrow/wide     — исходные, одна колонка на 760/1240px.
    * split-sidebar   — заголовок и опциональная карточка `support` слева,
    *                   аккордеон справа.
    * categorized     — заголовок пилюлей по центру, фильтр-пилюли по
    *                   `item.category` (настоящая фильтрация, клиентский
    *                   стейт), аккордеон карточками с иконкой у вопроса.
    */
-  variant?: "narrow" | "split" | "split-sidebar" | "categorized";
+  variant?: "narrow" | "wide" | "split-sidebar" | "categorized";
   items: FaqItem[];
   /** Карточка поддержки в сайдбаре. Читает только split-sidebar. */
   support?: FaqSupport;
@@ -537,22 +674,128 @@ export interface FaqSection extends SectionBase {
 
 // Pricing
 
+/**
+ * Обычная строка возможности — или явно исключённая (зачёркнутый текст,
+ * иконка-крестик вместо галочки). Читают только карточные варианты с
+ * чек-листом (ribbon/playful/glass); table/cards/остальные видят везде
+ * только строки — обратная совместимость не ломается.
+ */
+export type PricingFeature = string | { text: string; excluded?: boolean };
+
 export interface PricingPlan {
   name: string;
   price: string;
   unit?: string;
   text?: string;
-  features: string[];
+  features: PricingFeature[];
   action?: CtaLink;
   featured?: boolean;
   photo?: string;
+  /** Пилюля-лейбл над карточкой («MOST POPULAR» и т.п.). Читают ribbon/split/dark/playful/glass/banner. */
+  badge?: string;
+  /** Короткий лейбл над названием тарифа («ENTRY», «01 / DISCOVERY»). Читают ribbon/quote/glass. */
+  tag?: string;
+  /** Иконка-аватар в кружке над названием. Читает только playful. */
+  icon?: IconName;
+}
+
+/** Карточка-примечание под тарифами (variant="dark"). */
+export interface PricingFootnote {
+  icon?: IconName;
+  title: string;
+  text: string;
+  /** accent — левая акцентная линия вместо рамки, как у выделяющейся из ряда карточки. */
+  tone?: "plain" | "accent";
+}
+
+/**
+ * Замыкающий блок под тарифами.
+ * banner (surface="ink", без image/points) — variant="banner".
+ * плашка с фото+пунктами (surface="surface") — variant="matrix".
+ */
+export interface PricingClosing {
+  title: string;
+  text?: string;
+  points?: string[];
+  image?: string;
+  actions?: CtaLink[];
+  surface?: "ink" | "surface";
+}
+
+export interface PricingComparisonRow {
+  label: string;
+  /** По одному значению на колонку из `comparison.columns`; true/false — галка/прочерк. */
+  values: (string | boolean)[];
+  highlight?: boolean;
+}
+
+export interface PricingComparisonGroup {
+  title: string;
+  rows: PricingComparisonRow[];
+}
+
+/** Таблица сравнения тарифов построчно (variant="matrix"). */
+export interface PricingComparison {
+  columns: string[];
+  groups: PricingComparisonGroup[];
+  /** Индекс колонки для подсветки — обычно рекомендуемый тариф. */
+  highlightColumn?: number;
 }
 
 export interface PricingSection extends SectionBase {
   type: "pricing";
-  variant?: "table" | "cards";
+  /**
+   * table/cards — исходные.
+   * ribbon  — карточки с лейблом `tag` и цветной лентой `badge` поверх выделенной.
+   * split   — текст+`trust` слева, тёмная панель с 2 карточками справа.
+   * dark    — центрированная шапка на тёмной поверхности, ряд `footnotes` под тарифами.
+   * playful — иконка-аватар в каждой карточке, скруглённые кнопки, `trust`-подпись снизу.
+   * quote   — лейбл `tag` в каждой карточке, цитата поверх фото (`quote`) под тарифами.
+   * glass   — лейбл `tag`, разноцветный градиент на выделенной карточке, unit «/quarter».
+   * banner  — простые карточки, тёмный CTA-баннер `closing` под ними.
+   * matrix  — карточки без списка внутри, `comparison`-таблица и `closing` с фото под ними.
+   */
+  variant?:
+    | "table"
+    | "cards"
+    | "ribbon"
+    | "split"
+    | "dark"
+    | "playful"
+    | "quote"
+    | "glass"
+    | "banner"
+    | "matrix";
   items: PricingPlan[];
   note?: string;
+  /** Короткая подпись доверия под сеткой. Читают split/playful. */
+  trust?: string;
+  /**
+   * Ряд карточек-примечаний под тарифами. Раньше жил только в dark —
+   * теперь рендерится (parts/PricingFootnotes.tsx) при любом variant,
+   * если задан: variant решает раскладку тарифов, не то, какой контент
+   * под ними разрешён.
+   */
+  footnotes?: PricingFootnote[];
+  /**
+   * Замыкающий баннер/блок под тарифами (parts/PricingClosing.tsx).
+   * Раньше жил только в banner/matrix — рендерится при любом variant.
+   * closing.surface="ink" даёт сплошной баннер (заголовок+текст+кнопки
+   * в строку, без фото/пунктов — прежний вид banner); любое другое
+   * значение — раскладку с опциональным фото и списком пунктов (прежний
+   * вид matrix). Сам site.config решает, какая оправа подходит контенту.
+   */
+  closing?: PricingClosing;
+  /**
+   * Цитата поверх фото под тарифами. Раньше жила только в quote —
+   * теперь рендерится (parts/PricingQuoteBlock.tsx) при любом variant.
+   */
+  quote?: { text: string; author: string; photo: string };
+  /**
+   * Таблица сравнения тарифов. Раньше жила только в matrix — теперь
+   * рендерится (parts/PricingComparisonTable.tsx) при любом variant.
+   */
+  comparison?: PricingComparison;
 }
 
 // CTA
@@ -627,6 +870,8 @@ export interface ContactSection extends SectionBase {
   detailsTitle?: string;
   /** URL embed-iframe карты (Google/Yandex Maps). Без него карта не рендерится. */
   mapSrc?: string;
+  /** Показывать карту. По умолчанию true — читает только наличие mapSrc. */
+  showMap?: boolean;
 }
 
 export type Section =
@@ -706,6 +951,14 @@ export interface ThemeConfig {
    * Подробно — docs/presets.md.
    */
   preset?: Preset;
+  /**
+   * Форма .icon-tile по умолчанию для всего сайта: circle — круглая
+   * плашка, squircle — скруглённый квадрат, bare — голая иконка без
+   * плашки/фона. Не задано — "circle". Любая секция может переопределить
+   * это своим SectionBase.iconShape — см. его doc-комментарий за списком
+   * секций, которые вообще читают форму плашки.
+   */
+  iconShape?: IconShape;
 }
 
 /**
@@ -718,7 +971,7 @@ export interface ThemeConfig {
  * classic   — вордмарк слева, навигация по центру, текстовая ссылка +
  *             акцентная кнопка справа (двухуровневые actions).
  * compact   — навигация по центру, кнопка-таблетка справа.
- * gradient  — знак-плашка с инициалом слева, кнопка с крупным радиусом.
+ * monogram  — знак-плашка с инициалом на акцентном градиенте слева, кнопка с крупным радиусом.
  * centered  — знак и навигация в две строки, всё по центру, без кнопки.
  * glass     — стеклянная подложка включена всегда, а не только при скролле.
  * split     — навигация разбита на два кластера по бокам от вордмарка.
@@ -728,7 +981,7 @@ export type HeaderVariant =
   | "bold"
   | "classic"
   | "compact"
-  | "gradient"
+  | "monogram"
   | "centered"
   | "glass"
   | "split";
@@ -736,9 +989,25 @@ export type HeaderVariant =
 export interface HeaderConfig {
   actions: CtaLink[];
   variant?: HeaderVariant;
+  /**
+   * До скролла хедер прозрачный и лежит поверх hero (см. .ui-header в
+   * globals.css). true (по умолчанию) — так и остаётся: хедер сливается
+   * с hero, пока страницу не прокрутили. false — хедер держит непрозрачный
+   * фон/тень с первого кадра, как будто страница уже прокручена (нужно,
+   * когда hero недостаточно контрастен для наплывающего хедера).
+   */
+  transparentBeforeScroll?: boolean;
+  /**
+   * Хедер уезжает за верхний край при скролле вниз и возвращается при
+   * скролле вверх (после --header-height от начала страницы — самый
+   * верх всегда его показывает). По умолчанию false — хедер обычный
+   * sticky, всегда виден. Открытое мобильное меню всегда отменяет
+   * скрытие, независимо от этого поля.
+   */
+  hideOnScroll?: boolean;
 }
 
-/** Колонка сгруппированных ссылок в футере (Bold/Classic/Gradient/Glass). */
+/** Колонка сгруппированных ссылок в футере (Bold/Classic/Monogram). */
 export interface FooterColumn {
   title: string;
   links: CtaLink[];
@@ -757,7 +1026,7 @@ export interface FooterSocialLink {
 }
 
 /**
- * Форма подписки в футере (Gradient/Glass). Настоящая форма method="get",
+ * Форма подписки в футере (Monogram). Настоящая форма method="get",
  * как HeroSearch — уходит на `action` без JS, никакая форма в шаблоне не
  * должна молча съедать введённое.
  */
@@ -777,9 +1046,11 @@ export interface FooterNewsletter {
  * bold      — знак+соцссылки слева, сгруппированные колонки ссылок справа.
  * classic   — то же, три колонки вместо плоского списка.
  * compact   — одна строка: знак+копирайт слева, ссылки справа.
- * gradient  — колонки + форма подписки, знак на акцентном градиенте.
+ * monogram  — колонки + форма подписки, знак-плашка с инициалом
+ *             (см. monogramBackground — раньше это были два почти
+ *             идентичных варианта, gradient и glass, отличавшиеся только
+ *             фоном плашки и поверхностью секции).
  * centered  — всё по центру: знак, один ряд ссылок, копирайт, соцссылки.
- * glass     — колонки + подписка на стеклянной подложке (как Header glass).
  * split     — ссылки двумя кластерами по бокам от центрального вордмарка.
  */
 export type FooterVariant =
@@ -787,9 +1058,8 @@ export type FooterVariant =
   | "bold"
   | "classic"
   | "compact"
-  | "gradient"
+  | "monogram"
   | "centered"
-  | "glass"
   | "split";
 
 export interface FooterConfig {
@@ -798,10 +1068,17 @@ export interface FooterConfig {
   links: CtaLink[];
   variant?: FooterVariant;
   /** Сгруппированные колонки ссылок. Без них колончатые варианты (bold,
-   *  classic, gradient, glass) просто не рендерят блок колонок. */
+   *  classic, monogram) просто не рендерят блок колонок. */
   columns?: FooterColumn[];
   social?: FooterSocialLink[];
   newsletter?: FooterNewsletter;
+  /**
+   * Фон знака-плашки и поверхность секции у варианта monogram.
+   * "gradient" (по умолчанию) — плашка на акцентном градиенте, секция на
+   * paper (бывший вариант gradient). "surface" — сплошной акцент в
+   * плашке, секция на собственной поверхности surface (бывший glass).
+   */
+  monogramBackground?: "gradient" | "surface";
 }
 
 export interface SiteConfig {

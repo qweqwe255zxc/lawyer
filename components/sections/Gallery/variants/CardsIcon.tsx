@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { getIcon } from "@/lib/icons";
+import { cn } from "@/lib/cn";
 import { revealDelay } from "@/lib/reveal";
 import { GalleryHeader } from "../parts/GalleryHeader";
 import type { GallerySection } from "@/types/site";
@@ -14,10 +15,11 @@ import type { GallerySection } from "@/types/site";
  * ссылка `link` внизу.
  */
 export function CardsIcon(props: GallerySection) {
-  const { id, surface = "surface", number, eyebrow, title, lead, action, items } = props;
+  const { id, surface = "surface", number, eyebrow, title, lead, action, items, align = "left", iconShape } = props;
+  const centered = align === "center";
 
   return (
-    <Section id={id} surface={surface}>
+    <Section id={id} surface={surface} iconShape={iconShape}>
       <Container>
         <GalleryHeader
           number={number}
@@ -35,8 +37,20 @@ export function CardsIcon(props: GallerySection) {
             return (
               <li key={`${item.category}-${item.year}-${index}`}>
                 <Card variant="framed" className="flex h-full flex-col">
-                  <div className="flex flex-1 flex-col" data-reveal style={revealDelay(index % 3)}>
-                    <div className="flex items-start justify-between gap-4">
+                  <div
+                    className={cn(
+                      "flex flex-1 flex-col",
+                      centered && "items-center text-center",
+                    )}
+                    data-reveal
+                    style={revealDelay(index % 3)}
+                  >
+                    <div
+                      className={cn(
+                        "flex items-center justify-between gap-4",
+                        centered && "w-full",
+                      )}
+                    >
                       {Icon ? (
                         <span className="icon-tile">
                           <Icon aria-hidden="true" strokeWidth={1.5} className="size-5" />
@@ -50,7 +64,12 @@ export function CardsIcon(props: GallerySection) {
                     <h3 className="mt-5 font-display text-h3">{item.title}</h3>
                     <p className="mt-3 text-small text-fg-muted">{item.problem}</p>
 
-                    <div className="mt-auto flex items-center justify-between gap-4 pt-6">
+                    <div
+                      className={cn(
+                        "mt-auto flex items-center justify-between gap-4 pt-6",
+                        centered && "w-full",
+                      )}
+                    >
                       <span className="text-small font-medium text-accent">
                         {item.category}
                       </span>

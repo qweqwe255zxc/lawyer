@@ -13,12 +13,12 @@ import type { StatsSection } from "@/types/site";
  * (роутер в dev-режиме предупреждает, см. Stats/index.tsx).
  */
 export function Photo(props: StatsSection) {
-  const { id, surface = "paper", title, lead, image, items } = props;
+  const { id, surface = "paper", number, eyebrow, title, lead, image, items, iconShape } = props;
 
   if (!image) return null;
 
   return (
-    <Section id={id} surface={surface}>
+    <Section id={id} surface={surface} iconShape={iconShape}>
       <Container>
         <div className="grid gap-x-gutter gap-y-10 md:grid-cols-2 md:items-stretch">
           <div className="ui-media-raised relative min-h-[22rem] overflow-hidden md:min-h-0">
@@ -30,10 +30,19 @@ export function Photo(props: StatsSection) {
               className="object-cover"
             />
 
-            {title || lead ? (
+            {number || eyebrow || title || lead ? (
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 via-ink/40 to-transparent p-8 pt-20">
+                {number || eyebrow ? (
+                  <p className="text-caption font-medium uppercase text-paper/70">
+                    {[number, eyebrow].filter(Boolean).join(" · ")}
+                  </p>
+                ) : null}
                 {title ? (
-                  <h2 className="font-heading text-h2 text-paper">{title}</h2>
+                  <h2
+                    className={`font-heading text-h2 text-paper ${number || eyebrow ? "mt-2" : ""}`}
+                  >
+                    {title}
+                  </h2>
                 ) : null}
                 {lead ? (
                   <p className="mt-3 max-w-[42ch] text-small text-paper/80">{lead}</p>
@@ -47,27 +56,28 @@ export function Photo(props: StatsSection) {
               const Icon = getIcon(item.icon);
 
               return (
-                <Card key={item.label} variant="framed">
-                  <div data-reveal style={revealDelay(index)}>
-                    {Icon ? (
-                      <Icon
-                        aria-hidden="true"
-                        strokeWidth={1.5}
-                        className="size-6 text-accent"
-                      />
+                <Card
+                  key={item.label}
+                  variant="framed"
+                  data-reveal
+                  style={revealDelay(index)}
+                >
+                  {Icon ? (
+                    <span className="icon-tile">
+                      <Icon aria-hidden="true" strokeWidth={1.5} className="size-6" />
+                    </span>
+                  ) : null}
+
+                  <dt className="tabular mt-4 font-display text-h2">
+                    {item.value}
+                    {item.suffix ? (
+                      <span className="text-fg-muted">{item.suffix}</span>
                     ) : null}
+                  </dt>
 
-                    <dt className="tabular mt-4 font-display text-h2">
-                      {item.value}
-                      {item.suffix ? (
-                        <span className="text-fg-muted">{item.suffix}</span>
-                      ) : null}
-                    </dt>
-
-                    <dd className="mt-2 text-caption font-medium uppercase text-fg-muted">
-                      {item.label}
-                    </dd>
-                  </div>
+                  <dd className="mt-2 text-caption font-medium uppercase text-fg-muted">
+                    {item.label}
+                  </dd>
                 </Card>
               );
             })}

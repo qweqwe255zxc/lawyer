@@ -1,11 +1,9 @@
 import { Band } from "./variants/Band";
 import { Badge } from "./variants/Badge";
 import { Bento } from "./variants/Bento";
-import { Dark } from "./variants/Dark";
 import { Grid } from "./variants/Grid";
 import { Photo } from "./variants/Photo";
 import { Plain } from "./variants/Plain";
-import { Playful } from "./variants/Playful";
 import { Rows } from "./variants/Rows";
 import type { VariantMap } from "../variantMap";
 import type { StatsSection } from "@/types/site";
@@ -30,21 +28,25 @@ const variants: VariantMap<
   rows: Rows,
   bento: Bento,
   photo: Photo,
-  playful: Playful,
   plain: Plain,
-  dark: Dark,
 };
 
 export function Stats(props: StatsSection) {
-  const resolved = props.variant ?? "band";
+  const requested = props.variant ?? "band";
+  const missingImage = requested === "photo" && !props.image;
 
-  if (process.env.NODE_ENV !== "production" && resolved === "photo" && !props.image) {
+  if (process.env.NODE_ENV !== "production" && missingImage) {
     console.warn(
-      `[Stats] Секция "${props.id}": variant="photo" без image — фото занять нечем. ` +
-        `Дайте image: "/images/..." или возьмите другой variant. См. docs/section-system.md.`,
+      `[Stats] Секция "${props.id}": variant="photo" без image — фото занять нечем, ` +
+        `показан "band". Дайте image: "/images/..." или возьмите другой variant. ` +
+        `См. docs/section-system.md.`,
     );
   }
 
+  // Тот же откат, что у Hero.resolveHeroLayout: несовместимая комбинация
+  // полей не должна оставлять пустой блок вместо секции, только
+  // предупреждение в dev.
+  const resolved = missingImage ? "band" : requested;
   const Variant = variants[resolved] ?? Band;
   return <Variant {...props} />;
 }

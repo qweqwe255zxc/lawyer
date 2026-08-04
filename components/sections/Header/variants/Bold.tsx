@@ -7,8 +7,10 @@ import { Container } from "@/components/ui/Container";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/cn";
 import { BurgerButton } from "../parts/BurgerButton";
+import { headerSurface, resolveScrolled } from "../parts/headerSurface";
 import { MobileNav } from "../parts/MobileNav";
 import { useHeaderState } from "../parts/useHeaderState";
+import { useNavOverflow } from "../parts/useNavOverflow";
 import type { HeaderProps } from "../types";
 
 /**
@@ -23,39 +25,53 @@ export function Bold({
   nav,
   actions,
   showThemeToggle,
+  heroSurface,
+  transparentBeforeScroll,
+  hideOnScroll,
 }: HeaderProps) {
-  const { scrolled, menuOpen, toggleMenu, closeMenu } = useHeaderState();
+  const { scrolled, hiddenByScroll, menuOpen, toggleMenu, closeMenu, activeHref } = useHeaderState(nav);
+  const effectiveScrolled = resolveScrolled(scrolled, transparentBeforeScroll);
+  const { ref: navRef, overflowing } = useNavOverflow<HTMLElement>();
 
   return (
     <header
-      data-surface="paper"
-      data-scrolled={scrolled}
+      data-surface={headerSurface(heroSurface, effectiveScrolled)}
+      data-scrolled={effectiveScrolled}
       className={cn(
-        "ui-header sticky top-0 z-[var(--z-header)] text-fg",
-        scrolled ? "border-b border-rule" : "border-b border-transparent",
+        "ui-header fixed inset-x-0 top-0 z-[var(--z-header)] text-fg",
+        effectiveScrolled ? "border-b border-rule" : "border-b border-transparent",
+        hideOnScroll && "transition-transform duration-300",
+        hideOnScroll && hiddenByScroll && "-translate-y-full",
       )}
     >
       <Container>
         <div className="flex h-header items-center justify-between gap-6">
           <Link
             href="#hero"
-            className="inline-flex items-center gap-2 font-heading text-h3 font-bold whitespace-nowrap"
+            className="inline-flex shrink-0 items-center gap-2 font-heading text-h3 font-bold whitespace-nowrap"
             onClick={closeMenu}
           >
             <BrandMark mark={brandMark} alt={brandName} />
             <span className="hidden sm:inline">{brandName}</span>
           </Link>
 
-          <div className="flex items-center gap-8">
-            <nav className="hidden lg:block" aria-label="Основная навигация">
-              <ul className="flex items-center gap-8">
-                {nav.map((item, index) => (
+          <div className="flex min-w-0 items-center gap-8">
+            <nav
+              ref={navRef}
+              className={cn(
+                "no-scrollbar hidden min-w-0 overflow-x-auto lg:block",
+                overflowing && "invisible pointer-events-none",
+              )}
+              aria-label="Основная навигация"
+            >
+              <ul className="flex items-center gap-5 xl:gap-8">
+                {nav.map((item) => (
                   <li key={item.href}>
                     <Link
                       href={item.href}
                       className={cn(
-                        "text-small font-medium transition-colors hover:text-fg",
-                        index === 0 ? "text-fg" : "text-fg-muted",
+                        "text-small font-medium whitespace-nowrap transition-colors hover:text-fg",
+                        item.href === activeHref ? "text-fg" : "text-fg-muted",
                       )}
                     >
                       {item.label}
@@ -65,30 +81,53 @@ export function Bold({
               </ul>
             </nav>
 
-            <div className="flex items-center gap-3">
-              {showThemeToggle ? <ThemeToggle /> : null}
+            <div className="flex shrink-0 items-center gap-3">
+              {showThemeToggle ? (
+                <div className="hidden sm:block">
+                  <ThemeToggle />
+                </div>
+              ) : null}
 
-              <div className="hidden sm:block">
-                {actions.map((action) => (
-                  <Button
-                    key={action.href}
-                    href={action.href}
-                    variant={action.variant ?? "primary"}
-                    size="sm"
-                    className="uppercase tracking-wide"
-                  >
-                    {action.label}
-                  </Button>
-                ))}
-              </div>
+              {actions[0] ? (
+                <Button
+                  href={actions[0].href}
+                  variant={actions[0].variant ?? "primary"}
+                  size="sm"
+                  className="uppercase tracking-wide"
+                >
+                  {actions[0].label}
+                </Button>
+              ) : null}
 
-              <BurgerButton open={menuOpen} onClick={toggleMenu} />
+              {actions.length > 1 ? (
+                <div className="hidden items-center gap-3 sm:flex">
+                  {actions.slice(1).map((action, index) => (
+                    <Button
+                      key={index}
+                      href={action.href}
+                      variant={action.variant ?? "primary"}
+                      size="sm"
+                      className="uppercase tracking-wide"
+                    >
+                      {action.label}
+                    </Button>
+                  ))}
+                </div>
+              ) : null}
+
+              <BurgerButton open={menuOpen} onClick={toggleMenu} forceVisible={overflowing} />
             </div>
           </div>
         </div>
       </Container>
 
-      <MobileNav nav={nav} actions={actions} menuOpen={menuOpen} closeMenu={closeMenu} />
+      <MobileNav
+        nav={nav}
+        actions={actions}
+        menuOpen={menuOpen}
+        closeMenu={closeMenu}
+        activeHref={activeHref}
+      />
     </header>
   );
 }

@@ -26,8 +26,8 @@ interface AccordionProps {
  * Форма списка — ручки пресета (.ui-accordion / --accordion-* ):
  * в «Экономе» это список на линейках без рамок и фонов, в «Стандарте»
  * — стопка карточек с зазором (линейки при этом снимаются, их роль
- * берут подложка и тень). Раскрытый пункт в обоих случаях подсвечивается
- * 2px линией акцентного цвета слева — единственное цветное состояние.
+ * берут подложка и тень). Раскрытый пункт подсвечивается цветом текста
+ * (hover/active — text-accent), без вертикальной линии слева.
  */
 export function Accordion({ items, multiple = false, className }: AccordionProps) {
   const baseId = useId();
@@ -64,14 +64,13 @@ export function Accordion({ items, multiple = false, className }: AccordionProps
                 aria-controls={panelId}
                 onClick={() => toggle(index)}
                 className={cn(
-                  "flex w-full items-start justify-between gap-6 py-6 text-left transition-colors",
-                  "border-l-2 pl-5 md:pl-6",
-                  isOpen ? "border-accent" : "border-transparent hover:border-rule-strong",
+                  "flex w-full items-center justify-between gap-6 py-6 pl-5 text-left transition-colors md:pl-6",
+                  isOpen ? "text-fg" : "text-fg hover:text-accent",
                 )}
               >
                 <span className="flex items-center gap-4">
                   {Icon ? (
-                    <span className="icon-tile shrink-0">
+                    <span className="icon-tile flex shrink-0 items-center justify-center">
                       <Icon aria-hidden="true" strokeWidth={1.5} className="size-5" />
                     </span>
                   ) : null}
@@ -80,7 +79,7 @@ export function Accordion({ items, multiple = false, className }: AccordionProps
                 <ChevronDown
                   aria-hidden="true"
                   className={cn(
-                    "mt-1 size-5 shrink-0 text-fg-muted transition-transform duration-200",
+                    "size-5 shrink-0 text-fg-muted transition-transform duration-200",
                     isOpen && "rotate-180",
                   )}
                 />
@@ -99,7 +98,7 @@ export function Accordion({ items, multiple = false, className }: AccordionProps
               style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
             >
               <div className="overflow-hidden">
-                <div className="border-l-2 border-transparent pb-7 pl-5 pr-10 md:pl-6">
+                <div className="pb-7 pl-5 pr-10 md:pl-6">
                   <p className="measure text-body text-fg-muted">{item.answer}</p>
 
                   {item.tags && item.tags.length > 0 ? (

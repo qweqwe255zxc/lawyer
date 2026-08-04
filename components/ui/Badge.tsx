@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-export type BadgeVariant = "soft" | "outline";
+export type BadgeVariant = "soft" | "outline" | "solid";
 
 interface BadgeProps {
   children: ReactNode;
@@ -10,6 +10,12 @@ interface BadgeProps {
    *           «В работе»), бейдж виджета в hero.
    * outline — строгая рамка + моноширинный капс: теги и коды, где важна
    *           не эмоция, а различимость (тариф «Стандарт Premium»).
+   * solid   — непрозрачная акцентная заливка. Только для плашек, которые
+   *           физически лежат НА ГРАНИЦЕ двух поверхностей (например,
+   *           «MOST POPULAR» приподнят над верхним краем карточки и
+   *           наполовину лежит на фоне секции) — там soft (10–16%-подложка)
+   *           на светлом фоне секции почти не читается, а тут нужна плашка,
+   *           видимая одинаково и на карточке, и рядом с ней.
    */
   variant?: BadgeVariant;
   className?: string;
@@ -32,6 +38,7 @@ interface BadgeProps {
 const variants: Record<BadgeVariant, string> = {
   soft: "bg-badge-soft text-badge-soft-fg",
   outline: "border border-rule font-mono uppercase text-fg-muted",
+  solid: "bg-accent text-accent-fg",
 };
 
 export function Badge({ children, variant = "soft", className }: BadgeProps) {

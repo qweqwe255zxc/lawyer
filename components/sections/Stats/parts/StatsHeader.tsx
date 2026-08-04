@@ -29,7 +29,7 @@ export function StatsHeader({
   eyebrowStyle = "badge",
   className,
 }: StatsHeaderProps) {
-  if (!eyebrow && !title && !lead) return null;
+  if (!number && !eyebrow && !title && !lead) return null;
 
   const centered = align === "center";
 

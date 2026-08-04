@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { getIcon } from "@/lib/icons";
 import { revealDelay } from "@/lib/reveal";
+import { getInitials } from "../parts/initials";
 import { TeamBannerBlock } from "../parts/TeamBannerBlock";
 import { TeamHeader } from "../parts/TeamHeader";
 import type { TeamSection } from "@/types/site";
@@ -15,7 +16,7 @@ import type { TeamSection } from "@/types/site";
  * описание, `tags`. Опциональный баннер снизу (tone="quote").
  */
 export function TagsCards(props: TeamSection) {
-  const { id, surface = "paper", number, eyebrow, title, lead, banner, items } = props;
+  const { id, surface = "paper", number, eyebrow, title, lead, banner, items, headerAlign } = props;
   const LinkIcon = getIcon("arrowUpRight");
 
   return (
@@ -26,10 +27,11 @@ export function TagsCards(props: TeamSection) {
           eyebrow={eyebrow}
           title={title}
           lead={lead}
+          align={headerAlign}
           className="mb-12 md:mb-16"
         />
 
-        <ul className="grid gap-x-gutter gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-x-gutter gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {items.map((member, index) => (
             <li key={member.name} data-reveal style={revealDelay(index % 3)}>
               <Card variant="framed" padded={false} className="flex h-full flex-col overflow-hidden">
@@ -42,7 +44,14 @@ export function TagsCards(props: TeamSection) {
                       sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
                       className="object-cover grayscale"
                     />
-                  ) : null}
+                  ) : (
+                    <div
+                      aria-hidden="true"
+                      className="flex h-full w-full items-center justify-center font-display text-h1 text-fg-muted"
+                    >
+                      {getInitials(member.name)}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-1 flex-col p-7 md:p-9">

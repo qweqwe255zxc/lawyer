@@ -6,7 +6,19 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /** Служебные поля — в письмо и телеграм не идут, это не то, что ввёл пользователь. */
-const SERVICE_FIELDS = new Set(["company", "elapsed", "minFill"]);
+const SERVICE_FIELDS = new Set(["_gotcha", "elapsed"]);
+
+/**
+ * Порог антибот-таймера — только серверная константа, значение клиента
+ * не читаем: `payload.minFill` раньше приходил от клиента и сравнивался
+ * с `payload.elapsed`, тоже от клиента — весь фильтр проходился одним
+ * запросом вида `{elapsed: 999999, minFill: 0}`. Задержка та же, что и
+ * на клиенте (components/sections/ContactForm/parts/useContactForm.ts,
+ * MIN_FILL_MS) — держать в одном месте нельзя: серверный роут не должен
+ * импортировать клиентский модуль ("use client"), значения синхронизируются
+ * руками.
+ */
+const MIN_FILL_MS = 3000;
 
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 5;
@@ -124,14 +136,18 @@ export async function POST(request: Request) {
   }
 
   // антиспам: в обоих случаях отвечаю 200 — если бот поймёт, что его
-  // отсеяли, начнёт подбирать обход. Живой пользователь сюда не попадает
-  if (typeof payload.company === "string" && payload.company.trim() !== "") {
+  // отсеяли, начнёт подбирать обход. Живой пользователь сюда не попадает.
+  // console.log — не для отладки, а чтобы skip не был полностью немым:
+  // без него ложное срабатывание на живом после автозаполнении браузера
+  // выглядело бы как «заявка ушла», а на деле нигде не появилась бы.
+  if (typeof payload._gotcha === "string" && payload._gotcha.trim() !== "") {
+    console.log(`[contact] отсеяно honeypot, ip=${ip}`);
     return NextResponse.json({ ok: true, skipped: "honeypot" });
   }
 
   const elapsed = Number(payload.elapsed ?? 0);
-  const minFill = Number(payload.minFill ?? 3000);
-  if (!Number.isFinite(elapsed) || elapsed < minFill) {
+  if (!Number.isFinite(elapsed) || elapsed < MIN_FILL_MS) {
+    console.log(`[contact] отсеяно по таймеру (elapsed=${elapsed}), ip=${ip}`);
     return NextResponse.json({ ok: true, skipped: "too_fast" });
   }
 

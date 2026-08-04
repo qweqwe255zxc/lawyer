@@ -28,7 +28,7 @@ export function StepsHeader({
   eyebrowStyle = "badge",
   className,
 }: StepsHeaderProps) {
-  if (!eyebrow && !title && !lead) return null;
+  if (!number && !eyebrow && !title && !lead) return null;
 
   const centered = align === "center";
 

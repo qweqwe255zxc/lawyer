@@ -6,8 +6,8 @@ import type { StepItem } from "@/types/site";
 
 interface StepsRailListProps {
   items: StepItem[];
-  /** Сколько шагов в строке на md+: 4 у rail, 2 у stack. */
-  columns: "md:grid-cols-4" | "md:grid-cols-2";
+  /** Сколько шагов в строке: 4 с md у rail, 2 с sm у stack. */
+  columns: "md:grid-cols-4" | "sm:grid-cols-2";
 }
 
 /**
@@ -20,7 +20,13 @@ interface StepsRailListProps {
  */
 export function StepsRailList({ items, columns }: StepsRailListProps) {
   return (
-    <ol className={cn("mt-14 grid gap-x-gutter md:mt-20", columns)}>
+    // gap-y, а не margin на <li>: у stack (md:grid-cols-2) при 4+ items
+    // сетка переносится на вторую строку, а margin гасился на md ради
+    // мобильной раскладки в один столбец — между рядами не оставалось
+    // никакого зазора, и meta последнего шага в ряду утыкалась прямо в
+    // верх карточки следующего ряда. gap-y работает одинаково что в
+    // одну колонку на мобильном, что в несколько рядов на md+.
+    <ol className={cn("mt-14 grid gap-x-gutter gap-y-10 md:mt-20 md:gap-y-14", columns)}>
       {items.map((item, index) => {
         const Icon = getIcon(item.icon);
 
@@ -29,10 +35,12 @@ export function StepsRailList({ items, columns }: StepsRailListProps) {
             key={item.number}
             data-reveal
             style={revealDelay(index)}
-            className={cn("border-t border-rule pt-7", index > 0 && "mt-10 md:mt-0")}
+            className="border-t border-rule pt-7"
           >
             {Icon ? (
-              <Icon aria-hidden="true" strokeWidth={1.5} className="mb-4 size-6 text-fg-muted" />
+              <span className="icon-tile mb-4">
+                <Icon aria-hidden="true" strokeWidth={1.5} className="size-6" />
+              </span>
             ) : null}
 
             <span

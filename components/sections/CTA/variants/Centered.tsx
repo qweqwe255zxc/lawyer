@@ -32,12 +32,12 @@ export function Centered(props: CtaSection) {
 
           {actions.length > 0 ? (
             <div
-              className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
+              className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:items-baseline sm:justify-center"
               data-reveal
             >
-              {actions.map((action) => (
+              {actions.map((action, index) => (
                 <Button
-                  key={action.href}
+                  key={index}
                   href={action.href}
                   variant={action.variant ?? "primary"}
                 >

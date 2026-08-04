@@ -7,6 +7,8 @@ interface BurgerButtonProps {
   open: boolean;
   onClick: () => void;
   className?: string;
+  /** true, когда нав не помещается по ширине даже на lg+ (см. useNavOverflow) — бургер остаётся видимым и там. */
+  forceVisible?: boolean;
 }
 
 /**
@@ -14,7 +16,7 @@ interface BurgerButtonProps {
  * между иконками Menu/X дословно одинаковы во всех вариантах, меняется
  * только то, где кнопка стоит в макете (это решает variant, не этот файл).
  */
-export function BurgerButton({ open, onClick, className }: BurgerButtonProps) {
+export function BurgerButton({ open, onClick, className, forceVisible }: BurgerButtonProps) {
   return (
     <button
       type="button"
@@ -23,7 +25,8 @@ export function BurgerButton({ open, onClick, className }: BurgerButtonProps) {
       aria-controls="mobile-nav"
       aria-label={open ? "Закрыть меню" : "Открыть меню"}
       className={cn(
-        "-mr-2 p-2 text-fg-muted transition-colors hover:text-fg lg:hidden",
+        "-mr-2 shrink-0 cursor-pointer p-2 text-fg-muted transition-colors hover:text-fg",
+        !forceVisible && "lg:hidden",
         className,
       )}
     >

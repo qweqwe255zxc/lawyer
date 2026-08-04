@@ -5,17 +5,15 @@ import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Toast } from "@/components/ui/Toast";
 import { ContactDetails } from "../parts/ContactDetails";
+import { ContactMap } from "../parts/ContactMap";
 import { FormColumn } from "../parts/FormColumn";
 import { useContactForm } from "../parts/useContactForm";
 import type { ContactFormProps } from "../types";
 
 /**
  * Одна колонка: реквизиты сверху, форма под ними. Для узких страниц и
- * коротких форм.
- *
- * Карта тут дополнительно ограничена по ширине (mx-auto max-w-md): в
- * одной колонке блок реквизитов растягивается на весь контейнер, и iframe
- * с aspectRatio 4/3 превратился бы в полосу ~930px высотой на весь экран.
+ * коротких форм. Карта — полосой во всю ширину под ними, см.
+ * parts/ContactMap.tsx (та же раскладка карты, что и у split).
  */
 export function Stacked(props: ContactFormProps) {
   const {
@@ -35,6 +33,7 @@ export function Stacked(props: ContactFormProps) {
     errorText,
     contacts,
     mapSrc,
+    showMap = true,
   } = props;
 
   const form = useContactForm({
@@ -54,13 +53,14 @@ export function Stacked(props: ContactFormProps) {
           lead={lead}
         />
 
-        <div className="mt-14 grid gap-x-gutter gap-y-14 md:mt-20 md:grid-cols-1">
-          <ContactDetails
-            contacts={contacts}
-            detailsTitle={detailsTitle}
-            mapSrc={mapSrc}
-            mapClassName="mx-auto max-w-md"
-          />
+        {/* max-w-3xl + mx-auto: без ограничения ширины и реквизиты (dl на
+            линейках), и поля формы растягивались во все 1240px контейнера —
+            тонкие строки во всю ширину экрана читались как пустая,
+            недоделанная страница. Раньше тут ещё стоял md:grid-cols-1 —
+            no-op (1 колонка и так дефолт grid), реального разделения на
+            md+ не было вовсе. */}
+        <div className="mx-auto mt-14 flex max-w-3xl flex-col gap-y-14 md:mt-20">
+          <ContactDetails contacts={contacts} detailsTitle={detailsTitle} />
 
           <FormColumn
             form={form}
@@ -70,6 +70,8 @@ export function Stacked(props: ContactFormProps) {
             layout={layout}
           />
         </div>
+
+        {showMap && mapSrc ? <ContactMap mapSrc={mapSrc} /> : null}
       </Container>
 
       <Toast toast={form.toast} onClose={form.closeToast} />

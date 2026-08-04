@@ -11,6 +11,7 @@ interface MobileNavProps {
   actions: CtaLink[];
   menuOpen: boolean;
   closeMenu: () => void;
+  activeHref?: string;
 }
 
 /**
@@ -20,14 +21,14 @@ interface MobileNavProps {
  * мгновенно; inert убирает её из фокуса и чтения экранным диктором,
  * пока она закрыта.
  */
-export function MobileNav({ nav, actions, menuOpen, closeMenu }: MobileNavProps) {
+export function MobileNav({ nav, actions, menuOpen, closeMenu, activeHref }: MobileNavProps) {
   return (
     <div
       id="mobile-nav"
       data-open={menuOpen}
       inert={!menuOpen}
       className={cn(
-        "mobile-nav bg-bg lg:hidden",
+        "mobile-nav bg-bg",
         menuOpen ? "border-t border-rule" : "border-t border-transparent",
       )}
     >
@@ -40,7 +41,10 @@ export function MobileNav({ nav, actions, menuOpen, closeMenu }: MobileNavProps)
                   <Link
                     href={item.href}
                     onClick={closeMenu}
-                    className="block py-4 text-body text-fg-muted transition-colors hover:text-fg"
+                    className={cn(
+                      "block py-4 text-body transition-colors hover:text-fg",
+                      item.href === activeHref ? "text-fg" : "text-fg-muted",
+                    )}
                   >
                     {item.label}
                   </Link>
@@ -49,12 +53,13 @@ export function MobileNav({ nav, actions, menuOpen, closeMenu }: MobileNavProps)
             </ul>
           </nav>
 
-          <div className="py-6 sm:hidden">
-            {actions.map((action) => (
+          <div className="flex flex-col gap-3 py-6 sm:hidden">
+            {actions.map((action, index) => (
               <Button
-                key={action.href}
+                key={index}
                 href={action.href}
                 variant={action.variant ?? "primary"}
+                onClick={closeMenu}
                 full
               >
                 {action.label}

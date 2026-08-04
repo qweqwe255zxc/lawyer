@@ -23,7 +23,7 @@ export function TestimonialsHeader({
   align = "center",
   className,
 }: TestimonialsHeaderProps) {
-  if (!eyebrow && !title && !lead) return null;
+  if (!number && !eyebrow && !title && !lead) return null;
 
   const centered = align === "center";
 

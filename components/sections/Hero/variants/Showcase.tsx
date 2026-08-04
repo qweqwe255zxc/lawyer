@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/Badge";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
+import { cn } from "@/lib/cn";
 import { revealDelay } from "@/lib/reveal";
 import { HeroFacts } from "../parts/HeroFacts";
 import { HeroLede } from "../parts/HeroLede";
@@ -42,6 +43,7 @@ export function Showcase(props: HeroSection) {
     proof,
     image,
     widget,
+    hideMediaOnMobile,
   } = props;
 
   const hasPanel = Boolean(image || widget);
@@ -71,12 +73,20 @@ export function Showcase(props: HeroSection) {
           </div>
 
           {image ? (
-            <div className="md:col-span-6 md:col-start-7">
+            <div
+              className={cn(
+                "md:col-span-6 md:col-start-7 md:pl-6 lg:pl-10",
+                hideMediaOnMobile && "hidden md:block",
+              )}
+            >
               <HeroPanel image={image} alt={headline.join(" ")} frame={frame} />
             </div>
           ) : widget ? (
             <div
-              className="md:col-span-6 md:col-start-7"
+              className={cn(
+                "md:col-span-6 md:col-start-7 md:pl-6 lg:pl-10",
+                hideMediaOnMobile && "hidden md:block",
+              )}
               data-reveal
               style={revealDelay(1)}
             >

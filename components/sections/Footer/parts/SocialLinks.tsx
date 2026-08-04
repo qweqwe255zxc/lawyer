@@ -9,15 +9,18 @@ interface SocialLinksProps {
 
 /**
  * Ряд иконок-ссылок в футере, общий для нескольких вариантов (Bold,
- * Classic, Gradient, Glass, Centered, Split). Плашка — icon-tile, та же
- * роль, что у иконок Features: в «Экономе» это голая иконка без фона,
- * в «Стандарте» — мягкая подложка с радиусом.
+ * Classic, Monogram, Centered, Split). Плашка — icon-tile, та же роль,
+ * что у иконок Features: в «Экономе» это голая иконка без фона, в
+ * «Стандарте» — мягкая подложка с радиусом. Размер плашки сознательно не
+ * фиксирован (никакого size-9): icon-tile сама считает его из размера
+ * иконки и своего паддинга — фиксированный бокс поверх этого раньше
+ * обрезал паддинг и оставлял внутри непропорционально мелкую иконку.
  */
 export function SocialLinks({ items, className }: SocialLinksProps) {
   if (items.length === 0) return null;
 
   return (
-    <ul className={cn("flex items-center gap-3", className)}>
+    <ul className={cn("flex flex-wrap items-center gap-4", className)}>
       {items.map((item) => {
         const Icon = getIcon(item.icon);
         if (!Icon) return null;
@@ -27,9 +30,9 @@ export function SocialLinks({ items, className }: SocialLinksProps) {
             <a
               href={item.href}
               aria-label={item.label}
-              className="icon-tile flex size-9 items-center justify-center text-fg-muted transition-colors hover:text-fg"
+              className="icon-tile flex items-center justify-center rounded-full text-fg-muted transition-colors hover:text-fg"
             >
-              <Icon aria-hidden="true" strokeWidth={1.5} className="size-4" />
+              <Icon aria-hidden="true" strokeWidth={1.5} className="size-5" />
             </a>
           </li>
         );

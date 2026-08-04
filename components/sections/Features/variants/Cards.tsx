@@ -19,16 +19,20 @@ export function Cards(props: FeaturesSection) {
   const {
     id,
     surface = "surface",
-    columns = 2,
+    // 3 в ряд по умолчанию: на 2 колонках карточка растягивается почти
+    // на половину контейнера, и текст/пункты внутри читаются слишком
+    // просторно по сравнению с остальными карточными секциями страницы.
+    columns = 3,
     number,
     eyebrow,
     title,
     lead,
     items,
+    iconShape,
   } = props;
 
   return (
-    <Section id={id} surface={surface}>
+    <Section id={id} surface={surface} iconShape={iconShape}>
       <Container>
         <SectionHeader
           number={number}
@@ -55,7 +59,7 @@ export function Cards(props: FeaturesSection) {
                 data-reveal
                 style={revealDelay(index % columns)}
               >
-                <FeatureContent item={item} />
+                <FeatureContent item={item} iconLayout="inline" />
               </div>
             </Card>
           ))}

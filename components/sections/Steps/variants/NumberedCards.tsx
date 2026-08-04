@@ -14,20 +14,22 @@ import type { StepsSection } from "@/types/site";
  * ink-поверхность — обычно последний шаг («Результат»).
  */
 export function NumberedCards(props: StepsSection) {
-  const { id, surface = "paper", number, eyebrow, title, lead, items } = props;
+  const { id, surface = "paper", number, eyebrow, title, lead, items, headerAlign, iconShape } =
+    props;
 
   return (
-    <Section id={id} surface={surface}>
+    <Section id={id} surface={surface} iconShape={iconShape}>
       <Container>
         <StepsHeader
           number={number}
           eyebrow={eyebrow}
           title={title}
           lead={lead}
+          align={headerAlign}
           className="mb-12 md:mb-16"
         />
 
-        <ol className="grid gap-x-gutter gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+        <ol className="grid gap-x-gutter gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {items.map((item, index) => {
             const Icon = getIcon(item.icon);
             const isLast = index === items.length - 1;
@@ -38,7 +40,14 @@ export function NumberedCards(props: StepsSection) {
                 data-reveal
                 style={revealDelay(index)}
                 data-surface={item.featured ? "ink" : undefined}
-                className={item.featured ? "bg-bg text-fg" : undefined}
+                // bg-card, а не bg-bg: Card внутри рисует свой фон через
+                // --surface-card (в «Стандарте» он светлее чистого фона
+                // секции), и он покрывает контейнер целиком. Если у
+                // контейнера свой bg-bg (чистый --surface-bg), два разных
+                // тона совпадают почти везде, кроме скруглённых углов
+                // карточки — там в срезе виден чужой прямоугольный угол
+                // контейнера. bg-card делает их одним и тем же тоном.
+                className={item.featured ? "bg-card text-fg" : undefined}
               >
                 <Card variant="framed" className="h-full">
                   <div className="flex items-center gap-3">
@@ -56,10 +65,12 @@ export function NumberedCards(props: StepsSection) {
                   </div>
 
                   {Icon ? (
-                    <Icon aria-hidden="true" strokeWidth={1.5} className="mt-5 size-6 text-accent" />
+                    <span className="icon-tile mt-5">
+                      <Icon aria-hidden="true" strokeWidth={1.5} className="size-6" />
+                    </span>
                   ) : null}
 
-                  <h3 className="mt-4 font-heading text-h4">{item.title}</h3>
+                  <h3 className="mt-4 max-w-[22ch] font-heading text-h4">{item.title}</h3>
                   <p className="mt-2 text-small text-fg-muted">{item.text}</p>
 
                   {item.photo ? (

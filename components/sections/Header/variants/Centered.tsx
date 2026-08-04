@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Container } from "@/components/ui/Container";
 import { cn } from "@/lib/cn";
+import { headerSurface } from "../parts/headerSurface";
 import { useHeaderState } from "../parts/useHeaderState";
 import type { HeaderProps } from "../types";
 
@@ -18,16 +19,20 @@ export function Centered({
   brandName,
   nav,
   showThemeToggle,
+  heroSurface,
+  hideOnScroll,
 }: HeaderProps) {
-  const { scrolled } = useHeaderState();
+  const { scrolled, hiddenByScroll, activeHref } = useHeaderState(nav);
 
   return (
     <header
-      data-surface="paper"
+      data-surface={headerSurface(heroSurface, scrolled)}
       data-scrolled={scrolled}
       className={cn(
-        "ui-header sticky top-0 z-[var(--z-header)] text-fg",
+        "ui-header fixed inset-x-0 top-0 z-[var(--z-header)] text-fg",
         scrolled ? "border-b border-rule" : "border-b border-transparent",
+        hideOnScroll && "transition-transform duration-300",
+        hideOnScroll && hiddenByScroll && "-translate-y-full",
       )}
     >
       <Container>
@@ -44,13 +49,13 @@ export function Centered({
 
           <nav aria-label="Основная навигация">
             <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
-              {nav.map((item, index) => (
+              {nav.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
                     className={cn(
                       "text-caption font-medium tracking-wide uppercase transition-colors hover:text-fg",
-                      index === 0 ? "text-fg" : "text-fg-muted",
+                      item.href === activeHref ? "text-fg" : "text-fg-muted",
                     )}
                   >
                     {item.label}

@@ -13,15 +13,16 @@ import type { StatsSection } from "@/types/site";
  * после числа, а не хвост вроде «%».
  */
 export function Rows(props: StatsSection) {
-  const { id, surface = "paper", number, eyebrow, title, items } = props;
+  const { id, surface = "paper", number, eyebrow, title, lead, items, iconShape } = props;
 
   return (
-    <Section id={id} surface={surface}>
+    <Section id={id} surface={surface} iconShape={iconShape}>
       <Container>
         <StatsHeader
           number={number}
           eyebrow={eyebrow}
           title={title}
+          lead={lead}
           align="left"
           eyebrowStyle="plain"
           className="mb-12 md:mb-16"
@@ -38,9 +39,14 @@ export function Rows(props: StatsSection) {
                 style={revealDelay(index)}
                 className="border-t border-rule pt-6"
               >
-                <div className="flex items-center gap-2">
+                {/* min-h резервирует место под подпись в две строки: без
+                    него разные по длине label сдвигали dd ниже на разную
+                    высоту, и цифры «прыгали» между колонками одного ряда. */}
+                <div className="flex min-h-10 items-start gap-2">
                   {Icon ? (
-                    <Icon aria-hidden="true" strokeWidth={1.5} className="size-4 text-fg-muted" />
+                    <span className="icon-tile mt-0.5 shrink-0">
+                      <Icon aria-hidden="true" strokeWidth={1.5} className="size-4" />
+                    </span>
                   ) : null}
                   <dt className="text-caption font-medium uppercase text-fg-muted">
                     {item.label}

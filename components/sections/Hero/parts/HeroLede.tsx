@@ -15,7 +15,7 @@ interface HeroLedeProps {
 
 /**
  * Заголовок, лид и кнопки — сердце hero, одинаковое во всех раскладках.
- * Последняя строка headline всегда идёт курсивом в акценте: это одно из
+ * Последняя строка headline всегда в акцентном цвете: это одно из
  * шести мест, где акцент вообще появляется.
  */
 export function HeroLede({
@@ -30,14 +30,14 @@ export function HeroLede({
       {/* Ручные переносы включаются только с md: на узком экране они дают
           висячие строки, там заголовок верстается потоком. */}
       <h1
-        className="font-heading text-h1"
+        className="font-heading text-h1 break-words"
         style={compact ? COMPACT_H1 : undefined}
         data-reveal
       >
         {headline.map((line, index) => (
-          <span key={line} className="md:block">
+          <span key={index} className="md:block">
             {index === headline.length - 1 ? (
-              <span className="font-heading italic text-accent">{line}</span>
+              <span className="text-accent">{line}</span>
             ) : (
               line
             )}
@@ -62,9 +62,9 @@ export function HeroLede({
           data-reveal
           style={revealDelay(2)}
         >
-          {actions.map((action) => (
+          {actions.map((action, index) => (
             <Button
-              key={action.href}
+              key={index}
               href={action.href}
               variant={action.variant ?? "primary"}
             >

@@ -18,7 +18,11 @@ export function CategoryFilter({ items }: { items: FaqItem[] }) {
     () => Array.from(new Set(items.map((item) => item.category).filter(Boolean))) as string[],
     [items],
   );
-  const [active, setActive] = useState<string | null>(categories[0] ?? null);
+  // null — «Все». Раньше стартовало сразу с categories[0] и пилюли «Все»
+  // не было вовсе: вопросы без category (поле опционально) становились
+  // навсегда недостижимыми, как только у любого другого item была задана
+  // категория.
+  const [active, setActive] = useState<string | null>(null);
 
   const visible = active ? items.filter((item) => item.category === active) : items;
 
@@ -26,6 +30,20 @@ export function CategoryFilter({ items }: { items: FaqItem[] }) {
     <div>
       {categories.length > 0 ? (
         <div className="mb-10 flex flex-wrap justify-center gap-2" data-reveal>
+          <button
+            type="button"
+            onClick={() => setActive(null)}
+            aria-pressed={active === null}
+            className={cn(
+              "rounded-pill px-4 py-2 text-small font-medium transition-colors",
+              active === null
+                ? "bg-btn-primary text-btn-primary-fg"
+                : "bg-badge-soft text-badge-soft-fg hover:opacity-80",
+            )}
+          >
+            Все
+          </button>
+
           {categories.map((category) => (
             <button
               key={category}
@@ -45,7 +63,11 @@ export function CategoryFilter({ items }: { items: FaqItem[] }) {
         </div>
       ) : null}
 
-      <Accordion items={visible} />
+      {/* key сбрасывает открытые панели аккордеона при смене фильтра —
+          иначе позиционный индекс открытой панели из одной категории
+          совпадал бы с другим вопросом в новой и оставался раскрытым
+          сам по себе. */}
+      <Accordion key={active ?? "all"} items={visible} />
     </div>
   );
 }

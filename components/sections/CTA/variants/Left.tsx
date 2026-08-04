@@ -15,7 +15,10 @@ export function Left(props: CtaSection) {
   return (
     <Section id={id} surface={surface} spacing="lg">
       <Container>
-        <div className="max-w-[42rem]">
+        {/* max-w-[52rem]: у 42rem три action (кнопка+кнопка+текстовая
+            ссылка) не помещались в строку и ссылка переносилась под низ —
+            заголовку и лиду это ширины не убавляет, у них свой max-w. */}
+        <div className="max-w-[52rem]">
           <CtaEyebrow eyebrow={eyebrow} variant="dot" />
 
           {title ? (
@@ -30,11 +33,14 @@ export function Left(props: CtaSection) {
             </p>
           ) : null}
 
+          {/* items-baseline: variant="quiet" — текстовая ссылка без своего
+              бокса (h-auto), рядом с обычными кнопками (h-12) центр по
+              боксу держал её заметно выше подписи кнопок. */}
           {actions.length > 0 ? (
-            <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4" data-reveal>
-              {actions.map((action) => (
+            <div className="mt-8 flex flex-wrap items-baseline gap-x-8 gap-y-4" data-reveal>
+              {actions.map((action, index) => (
                 <Button
-                  key={action.href}
+                  key={index}
                   href={action.href}
                   variant={action.variant ?? "primary"}
                 >

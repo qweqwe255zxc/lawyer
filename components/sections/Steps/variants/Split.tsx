@@ -14,12 +14,12 @@ import type { StepsSection } from "@/types/site";
  * Требует `image`, без него вариант не рендерится (роутер предупреждает).
  */
 export function Split(props: StepsSection) {
-  const { id, surface = "paper", title, lead, image, items } = props;
+  const { id, surface = "paper", number, eyebrow, title, lead, image, items, iconShape } = props;
 
   if (!image) return null;
 
   return (
-    <Section id={id} surface={surface}>
+    <Section id={id} surface={surface} iconShape={iconShape}>
       <Container>
         <div className="grid gap-x-gutter gap-y-10 md:grid-cols-2 md:items-stretch">
           <div className="ui-media-raised relative min-h-[22rem] overflow-hidden md:min-h-0">
@@ -31,9 +31,20 @@ export function Split(props: StepsSection) {
               className="object-cover"
             />
 
-            {title || lead ? (
+            {number || eyebrow || title || lead ? (
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 via-ink/40 to-transparent p-8 pt-20">
-                {title ? <h2 className="font-heading text-h2 text-paper">{title}</h2> : null}
+                {number || eyebrow ? (
+                  <p className="text-caption font-medium uppercase text-paper/70">
+                    {[number, eyebrow].filter(Boolean).join(" · ")}
+                  </p>
+                ) : null}
+                {title ? (
+                  <h2
+                    className={`font-heading text-h2 text-paper ${number || eyebrow ? "mt-2" : ""}`}
+                  >
+                    {title}
+                  </h2>
+                ) : null}
                 {lead ? (
                   <p className="mt-3 max-w-[42ch] text-small text-paper/80">{lead}</p>
                 ) : null}
@@ -65,10 +76,12 @@ export function Split(props: StepsSection) {
                     </span>
 
                     {Icon ? (
-                      <Icon aria-hidden="true" strokeWidth={1.5} className="size-6 text-accent" />
+                      <span className="icon-tile">
+                        <Icon aria-hidden="true" strokeWidth={1.5} className="size-6" />
+                      </span>
                     ) : null}
 
-                    <h3 className="relative mt-4 font-heading text-h4">{item.title}</h3>
+                    <h3 className="relative mt-4 max-w-[22ch] font-heading text-h4">{item.title}</h3>
                     <p className="relative mt-2 text-small text-fg-muted">{item.text}</p>
                   </Card>
                 </li>

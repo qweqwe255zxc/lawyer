@@ -36,7 +36,7 @@ export function ThemeToggle() {
       aria-label={
         mode === "dark" ? "Включить светлую тему" : "Включить тёмную тему"
       }
-      className="p-2 text-fg-muted transition-colors hover:text-fg"
+      className="shrink-0 cursor-pointer p-2 text-fg-muted transition-colors hover:text-fg"
     >
       {mode === "dark" ? (
         <Sun aria-hidden="true" className="size-5" />

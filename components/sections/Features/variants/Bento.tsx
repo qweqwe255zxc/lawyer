@@ -20,16 +20,17 @@ import type { FeaturesSection } from "@/types/site";
  * любому числу items поток.
  */
 export function Bento(props: FeaturesSection) {
-  const { id, surface = "surface", number, eyebrow, title, lead, items } = props;
+  const { id, surface = "surface", number, eyebrow, title, lead, items, iconShape, headerAlign } = props;
 
   return (
-    <Section id={id} surface={surface}>
+    <Section id={id} surface={surface} iconShape={iconShape}>
       <Container>
         <FeaturesHeader
           number={number}
           eyebrow={eyebrow}
           title={title}
           lead={lead}
+          align={headerAlign}
           className="mb-12 md:mb-16"
         />
 
@@ -41,23 +42,33 @@ export function Bento(props: FeaturesSection) {
               style={revealDelay(index)}
               className={cn(index === 0 && "sm:col-span-2")}
             >
-              <Card variant={index === 0 ? "bordered-accent" : "framed"} className="h-full">
-                <FeatureContent item={item} />
+              <Card
+                variant={index === 0 ? "bordered-accent" : "framed"}
+                className="flex h-full flex-col"
+              >
+                {/* Ссылка «Подробнее» прижата к низу (mt-auto), а не сразу
+                    после текста — иначе в карточках с разной длиной текста
+                    внутри одной строки она стояла бы на разной высоте.
+                    Сама FeatureContent+tags — отдельная flex-колонка, чтобы
+                    mt-auto ниже отсчитывался от полного объёма карточки. */}
+                <div className="flex flex-1 flex-col">
+                  <FeatureContent item={item} iconLayout="inline" />
 
-                {item.tags && item.tags.length > 0 ? (
-                  <ul className="mt-5 flex flex-wrap gap-2">
-                    {item.tags.map((tag) => (
-                      <li key={tag}>
-                        <Badge variant="soft">{tag}</Badge>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
+                  {item.tags && item.tags.length > 0 ? (
+                    <ul className="mt-5 flex flex-wrap gap-2">
+                      {item.tags.map((tag) => (
+                        <li key={tag}>
+                          <Badge variant="soft">{tag}</Badge>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </div>
 
                 {item.link ? (
                   <Link
                     href={item.link.href}
-                    className="mt-5 inline-flex items-center gap-1.5 text-small font-medium text-accent"
+                    className="mt-auto inline-flex items-center gap-1.5 pt-5 text-small font-medium text-accent"
                   >
                     {item.link.label}
                     <ArrowRight aria-hidden="true" className="size-4" />

@@ -19,12 +19,15 @@ interface StepContentProps {
  *
  * item.number тут не выводится: в разных вариантах он живёт в разных
  * местах (крупный сериф над заголовком в rail/stack, бейдж на оси в
- * numbered-nodes), поэтому его рисует вариант.
+ * timeline-vertical), поэтому его рисует вариант.
  */
 export function StepContent({ item, titleClassName }: StepContentProps) {
   return (
     <>
-      <h3 className={cn(titleClassName, "font-display text-h3")}>
+      {/* max-w — предсказуемая длина строки для длинного заголовка: без
+          неё заголовок растягивался на всю ширину колонки и мог
+          перенестись на 5-6 строк вместо читаемых 2-3. */}
+      <h3 className={cn(titleClassName, "max-w-[22ch] font-display text-h3")}>
         {item.title}
       </h3>
       <p className="mt-3 text-body text-fg-muted">{item.text}</p>

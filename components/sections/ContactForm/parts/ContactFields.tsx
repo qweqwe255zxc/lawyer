@@ -33,17 +33,20 @@ export function ContactFields({
       className={className}
       data-reveal
     >
-      {/* honeypot: обычный человек это поле не видит и не заполнит */}
+      {/* honeypot: обычный человек это поле не видит и не заполнит.
+          Имя/id — "_gotcha", не "company": реальное поле формы с именем
+          "company" (естественное для B2B-конфига) раньше делило name/id
+          с этим полем и затиралось им при отправке. */}
       <div
         aria-hidden="true"
         className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden"
       >
-        <label htmlFor="field-company">Компания</label>
+        <label htmlFor="field-_gotcha">Компания</label>
         <input
           ref={form.honeypotRef}
-          id="field-company"
+          id="field-_gotcha"
           type="text"
-          name="company"
+          name="_gotcha"
           tabIndex={-1}
           autoComplete="off"
         />

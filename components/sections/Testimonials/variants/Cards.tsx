@@ -55,7 +55,7 @@ export function Cards(props: TestimonialsSection) {
         >
           {items.map((item, index) => (
             <Card
-              key={item.author}
+              key={`${item.author}-${index}`}
               variant="framed"
               className="flex h-full flex-col"
             >

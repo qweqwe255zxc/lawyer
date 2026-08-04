@@ -60,9 +60,9 @@ export function Centered(props: HeroSection) {
             style={revealDelay(1)}
           >
             {headline.map((line, index) => (
-              <span key={line} className="md:block">
+              <span key={index} className="md:block">
                 {index === headline.length - 1 ? (
-                  <span className="font-heading italic text-accent">{line}</span>
+                  <span className="text-accent">{line}</span>
                 ) : (
                   line
                 )}
@@ -87,9 +87,9 @@ export function Centered(props: HeroSection) {
               data-reveal
               style={revealDelay(3)}
             >
-              {actions.map((action) => (
+              {actions.map((action, index) => (
                 <Button
-                  key={action.href}
+                  key={index}
                   href={action.href}
                   variant={action.variant ?? "primary"}
                 >

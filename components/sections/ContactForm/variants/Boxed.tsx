@@ -33,6 +33,7 @@ export function Boxed(props: ContactFormProps) {
     errorText,
     contacts,
     mapSrc,
+    showMap = true,
   } = props;
 
   const form = useContactForm({
@@ -57,6 +58,7 @@ export function Boxed(props: ContactFormProps) {
             contacts={contacts}
             detailsTitle={detailsTitle}
             mapSrc={mapSrc}
+            showMap={showMap}
             className="md:col-span-5"
           />
 

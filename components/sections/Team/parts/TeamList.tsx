@@ -5,32 +5,19 @@ import { cn } from "@/lib/cn";
 import { MemberContent } from "./MemberContent";
 import type { TeamSection } from "@/types/site";
 
-interface TeamListProps extends TeamSection {
-  /** Сетка: 3 колонки (columns) или 1 (rows). */
-  columns: "md:grid-cols-3" | "md:grid-cols-1";
-  /**
-   * Одна колонка роняет grid-cols-3 — без потолка ширины aspect-[3/4]
-   * растягивается на всю ~1240px колонку контейнера и даёт портрет
-   * ~1650px высотой. Тот же паттерн бага, что был у карты в ContactForm
-   * при variant="stacked": вариант снял constraint, а зависимый
-   * aspect-ratio блок на это не рассчитан.
-   */
-  avatarClassName?: string;
-}
-
 /**
- * Список людей на линейках — общий для раскладок columns и rows, они
- * отличаются только числом колонок и потолком ширины аватара.
+ * Список людей на линейках, 3 колонки — вариант columns. rows строит
+ * свою раскладку (фото слева на всю высоту строки, содержимое справа),
+ * этот компонент ей не подходит и больше не используется.
  */
 export function TeamList({
-  columns,
-  avatarClassName,
   number,
   eyebrow,
   title,
   lead,
   items,
-}: TeamListProps) {
+  alignExperienceBottom = false,
+}: TeamSection) {
   return (
     <Container>
       <SectionHeader
@@ -40,7 +27,7 @@ export function TeamList({
         lead={lead}
       />
 
-      <ul className={cn("mt-14 grid gap-x-gutter md:mt-20", columns)}>
+      <ul className="mt-14 grid gap-x-gutter md:mt-20 md:grid-cols-3 md:gap-y-14 xl:grid-cols-4">
         {items.map((member, index) => (
           <li
             key={member.name}
@@ -49,9 +36,15 @@ export function TeamList({
             className={cn(
               "border-t border-rule pt-7",
               index > 0 && "mt-10 md:mt-0",
+              // flex-col + h-full: grid по умолчанию растягивает <li> до
+              // высоты самой высокой ячейки ряда (align-items: stretch), но
+              // margin-top: auto ВНУТРИ ячейки работает только в её
+              // собственном flex-контексте — без flex-col тут его не на что
+              // опереть, и стаж не прижимался к низу.
+              alignExperienceBottom && "flex h-full flex-col",
             )}
           >
-            <MemberContent member={member} avatarClassName={avatarClassName} />
+            <MemberContent member={member} />
           </li>
         ))}
       </ul>

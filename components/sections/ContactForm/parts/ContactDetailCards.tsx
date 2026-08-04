@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/cn";
+import { yandexMapsHref } from "./yandexMapsHref";
 import type { ContactsConfig } from "@/types/site";
 
 interface ContactDetailCardsProps {
@@ -18,6 +19,8 @@ interface ContactDetailCardsProps {
   detailsTitle?: string;
   /** URL embed-iframe карты. Без него карта не рендерится. */
   mapSrc?: string;
+  /** Показывать карту. По умолчанию true. */
+  showMap?: boolean;
   className?: string;
 }
 
@@ -31,6 +34,7 @@ export function ContactDetailCards({
   contacts,
   detailsTitle,
   mapSrc,
+  showMap = true,
   className,
 }: ContactDetailCardsProps) {
   const details: {
@@ -77,7 +81,12 @@ export function ContactDetailCards({
           },
         ]
       : []),
-    { icon: MapPin, label: "Офис", value: contacts.address, href: undefined },
+    {
+      icon: MapPin,
+      label: "Офис",
+      value: contacts.address,
+      href: yandexMapsHref(contacts),
+    },
     {
       icon: Clock,
       label: "Часы работы",
@@ -94,6 +103,13 @@ export function ContactDetailCards({
         </h3>
       ) : null}
 
+      {/* sm:grid-cols-2 — до 7 карточек (телефон/почта/telegram/whatsapp/
+          instagram/офис/часы) в одну колонку вытягивались вдвое выше
+          компактной формы в соседней 7/12-колонке. Ниже md сама секция
+          ещё в один столбец (колонка реквизитов на всю ширину контейнера),
+          там 2 карточки в ряд смотрятся свободно; на md+ колонка сама
+          сужается до 5/12 — карточки уже теснее, но зато вдвое короче
+          весь блок, и он перестаёт вдвое обгонять форму по высоте. */}
       <div className={cn("grid gap-4 sm:grid-cols-2", detailsTitle && "mt-7")}>
         {details.map(({ icon: Icon, label, value, href }) => (
           <Card key={label} variant="framed" className="flex items-start gap-3">
@@ -137,7 +153,7 @@ export function ContactDetailCards({
         </p>
       ) : null}
 
-      {mapSrc ? (
+      {showMap && mapSrc ? (
         <div className="ui-media-raised mt-4 overflow-hidden border border-rule">
           <iframe
             src={mapSrc}
