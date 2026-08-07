@@ -33,27 +33,26 @@ export function NumberedCards(props: StepsSection) {
         <ol className="grid gap-gutter sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {items.map((item, index) => {
             const Icon = getIcon(item.icon);
-            const isLast = index === items.length - 1;
 
             return (
               <li
                 key={item.number}
                 data-reveal
                 style={revealDelay(index)}
-                data-surface={item.featured ? "ink" : undefined}
-                // bg-card, а не bg-bg: Card внутри рисует свой фон через
-                // --surface-card (в «Стандарте» он светлее чистого фона
-                // секции), и он покрывает контейнер целиком. Если у
-                // контейнера свой bg-bg (чистый --surface-bg), два разных
-                // тона совпадают почти везде, кроме скруглённых углов
-                // карточки — там в срезе виден чужой прямоугольный угол
-                // контейнера. bg-card делает их одним и тем же тоном.
-                className={cn(
-                  item.featured && "bg-card text-fg",
-                  bentoSpan(index, items.length, { sm: 2, lg: 3, xl: 4 }),
-                )}
+                className={bentoSpan(index, items.length, { sm: 2, lg: 3, xl: 4 })}
               >
-                <Card variant="framed" className="h-full">
+                <Card
+                  variant="framed"
+                  // data-surface — на самой Card, а не на <li>: .ui-card
+                  // красит и фон, и border-radius одним и тем же правилом,
+                  // значит скруглённый угол не может просвечивать чужим
+                  // фоном родителя. text-fg переезжает вместе с
+                  // data-surface: h3/p ниже без своего цвета наследуют уже
+                  // вычисленный color, а не пересчитывают var(--color-fg)
+                  // заново — без text-fg тут текст остался бы тёмным.
+                  className={cn("h-full", item.featured && "text-fg")}
+                  data-surface={item.featured ? "ink" : undefined}
+                >
                   <div className="flex items-center gap-3">
                     <span
                       className={cn(
@@ -63,9 +62,7 @@ export function NumberedCards(props: StepsSection) {
                     >
                       {item.number}
                     </span>
-                    {!isLast ? (
-                      <span aria-hidden="true" className="h-px flex-1 bg-rule-strong" />
-                    ) : null}
+                    <span aria-hidden="true" className="h-px flex-1 bg-rule-strong" />
                   </div>
 
                   {Icon ? (

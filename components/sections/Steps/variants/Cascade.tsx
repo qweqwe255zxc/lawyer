@@ -16,6 +16,56 @@ const GRID_BREAKPOINTS = [
   { prefix: "xl:", cols: 4 },
 ] as const;
 
+const CASCADE_STEP_PX = 28;
+
+/**
+ * Смещение margin-top для лесенки, отдельно на каждый брейкпоинт: число
+ * колонок разное на sm/lg/xl, поэтому и то, что считается «неполным
+ * последним рядом», на каждом брейкпоинте своё (пример: 6 карточек — 2
+ * ровных ряда на lg:3, но ряд из 4 + хвост из 2 на xl:4). Обычная карточка
+ * получает накопительный офсет index*step (см. комментарий у style в
+ * разметке — почему накопительный, а не index%cols). Если total не
+ * делится на cols нацело, последний ряд неполный — fillLastRowClasses уже
+ * растягивает его по ширине, а этот же ряд должен получить одинаковый
+ * margin-top на всех своих карточках, иначе они всё равно съезжают по
+ * диагонали внутри уже выровненного по ширине ряда. Плоское значение —
+ * офсет первой карточки этого ряда при обычном накоплении: ряд продолжает
+ * общий спуск как единый блок, а не сбрасывается в 0.
+ *
+ * remainder = total % cols — то же, что rowItems в lib/gridFill.ts, НЕ
+ * количество реально растянутых (col-span-2) карточек: fillLastRowClasses
+ * может растянуть лишь часть хвостового ряда, но выровнять по высоте нужно
+ * все карточки этого визуального ряда.
+ */
+function cascadeOffsetPx(index: number, total: number, cols: number, step: number): number {
+  if (cols <= 1 || total <= 0) return index * step;
+
+  const remainder = total % cols;
+  if (remainder === 0) return index * step;
+
+  const rowStart = total - remainder;
+  return index >= rowStart ? rowStart * step : index * step;
+}
+
+/**
+ * По одному CSS custom property на брейкпоинт (--offset-sm/-lg/-xl), а не
+ * общий "--offset": разным брейкпоинтам для одной и той же карточки нужны
+ * разные значения (см. cascadeOffsetPx выше), а Tailwind-сканеру нужен
+ * литеральный var(--offset-XX) в исходнике — три статических класса, три
+ * переменные.
+ */
+function cascadeOffsetVars(
+  index: number,
+  total: number,
+  step: number = CASCADE_STEP_PX,
+): Record<string, string> {
+  const vars: Record<string, string> = {};
+  for (const { prefix, cols } of GRID_BREAKPOINTS) {
+    vars[`--offset-${prefix.replace(":", "")}`] = `${cascadeOffsetPx(index, total, cols, step)}px`;
+  }
+  return vars;
+}
+
 /**
  * Карточки каскадом: каждая следующая ниже и правее предыдущей, номер —
  * акцентный бейдж на углу карточки. Тёмный/светлый вариант референса —
@@ -65,15 +115,22 @@ export function Cascade(props: StepsSection) {
                 // того чтобы продолжать спуск. Накопительное смещение растёт
                 // с каждой карточкой независимо от переноса строк, поэтому
                 // лесенка читается непрерывной и сверху, и снизу на любом
-                // количестве колонок. mt-0 ниже sm — там всего одна колонка
-                // и каскада нет вовсе.
+                // количестве колонок. Отдельная переменная на каждый
+                // брейкпоинт (а не одна общая) — потому что «неполный
+                // последний ряд» на sm:2/lg:3/xl:4 не совпадает: там, где
+                // ряд неполный, его карточки нужно выровнять по высоте
+                // (см. cascadeOffsetPx выше). mt-0 ниже sm — там всего одна
+                // колонка и каскада нет вовсе.
                 style={
                   {
                     ...revealDelay(index),
-                    "--offset": `${index * 28}px`,
+                    ...cascadeOffsetVars(index, items.length),
                   } as CSSProperties
                 }
-                className={cn("relative mt-0 sm:mt-[var(--offset)]", spanClasses[index])}
+                className={cn(
+                  "relative mt-0 sm:mt-[var(--offset-sm)] lg:mt-[var(--offset-lg)] xl:mt-[var(--offset-xl)]",
+                  spanClasses[index],
+                )}
               >
                 <span
                   aria-hidden="true"
