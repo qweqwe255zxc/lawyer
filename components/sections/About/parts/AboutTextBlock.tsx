@@ -90,11 +90,13 @@ export function AboutTextBlock({
                 key={action.label}
                 href={action.href}
                 variant={variant}
-                // На мобильном — во всю ширину: иначе две кнопки разной
-                // длины подписи стоят вплотную разной ширины, читается
-                // неровно. quiet — текстовая ссылка без своей рамки/фона,
-                // ей во всю ширину растягиваться незачем.
-                className={variant !== "quiet" ? "w-full sm:w-auto" : undefined}
+                // На мобильном — во всю ширину, с sm — flex-1 (а не
+                // w-auto): иначе при двух кнопках разной длины подписи
+                // (primary/secondary) вторая была короче первой и ряд
+                // читался неровным — flex-1 растягивает обе на всю
+                // доступную ширину ряда поровну. quiet — текстовая ссылка
+                // без своей рамки/фона, ей растягиваться незачем.
+                className={variant !== "quiet" ? "w-full sm:flex-1" : undefined}
               >
                 {action.label}
               </Button>

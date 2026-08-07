@@ -26,9 +26,28 @@ interface FeatureContentProps {
    * как два отдельных яруса вместо одного цельного заголовка.
    */
   iconLayout?: "stack" | "inline";
+  /**
+   * Фото вложено в padded Card (cards/cards-cta/bento: p-7/md:p-9) —
+   * радиус фото обязан отставать от радиуса карточки ровно на этот
+   * паддинг (см. .ui-media-inset в globals.css), иначе на Стандарте
+   * дуги не делят центр. В table/table-links карточки нет вообще —
+   * там остаётся обычный .ui-media.
+   */
+  mediaInset?: boolean;
+  /**
+   * Переопределяет aspect-ratio фото для растянутой в 2 колонки карточки
+   * (`fillLastRow`, см. lib/gridFill.ts) — без этого фото удваивало бы
+   * не только ширину, но и высоту.
+   */
+  mediaAspectClassName?: string;
 }
 
-export function FeatureContent({ item, iconLayout = "stack" }: FeatureContentProps) {
+export function FeatureContent({
+  item,
+  iconLayout = "stack",
+  mediaInset = false,
+  mediaAspectClassName,
+}: FeatureContentProps) {
   const Icon = getIcon(item.icon);
   const inline = iconLayout === "inline" && Boolean(Icon);
 
@@ -50,7 +69,13 @@ export function FeatureContent({ item, iconLayout = "stack" }: FeatureContentPro
           иначе в высоком ряду flex-shrink подминает ему высоту и фото
           перестают быть одного формата. */}
       {item.photo ? (
-        <div className="ui-media relative mb-5 aspect-[4/3] w-full shrink-0 overflow-hidden">
+        <div
+          className={cn(
+            "relative mb-5 aspect-[4/3] w-full shrink-0 overflow-hidden",
+            mediaInset ? "ui-media-inset" : "ui-media",
+            mediaAspectClassName,
+          )}
+        >
           <Image
             src={item.photo}
             alt={item.title}

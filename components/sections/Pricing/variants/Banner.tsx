@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
+import { fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { PlanContent } from "../parts/PlanContent";
 import { PricingClosing } from "../parts/PricingClosing";
@@ -10,6 +11,8 @@ import { PricingFootnotes } from "../parts/PricingFootnotes";
 import { PricingHeader } from "../parts/PricingHeader";
 import { PricingQuoteBlock } from "../parts/PricingQuoteBlock";
 import type { PricingSection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [{ prefix: "md:", cols: 3 }] as const;
 
 /**
  * Простые карточки (выделенная — просто elevated, без смены поверхности),
@@ -33,7 +36,9 @@ export function Banner(props: PricingSection) {
     quote,
     comparison,
     headerAlign,
+    fillLastRow = true,
   } = props;
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
 
   return (
     <Section id={id} surface={surface}>
@@ -49,7 +54,12 @@ export function Banner(props: PricingSection) {
 
         <div className="grid gap-gutter md:grid-cols-3">
           {items.map((plan, index) => (
-            <div key={plan.name} data-reveal style={revealDelay(index)}>
+            <div
+              key={plan.name}
+              data-reveal
+              style={revealDelay(index)}
+              className={spanClasses[index] || undefined}
+            >
               {/* Плашка — внутри Card, не соседним элементом: hover-подъём
                   задаёт transform самому Card, и абсолютно спозиционированный
                   ребёнок переезжает вместе с ним. Снаружи плашка оставалась

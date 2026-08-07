@@ -1,17 +1,24 @@
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
+import { fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { StatCard } from "../parts/StatCard";
 import { StatsHeader } from "../parts/StatsHeader";
 import type { StatsSection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [
+  { prefix: "sm:", cols: 2 },
+  { prefix: "lg:", cols: 4 },
+] as const;
 
 /**
  * Самый спокойный из карточных вариантов: заголовок по центру без пилюли,
  * иконка без плашки (tile="none") — просто акцентный штрих над числом.
  */
 export function Plain(props: StatsSection) {
-  const { id, surface = "paper", number, eyebrow, title, lead, items } = props;
+  const { id, surface = "paper", number, eyebrow, title, lead, items, fillLastRow = true } = props;
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
 
   return (
     <Section id={id} surface={surface}>
@@ -32,6 +39,7 @@ export function Plain(props: StatsSection) {
               variant="framed"
               data-reveal
               style={revealDelay(index)}
+              className={spanClasses[index] || undefined}
             >
               <StatCard item={item} tile="none" />
             </Card>

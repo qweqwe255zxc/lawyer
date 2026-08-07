@@ -53,7 +53,7 @@ export function TeamBannerBlock({ banner, tone = "soft", className }: TeamBanner
 
   if (tone === "solid") {
     return (
-      <div data-surface="accent" className={cn("bg-bg text-fg", className)}>
+      <div data-surface="accent" className={cn("rounded-card bg-bg text-fg", className)}>
         <Card variant="framed">{content}</Card>
       </div>
     );

@@ -66,7 +66,9 @@ export function Rows(props: TeamSection) {
           })}
         </ul>
 
-        {banner ? <TeamBannerBlock banner={banner} tone="soft" className="mt-12 md:mt-16" /> : null}
+        {banner ? (
+          <TeamBannerBlock banner={banner} tone={banner.tone ?? "soft"} className="mt-12 md:mt-16" />
+        ) : null}
       </Container>
     </Section>
   );

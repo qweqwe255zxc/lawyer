@@ -1,0 +1,34 @@
+import { About } from "@/components/sections/About";
+import { siteConfig } from "@/content/site.config";
+import type { AboutSection } from "@/types/site";
+import { QaBlock } from "../_lib";
+
+const base = siteConfig.sections.find(
+  (s): s is AboutSection => s.type === "about",
+)!;
+
+const variants: NonNullable<AboutSection["variant"]>[] = [
+  "photo-right",
+  "photo-left",
+  "type-only",
+  "split-actions",
+  "quiet-split",
+  "panel",
+];
+
+export default function QaAboutPage() {
+  return (
+    <main>
+      {variants.map((variant) => (
+        <QaBlock key={variant} label={`About / variant="${variant}"`}>
+          <About
+            {...base}
+            id={`about-${variant}`}
+            variant={variant}
+            iconShape={base.iconShape ?? siteConfig.theme.iconShape}
+          />
+        </QaBlock>
+      ))}
+    </main>
+  );
+}

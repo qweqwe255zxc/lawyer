@@ -64,7 +64,7 @@ export function Accordion({ items, multiple = false, className }: AccordionProps
                 aria-controls={panelId}
                 onClick={() => toggle(index)}
                 className={cn(
-                  "flex w-full items-center justify-between gap-6 py-6 pl-5 text-left transition-colors md:pl-6",
+                  "flex w-full cursor-pointer items-center justify-between gap-6 py-6 pl-5 text-left transition-colors md:pl-6",
                   isOpen ? "text-fg" : "text-fg hover:text-accent",
                 )}
               >

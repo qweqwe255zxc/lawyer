@@ -13,18 +13,31 @@ import type { FeaturesSection } from "@/types/site";
  * всю ширину, иначе верхняя линия обрывается на середине/трети ряда).
  */
 function cellClass(index: number, columns: number, lastAlone: boolean): string {
-  const parts = ["border-t border-rule py-9 md:py-11"];
+  // pr-9 — базовый, а не только md:, потому что стрелка-ссылка в углу
+  // абсолютно спозиционирована при ЛЮБОЙ ширине (top-9 right-9), а не
+  // только с md: — без базового отступа заголовок без иконки залезал
+  // под стрелку ниже 768px, а в 2-колоночной раскладке — и в самой
+  // правой колонке даже на md+, у которой был только border-l/pl-9.
+  const parts = ["border-t border-rule py-9 pr-9 md:py-11"];
 
   if (lastAlone) {
-    parts.push(columns === 2 ? "md:col-span-2" : "md:col-span-3");
+    // columns===3 сетка переходит на 3 колонки с lg (см. grid ниже,
+    // sm:grid-cols-2 lg:grid-cols-3) — col-span должен переключаться
+    // на том же брейкпоинте, иначе одинокий последний элемент растянется
+    // на всю ширину раньше, чем сетка реально стала трёхколоночной.
+    parts.push(columns === 2 ? "md:col-span-2" : "lg:col-span-3");
     return parts.join(" ");
   }
 
   if (columns === 2) {
-    parts.push(index % 2 === 1 ? "md:border-l md:pl-9" : "md:pr-9");
+    if (index % 2 === 1) parts.push("md:border-l md:pl-9");
   } else {
-    if (index % 3 !== 0) parts.push("md:border-l md:pl-9");
-    parts.push("md:pr-9");
+    // Пока сетка реально двухколоночная (sm–lg, см. grid ниже) — рамка
+    // по паттерну 2 колонок; с lg, где включается настоящий 3-й столбец,
+    // пересчитываем по остатку от 3 и явно снимаем то, что поставил
+    // sm-паттерн там, где трёхколоночному рамка не нужна (index%3===0).
+    if (index % 2 === 1) parts.push("sm:border-l sm:pl-9");
+    parts.push(index % 3 !== 0 ? "lg:border-l lg:pl-9" : "lg:border-l-0 lg:pl-0");
   }
   return parts.join(" ");
 }
@@ -91,7 +104,7 @@ export function TableLinks(props: FeaturesSection) {
         ) : null}
 
         <div
-          className={cn("grid", columns === 2 ? "md:grid-cols-2" : "md:grid-cols-3")}
+          className={cn("grid", columns === 2 ? "md:grid-cols-2" : "sm:grid-cols-2 lg:grid-cols-3")}
         >
           {items.map((item, index) => {
             const lastAlone =

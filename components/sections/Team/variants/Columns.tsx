@@ -14,7 +14,7 @@ export function Columns(props: TeamSection) {
 
       {banner ? (
         <Container>
-          <TeamBannerBlock banner={banner} tone="soft" className="mt-12 md:mt-16" />
+          <TeamBannerBlock banner={banner} tone={banner.tone ?? "soft"} className="mt-12 md:mt-16" />
         </Container>
       ) : null}
     </Section>

@@ -11,13 +11,28 @@ import type { StatsSection } from "@/types/site";
  * Классы собираются статическими литералами — иначе сканер Tailwind
  * их не увидит и утилиты не попадут в сборку.
  *
- * Паддинг симметричный на всех ячейках (без обнуления слева у первой
- * колонки) и текст внутри центрирован — иначе цифры разной длины
- * («18» рядом с «640») висят на левом крае каждой колонки и полоса
- * читается неровной, особенно когда все 4 в одну строку на десктопе.
+ * Паддинг между колонками симметричный, но на крайней колонке с каждой
+ * стороны блока горизонтальный паддинг обнуляется — иначе по краям всей
+ * полосы остаётся пустой отступ поверх паддинга контейнера. pl/pr
+ * прописаны отдельно (не через px-*), чтобы не было двух конфликтующих
+ * классов на одном брейкпоинте — какой из них победит, зависело бы от
+ * порядка генерации в Tailwind, а не от порядка в classList.
  */
 function bandCell(index: number): string {
-  const parts = ["px-4 py-4 text-center sm:px-6 md:px-8 border-rule"];
+  const parts = ["py-4 text-center border-rule"];
+
+  const mobileLeftEdge = index % 2 === 0;
+  const mobileRightEdge = index % 2 === 1;
+  const desktopLeftEdge = index % 4 === 0;
+  const desktopRightEdge = index % 4 === 3;
+
+  parts.push(mobileLeftEdge ? "pl-0" : "pl-4");
+  parts.push(mobileLeftEdge ? "sm:pl-0" : "sm:pl-6");
+  parts.push(desktopLeftEdge ? "md:pl-0" : "md:pl-8");
+
+  parts.push(mobileRightEdge ? "pr-0" : "pr-4");
+  parts.push(mobileRightEdge ? "sm:pr-0" : "sm:pr-6");
+  parts.push(desktopRightEdge ? "md:pr-0" : "md:pr-8");
 
   if (index % 2 === 1) parts.push("border-l");
   if (index >= 2) parts.push("border-t");

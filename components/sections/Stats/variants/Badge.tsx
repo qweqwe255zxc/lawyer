@@ -1,10 +1,16 @@
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
+import { fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { StatCard } from "../parts/StatCard";
 import { StatsHeader } from "../parts/StatsHeader";
 import type { StatsSection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [
+  { prefix: "sm:", cols: 2 },
+  { prefix: "lg:", cols: 4 },
+] as const;
 
 /**
  * Заголовок пилюлей + крупный заголовок + лид по центру, затем карточки
@@ -12,7 +18,8 @@ import type { StatsSection } from "@/types/site";
  * выбирает тариф). Требует `icon` у каждого item, иначе плашка пустая.
  */
 export function Badge(props: StatsSection) {
-  const { id, surface = "paper", number, eyebrow, title, lead, items, iconShape } = props;
+  const { id, surface = "paper", number, eyebrow, title, lead, items, iconShape, fillLastRow = true } = props;
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
 
   return (
     <Section id={id} surface={surface} iconShape={iconShape}>
@@ -32,6 +39,7 @@ export function Badge(props: StatsSection) {
               variant="framed"
               data-reveal
               style={revealDelay(index)}
+              className={spanClasses[index] || undefined}
             >
               <StatCard item={item} tile="round" />
             </Card>

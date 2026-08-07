@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
+import { fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { cn } from "@/lib/cn";
 import { PlanContent } from "../parts/PlanContent";
@@ -11,6 +12,11 @@ import { PricingFootnotes } from "../parts/PricingFootnotes";
 import { PricingHeader } from "../parts/PricingHeader";
 import { PricingQuoteBlock } from "../parts/PricingQuoteBlock";
 import type { PricingSection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [
+  { prefix: "sm:", cols: 2 },
+  { prefix: "lg:", cols: 3 },
+] as const;
 
 /**
  * Лейбл `tag` в каждой карточке, выделенный тариф — мягкая подложка
@@ -33,7 +39,9 @@ export function Quote(props: PricingSection) {
     closing,
     comparison,
     headerAlign,
+    fillLastRow = true,
   } = props;
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
 
   return (
     <Section id={id} surface={surface}>
@@ -47,11 +55,11 @@ export function Quote(props: PricingSection) {
           className="mb-12 md:mb-16"
         />
 
-        <div className="grid gap-gutter md:grid-cols-3">
+        <div className="grid gap-gutter sm:grid-cols-2 lg:grid-cols-3">
           {items.map((plan, index) => (
             <div
               key={plan.name}
-              className={cn("rounded-card", plan.featured && "bg-badge-soft")}
+              className={cn("rounded-card", plan.featured && "bg-badge-soft", spanClasses[index])}
               data-reveal
               style={revealDelay(index)}
             >
@@ -67,7 +75,14 @@ export function Quote(props: PricingSection) {
                 className="relative flex h-full flex-col overflow-visible"
               >
                 {plan.badge ? (
-                  <Badge variant="solid" className="absolute -top-3 right-6 uppercase">
+                  // max-w + truncate: плашка абсолютно спозиционирована от
+                  // правого края (right-6) без ограничения слева — длинный
+                  // текст (`plan.badge`) на узкой карточке мог вылезти за
+                  // левую границу карточки, ничем не остановленный.
+                  <Badge
+                    variant="solid"
+                    className="absolute -top-3 right-6 max-w-[calc(100%-3rem)] truncate uppercase"
+                  >
                     {plan.badge}
                   </Badge>
                 ) : null}

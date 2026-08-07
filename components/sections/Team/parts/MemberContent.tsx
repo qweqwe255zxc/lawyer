@@ -1,9 +1,23 @@
 import Image from "next/image";
+import { cn } from "@/lib/cn";
 import { getInitials } from "./initials";
 import type { TeamMember } from "@/types/site";
 
 interface MemberContentProps {
   member: TeamMember;
+  /**
+   * Аватар вложен в padded Card (Team cards: p-7/md:p-9) — радиус фото
+   * обязан отставать от радиуса карточки ровно на этот паддинг (см.
+   * .ui-media-inset в globals.css), иначе на Стандарте дуги не делят
+   * центр. В TeamList (columns/rows) карточки нет — там обычный .ui-media.
+   */
+  mediaInset?: boolean;
+  /**
+   * Переопределяет aspect-ratio аватара для растянутой в 2 колонки
+   * карточки (`fillLastRow`, см. lib/gridFill.ts) — без этого аватар
+   * удваивал бы не только ширину, но и высоту.
+   */
+  mediaAspectClassName?: string;
 }
 
 /**
@@ -11,12 +25,18 @@ interface MemberContentProps {
  * нет: пока фото не задано, в том же боксе стоит заглушка с инициалами.
  * Так карточки с фото и без фото в одной секции остаются одной высоты.
  */
-export function MemberContent({ member }: MemberContentProps) {
+export function MemberContent({ member, mediaInset = false, mediaAspectClassName }: MemberContentProps) {
   const initials = getInitials(member.name);
 
   return (
     <>
-      <div className="ui-media relative mb-7 aspect-[3/4] w-full shrink-0 overflow-hidden bg-rule">
+      <div
+        className={cn(
+          "relative mb-7 aspect-[3/4] w-full shrink-0 overflow-hidden bg-rule",
+          mediaInset ? "ui-media-inset" : "ui-media",
+          mediaAspectClassName,
+        )}
+      >
         {member.photo ? (
           <Image
             src={member.photo}

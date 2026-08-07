@@ -57,6 +57,7 @@ export default function RootLayout({
     <html
       lang="ru"
       data-preset={siteConfig.theme.preset ?? "econom"}
+      data-title-style={siteConfig.theme.titleStyle ?? "standard"}
       className={`${onest.variable} ${golos.variable} ${unbounded.variable}`}
       suppressHydrationWarning
     >

@@ -28,6 +28,19 @@ export function useNavOverflow<T extends HTMLElement>() {
 
     const observer = new ResizeObserver(check);
     observer.observe(el);
+
+    // ResizeObserver следит только за собственным боксом nav (его ширину
+    // задаёт грид-колонка снаружи) — он не срабатывает, когда меняется
+    // ТОЛЬКО контент внутри при том же боксе. font-display: swap отдаёт
+    // самый первый check() на fallback-шрифт до подгрузки настоящего
+    // (next/font подключает его почти сразу, но не мгновенно): если
+    // реальная гарнитура шире системной, scrollWidth после подмены
+    // растёт без изменения clientWidth, ResizeObserver это не ловит,
+    // и nav с overflowing=false остаётся залипшим — бургер не появляется
+    // там, где уже реально не помещается. document.fonts.ready — сигнал
+    // «шрифты подменились», перепроверяем на нём отдельно.
+    document.fonts?.ready?.then(check);
+
     return () => observer.disconnect();
   }, []);
 

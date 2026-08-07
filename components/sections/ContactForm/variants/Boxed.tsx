@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Toast } from "@/components/ui/Toast";
+import { cn } from "@/lib/cn";
 import { ContactDetailCards } from "../parts/ContactDetailCards";
 import { FormColumn } from "../parts/FormColumn";
 import { useContactForm } from "../parts/useContactForm";
@@ -20,6 +21,7 @@ export function Boxed(props: ContactFormProps) {
     id,
     surface = "surface",
     layout = "plain",
+    order = "form-first",
     number,
     eyebrow,
     title,
@@ -43,6 +45,8 @@ export function Boxed(props: ContactFormProps) {
     errorText,
   });
 
+  const formFirst = order === "form-first";
+
   return (
     <Section id={id} surface={surface}>
       <Container>
@@ -53,13 +57,16 @@ export function Boxed(props: ContactFormProps) {
           lead={lead}
         />
 
-        <div className="mt-14 grid gap-x-gutter gap-y-14 md:mt-20 md:grid-cols-12">
+        {/* lg, а не md — тот же корневой случай, что и у Split.tsx (см.
+            комментарий там): на 768–1023px 7/12-колонка формы слишком
+            узкая под 2 поля в ряд. */}
+        <div className="mt-14 grid gap-x-gutter gap-y-14 lg:mt-20 lg:grid-cols-12">
           <ContactDetailCards
             contacts={contacts}
             detailsTitle={detailsTitle}
             mapSrc={mapSrc}
             showMap={showMap}
-            className="md:col-span-5"
+            className={cn("lg:order-none lg:col-span-5", formFirst && "order-2")}
           />
 
           <FormColumn
@@ -68,7 +75,7 @@ export function Boxed(props: ContactFormProps) {
             submitLabel={submitLabel}
             consent={consent}
             layout={layout}
-            columnClassName="md:col-span-7"
+            columnClassName={cn("lg:order-none lg:col-span-7", formFirst && "order-1")}
           />
         </div>
       </Container>

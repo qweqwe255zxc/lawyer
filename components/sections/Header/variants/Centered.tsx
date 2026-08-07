@@ -4,25 +4,34 @@ import Link from "next/link";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Container } from "@/components/ui/Container";
 import { cn } from "@/lib/cn";
+import { BurgerButton } from "../parts/BurgerButton";
 import { headerSurface } from "../parts/headerSurface";
+import { MobileNav } from "../parts/MobileNav";
 import { useHeaderState } from "../parts/useHeaderState";
+import { useNavOverflow } from "../parts/useNavOverflow";
 import type { HeaderProps } from "../types";
 
 /**
- * Минималистичный хедер в две строки: знак и навигация центрированы,
- * без кнопки и без бургера — список ссылок короткий и просто переносится
- * (`flex-wrap`), отдельного мобильного состояния этому дизайну не нужно.
- * Первый пункт навигации — активный (жирный), как и в остальных хедерах
- * шаблона.
+ * Минималистичный хедер в две строки: знак и навигация центрированы.
+ * Пока список ссылок помещается в одну строку — без кнопки и без
+ * бургера, просто центрированный ряд. Если пунктов слишком много для
+ * одной строки (см. useNavOverflow — как и у остальных хедеров, а не
+ * flex-wrap: с fixed-хедером перенос на 2-3 строки увеличивает высоту
+ * хедера без изменения scroll-margin-top секций и накрывает контент
+ * hero), ряд прячется и вместо него — бургер с той же выезжающей
+ * панелью, что и у остальных дизайнов. Первый пункт навигации —
+ * активный (жирный), как и в остальных хедерах шаблона.
  */
 export function Centered({
   brandName,
   nav,
+  actions,
   showThemeToggle,
   heroSurface,
   hideOnScroll,
 }: HeaderProps) {
-  const { scrolled, hiddenByScroll, activeHref } = useHeaderState(nav);
+  const { scrolled, hiddenByScroll, menuOpen, toggleMenu, closeMenu, activeHref } = useHeaderState(nav);
+  const { ref: navRef, overflowing } = useNavOverflow<HTMLElement>();
 
   return (
     <header
@@ -37,20 +46,28 @@ export function Centered({
     >
       <Container>
         <div className="relative flex flex-col items-center gap-4 py-6">
-          {showThemeToggle ? (
-            <div className="absolute top-6 right-0">
-              <ThemeToggle />
-            </div>
-          ) : null}
+          <div className="absolute top-6 right-0 flex items-center gap-3">
+            {showThemeToggle ? <ThemeToggle /> : null}
+            {overflowing ? (
+              <BurgerButton open={menuOpen} onClick={toggleMenu} forceVisible />
+            ) : null}
+          </div>
 
           <Link href="#hero" className="font-heading text-h3 tracking-wide">
             {brandName}
           </Link>
 
-          <nav aria-label="Основная навигация">
-            <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
+          <nav
+            ref={navRef}
+            aria-label="Основная навигация"
+            className={cn(
+              "no-scrollbar w-full overflow-x-auto",
+              overflowing && "invisible pointer-events-none",
+            )}
+          >
+            <ul className="mx-auto flex w-fit items-center gap-x-8">
               {nav.map((item) => (
-                <li key={item.href}>
+                <li key={item.href} className="shrink-0">
                   <Link
                     href={item.href}
                     className={cn(
@@ -66,6 +83,14 @@ export function Centered({
           </nav>
         </div>
       </Container>
+
+      <MobileNav
+        nav={nav}
+        actions={actions}
+        menuOpen={menuOpen}
+        closeMenu={closeMenu}
+        activeHref={activeHref}
+      />
     </header>
   );
 }

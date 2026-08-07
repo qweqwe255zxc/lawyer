@@ -5,6 +5,13 @@
 (`theme/tokens.css`, `app/globals.css`, `lib/preset.ts`) и поправить этот
 файл.
 
+> **На этом шаблоне собираются только два тарифа: «Эконом» и
+> «Стандарт».** Весь документ ниже — про них, и агент, собирающий
+> `site.config.ts`, выбирает `theme.preset` только между этими двумя
+> значениями. «Бизнес» (индивидуальный сайт премиум-класса) шаблоном не
+> покрывается вообще: такой проект пишется с нуля отдельным репозиторием,
+> без единого компонента отсюда.
+
 ---
 
 ## 0. Короткая версия
@@ -24,8 +31,8 @@ theme: {
 - **не трогать** ни один компонент,
 - **не дописывать** `shadow-*`, `rounded-xl`, градиенты и `bg-white/80`
   в `className` секций,
-- **не править** `theme/tokens.css` под тариф — блоки
-  `[data-preset="standard"]` и `[data-preset="premium"]` там уже есть.
+- **не править** `theme/tokens.css` под тариф — блок
+  `[data-preset="standard"]` там уже есть.
 
 Что ещё нужно сделать руками — раздел 3 (короткий чек-лист) и раздел 4
 (готовый пример конфига).
@@ -53,9 +60,9 @@ theme: {
 
 ### 2.1. Пластику — чистым CSS, без участия компонентов
 
-`theme.preset` → `data-preset` на `<html>` (`app/layout.tsx`) → блоки
-`[data-preset="standard"]` / `[data-preset="premium"]` в
-`theme/tokens.css` переопределяют «ручки глубины». Компоненты читают
+`theme.preset` → `data-preset` на `<html>` (`app/layout.tsx`) → блок
+`[data-preset="standard"]` в `theme/tokens.css` переопределяет
+«ручки глубины». Компоненты читают
 только ручки и не содержат ни одного условия про тариф.
 
 | Ручка | Эконом | Стандарт |
@@ -96,20 +103,20 @@ theme: {
 variant={section.variant ?? presetDefaults(preset).features}
 ```
 
-| Секция | econom | standard | premium |
-|---|---|---|---|
-| `hero` | `type-only` | `split` | `split` |
-| `stats` | `band` | `grid` | `band` |
-| `stats.containerVariant` | `flat` | `elevated` | `bordered` |
-| `features` | `table` | **`cards`** | `cards` |
-| `steps` | `rail` | **`timeline-vertical`** | `stack` |
-| `gallery` | `table` | **`grid`** | `table` |
-| `testimonials` | `quotes` | **`cards`** | `quotes` |
-| `team` | `columns` | **`cards`** | `columns` |
-| `pricing` | `table` | **`cards`** | `cards` |
-| `faq` | `narrow` | `narrow` | `narrow` |
-| `contact` | `split` | `split` | `split` |
-| `contact.layout` | `plain` | **`cardContainer`** | `plain` |
+| Секция | econom | standard |
+|---|---|---|
+| `hero` | `type-only` | `split` |
+| `stats` | `band` | `grid` |
+| `stats.containerVariant` | `flat` | `elevated` |
+| `features` | `table` | **`cards`** |
+| `steps` | `rail` | **`timeline-vertical`** |
+| `gallery` | `table` | **`grid`** |
+| `testimonials` | `quotes` | **`cards`** |
+| `team` | `columns` | **`cards`** |
+| `pricing` | `table` | **`cards`** |
+| `faq` | `narrow` | `narrow` |
+| `contact` | `split` | `split` |
+| `contact.layout` | `plain` | **`cardContainer`** |
 
 **Явно указанный в конфиге `variant` всегда главнее.** Это и есть
 единственная оставшаяся ловушка: конфиг обычно копируют с готового
@@ -152,6 +159,11 @@ variant: "cards" или уберите variant совсем — тогда во�
 8. Подобрать акцент под бренд (`--palette-accent` в `theme/tokens.css` +
    `accent` в `theme/palette.ts` — оба файла, они дублируют друг друга).
    Хвойный `#14452f` — это акцент юрбюро.
+9. Если в секциях есть CTA `variant: "centered"`/`"boxed"` — поставить
+   `theme.titleStyle: "centered"`. Это отдельная от пресета ось (дефолт
+   `"standard"` действует независимо от `theme.preset`, тариф её не
+   трогает): без неё заголовок этих двух CTA-вариантов мельче и перестаёт
+   быть центрированным. Подробно — `docs/section-system.md`, раздел 1.
 
 Чего **не** делать:
 
@@ -321,14 +333,3 @@ Tailwind (`border-fg`, `h-full`, `mt-*`) их по-прежнему переби
 `"econom"`, собрать страницу и сравнить разметку с предыдущей версией —
 измениться должны только имена классов, но не структура и не
 вычисленные значения (тень `none`, радиусы 2/4px, подъём 0).
-
----
-
-## 6. Premium
-
-Тот же каркас, противоположный способ: глубина строится рамкой и
-воздухом, а не тенью. `--radius-*` минимальные (2px), все тени `none`,
-`--card-border` — приглушённый акцент (45%). Раскладки ближе к Экономy
-(см. таблицу в разделе 2.2). Годится там, где тени читаются как
-«дешёвый SaaS»: ювелирка, архитектура, консалтинг высокого ценового
-сегмента.

@@ -15,13 +15,11 @@ export type Surface = "paper" | "surface" | "ink" | "accent";
  * standard — глубина: карточки на собственной поверхности, многослойные
  *            тени, крупные скругления, подсветка секций, плашки под
  *            иконками, живой hover, стеклянный хедер.
- * premium  — тоже дорого, но через воздух и акцентную рамку: теней нет,
- *            радиус минимальный.
  *
  * Влияет на две вещи сразу: на токены (data-preset на <html> →
  * theme/tokens.css) и на дефолтные variant секций (lib/preset.ts).
  */
-export type Preset = "econom" | "standard" | "premium";
+export type Preset = "econom" | "standard";
 
 /**
  * Форма плашки .icon-tile: circle — круглая, squircle — скруглённый
@@ -30,6 +28,22 @@ export type Preset = "econom" | "standard" | "premium";
  * может переопределяться per-секцию через SectionBase.iconShape.
  */
 export type IconShape = "circle" | "squircle" | "bare";
+
+/**
+ * Стиль заголовка секции (.section-title, theme/tokens.css): чисто
+ * типографика самого <h2> — размер/выравнивание/max-width, не форма
+ * кикера и не структура колонок (это layout/headerAlign, отдельная
+ * ручка).
+ *
+ * standard — левый край, text-h2, max-width 22ch. Базовый вид SectionHeader.
+ * centered — по центру, text-h1, max-width 46rem. Вид, которым сейчас
+ *            рисуют заголовок Team/Steps/Stats/Features header'ы и
+ *            CTA centered/boxed.
+ *
+ * Ставится сайтвайд в ThemeConfig.titleStyle, конкретная секция может
+ * переопределить через SectionBase.titleStyle — см. SectionRenderer.tsx.
+ */
+export type TitleStyle = "standard" | "centered";
 
 export interface SectionBase {
   /** Используется как anchor и как key, плюс scroll-margin-top под sticky-хедер. */
@@ -78,6 +92,15 @@ export interface SectionBase {
    * только тем, где стоит шапка.
    */
   headerAlign?: "left" | "center";
+  /**
+   * Переопределяет typography-масштаб заголовка (.section-title) для
+   * этой конкретной секции — см. TitleStyle. Без поля секция наследует
+   * сайтвайдный дефолт ThemeConfig.titleStyle через CSS-каскад
+   * ([data-title-style] на <html>, наследуется по DOM) — SectionRenderer
+   * оборачивает секцию в свой data-title-style только когда это поле
+   * реально задано, JS-резолва как у iconShape не требуется.
+   */
+  titleStyle?: TitleStyle;
 }
 
 export interface CtaLink {
@@ -276,9 +299,10 @@ export interface StatItem {
    * Оправа карточки в variant="bento": accent — акцентная рамка, tint —
    * мягкая тонировка фона (темнее в светлой теме, светлее в тёмной).
    * Не задано — обычная framed-карточка. Без явного значения bento
-   * по умолчанию красит первый item accent, последний — tint (прежнее
-   * поведение по позиции), но явный highlight на любом item всегда
-   * главнее позиции.
+   * по умолчанию красит только первый item accent — автоматической
+   * тонировки последнего больше нет (читалась как случайное затемнение
+   * там, где это не был содержательный акцент). Явный highlight на
+   * любом item всегда главнее позиции.
    */
   highlight?: "accent" | "tint";
 }
@@ -314,6 +338,13 @@ export interface StatsSection extends SectionBase {
   containerVariant?: "flat" | "elevated" | "bordered";
   /** Фото для variant="photo". Без него эта раскладка не рендерится. */
   image?: string;
+  /**
+   * Растягивает карточки последнего неполного ряда сетки на пустые
+   * колонки (максимум col-span-2 на карточку, см. lib/gridFill.ts).
+   * Дефолт `true`; `false` отключает для этой секции. Читают только
+   * карточные варианты: badge, plain, bento (не band/grid/rows/photo).
+   */
+  fillLastRow?: boolean;
   items: StatItem[];
 }
 
@@ -349,6 +380,13 @@ export interface FeaturesSection extends SectionBase {
   columns?: 2 | 3;
   /** Кнопка под сеткой карточек. Читает только cards-cta. */
   action?: CtaLink;
+  /**
+   * Растягивает карточки последнего неполного ряда сетки на пустые
+   * колонки (максимум col-span-2 на карточку, см. lib/gridFill.ts).
+   * Дефолт `true`; `false` отключает для этой секции. Читают только
+   * карточные варианты: cards, cards-cta, bento (не table/table-links).
+   */
+  fillLastRow?: boolean;
   items: FeatureItem[];
 }
 
@@ -401,6 +439,14 @@ export interface StepsSection extends SectionBase {
     | "numbered-cards";
   /** Фото для variant="split" — эйброу/заголовок/лид ложатся поверх него. Без него вариант не рендерится. */
   image?: string;
+  /**
+   * Растягивает карточки последнего неполного ряда сетки на пустые
+   * колонки (максимум col-span-2 на карточку, см. lib/gridFill.ts).
+   * Дефолт `true`; `false` отключает для этой секции. Читают только
+   * карточные варианты: cards, cascade, numbered-cards (не rail/stack/
+   * timeline-vertical/timeline-horizontal/split).
+   */
+  fillLastRow?: boolean;
   items: StepItem[];
 }
 
@@ -456,6 +502,13 @@ export interface GallerySection extends SectionBase {
    * применима.
    */
   align?: "left" | "center";
+  /**
+   * Растягивает карточки последнего неполного ряда сетки на пустые
+   * колонки (максимум col-span-2 на карточку, см. lib/gridFill.ts).
+   * Дефолт `true`; `false` отключает для этой секции. Читают только
+   * карточные варианты: grid, cards-icon, photo-grid, photo-bento (не table).
+   */
+  fillLastRow?: boolean;
 }
 
 // Testimonials
@@ -497,6 +550,13 @@ export interface TestimonialsSection extends SectionBase {
   items: TestimonialItem[];
   /** Строка «нам доверяют» под отзывами. Тот же тип, что у Hero. */
   trust?: HeroTrust;
+  /**
+   * Растягивает карточки последнего неполного ряда сетки на пустые
+   * колонки (максимум col-span-2 на карточку, см. lib/gridFill.ts).
+   * Дефолт `true`; `false` отключает для этой секции. Читают только
+   * карточные варианты: cards, bento, rated-cards (не quotes/spotlight).
+   */
+  fillLastRow?: boolean;
 }
 
 // Team
@@ -516,15 +576,17 @@ export interface TeamMember {
 }
 
 /**
- * Баннер «Хотите к нам?» под сеткой людей. Читают только photo-cards,
- * badge-avatars, tags-cards — каждый вариант оформляет его по-своему
- * (мягкая карточка, акцентная заливка, цитата с рамкой), но данные одни
- * и те же.
+ * Баннер «Хотите к нам?» под сеткой людей. Данные одни и те же для
+ * любого variant — оправу (`TeamBannerBlock`'s `tone`: soft/solid/quote)
+ * решает variant по умолчанию, но `tone` тут переопределяет её явно,
+ * когда нужен другой вид баннера независимо от того, какой variant
+ * выбран у самой секции.
  */
 export interface TeamBanner {
   title: string;
   text: string;
   action: CtaLink;
+  tone?: "soft" | "solid" | "quote";
 }
 
 export interface TeamSection extends SectionBase {
@@ -563,6 +625,14 @@ export interface TeamSection extends SectionBase {
    * этого прижать стаж к низу нечем. rows/cards уже делают это сами.
    */
   alignExperienceBottom?: boolean;
+  /**
+   * Растягивает карточки последнего неполного ряда сетки на пустые
+   * колонки (максимум col-span-2 на карточку, см. lib/gridFill.ts).
+   * Дефолт `true`; `false` отключает для этой секции. Читают только
+   * карточные варианты: cards, photo-cards, badge-avatars, tags-cards,
+   * bento (не columns/rows).
+   */
+  fillLastRow?: boolean;
 }
 
 // About ("о нас" / "о месте")
@@ -796,6 +866,14 @@ export interface PricingSection extends SectionBase {
    * рендерится (parts/PricingComparisonTable.tsx) при любом variant.
    */
   comparison?: PricingComparison;
+  /**
+   * Растягивает карточки последнего неполного ряда сетки на пустые
+   * колонки (максимум col-span-2 на карточку, см. lib/gridFill.ts).
+   * Дефолт `true`; `false` отключает для этой секции. Читают только
+   * карточные варианты: cards, ribbon, split, dark, playful, quote,
+   * glass, banner, matrix (не table).
+   */
+  fillLastRow?: boolean;
 }
 
 // CTA
@@ -872,6 +950,16 @@ export interface ContactSection extends SectionBase {
   mapSrc?: string;
   /** Показывать карту. По умолчанию true — читает только наличие mapSrc. */
   showMap?: boolean;
+  /**
+   * Порядок формы и реквизитов НА МОБИЛЬНОМ, где split/boxed переходят
+   * в один столбец (ниже md). По умолчанию "form-first" — форма первая:
+   * это то, ради чего человек открыл раздел, реквизиты — второстепенны.
+   * На десктопе (md+, где колонки идут бок о бок) порядок не меняет —
+   * там расположение слева/справа решает сам variant, это отдельная ось.
+   * Читают только split/boxed — у stacked/panels свой порядок уже задан
+   * версткой напрямую.
+   */
+  order?: "form-first" | "info-first";
 }
 
 export type Section =
@@ -959,6 +1047,12 @@ export interface ThemeConfig {
    * секций, которые вообще читают форму плашки.
    */
   iconShape?: IconShape;
+  /**
+   * Сайтвайдный дефолт typography-масштаба заголовков секций (.section-title,
+   * theme/tokens.css). Не задано — "standard". Любая секция может
+   * переопределить это своим SectionBase.titleStyle — см. TitleStyle.
+   */
+  titleStyle?: TitleStyle;
 }
 
 /**

@@ -10,7 +10,8 @@ interface CommonProps {
   variant?: Variant;
   size?: Size;
   className?: string;
-  full?: boolean;
+  /** true — на всю ширину всегда. "mobile" — во всю ширину только ниже sm, дальше по контенту. */
+  full?: boolean | "mobile";
   onClick?: () => void;
 }
 
@@ -72,7 +73,8 @@ export function Button(props: ButtonProps) {
     base,
     variant !== "quiet" && sizes[size],
     variants[variant],
-    full && "w-full",
+    full === true && "w-full",
+    full === "mobile" && "w-full sm:w-auto",
     className,
   );
 

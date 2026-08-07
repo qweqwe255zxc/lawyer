@@ -53,7 +53,7 @@ export function GalleryHeader({
         ) : null}
 
         {title ? (
-          <h2 className="mt-4 font-heading text-h1" data-reveal>
+          <h2 className="mt-4 font-heading section-title-scale" data-reveal>
             {title}
           </h2>
         ) : null}

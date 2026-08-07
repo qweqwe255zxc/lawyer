@@ -1,7 +1,9 @@
+import type { CSSProperties } from "react";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
+import { fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { cn } from "@/lib/cn";
 import { PlanContent } from "../parts/PlanContent";
@@ -10,6 +12,8 @@ import { PricingComparisonTable } from "../parts/PricingComparisonTable";
 import { PricingFootnotes } from "../parts/PricingFootnotes";
 import { PricingQuoteBlock } from "../parts/PricingQuoteBlock";
 import type { PricingSection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [{ prefix: "sm:", cols: 2 }] as const;
 
 /**
  * Текст слева (5/12): пилюля, заголовок, лид, короткая подпись доверия
@@ -33,7 +37,9 @@ export function Split(props: PricingSection) {
     closing,
     quote,
     comparison,
+    fillLastRow = true,
   } = props;
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
 
   return (
     <Section id={id} surface={surface}>
@@ -76,8 +82,23 @@ export function Split(props: PricingSection) {
                 <div
                   key={plan.name}
                   data-surface={plan.featured ? "accent" : undefined}
-                  className={cn(plan.featured && "rounded-card bg-bg text-fg")}
-                  style={revealDelay(index)}
+                  className={cn(plan.featured && "rounded-card bg-bg text-fg", spanClasses[index])}
+                  style={
+                    plan.featured
+                      ? // --accent сбрасываем на обычный, немикшированный
+                        // палитровый: у [data-surface="ink"] (родительская
+                        // панель) --accent переопределён светлее ради тонких
+                        // элементов НА ink-фоне (рамка, строка заголовка) —
+                        // но здесь эта переменная становится ПОЛНОЙ ЗАЛИВКОЙ
+                        // карточки (--surface-bg: var(--accent) у
+                        // [data-surface="accent"]), а --accent-fg остаётся
+                        // рассчитан под обычный акцент. В тёмной теме
+                        // унаследованный ink-микс уходил в тёмный тон и
+                        // совпадал с тоже тёмным --accent-fg — текст
+                        // карточки читался как чёрный по чёрному.
+                        ({ ...revealDelay(index), "--accent": "var(--palette-accent)" } as CSSProperties)
+                      : revealDelay(index)
+                  }
                 >
                   <Card
                     variant={plan.featured ? "elevated" : "framed"}

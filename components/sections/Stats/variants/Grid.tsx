@@ -32,7 +32,7 @@ export function Grid(props: StatsSection) {
             containerClasses(containerVariant),
           )}
         >
-          <StatItems items={items} />
+          <StatItems items={items} cellClassName={() => "text-center"} align="center" />
         </dl>
       </Container>
     </Section>

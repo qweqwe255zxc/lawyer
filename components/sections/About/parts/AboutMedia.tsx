@@ -66,7 +66,7 @@ export function AboutMedia({
           className={
             browser
               ? "relative aspect-[4/3] w-full"
-              : "ui-media relative aspect-[4/3] w-full overflow-hidden"
+              : "ui-media-inset relative aspect-[4/3] w-full overflow-hidden"
           }
         >
           <Image

@@ -35,7 +35,7 @@ export function CategoryFilter({ items }: { items: FaqItem[] }) {
             onClick={() => setActive(null)}
             aria-pressed={active === null}
             className={cn(
-              "rounded-pill px-4 py-2 text-small font-medium transition-colors",
+              "cursor-pointer rounded-pill px-4 py-2 text-small font-medium transition-colors",
               active === null
                 ? "bg-btn-primary text-btn-primary-fg"
                 : "bg-badge-soft text-badge-soft-fg hover:opacity-80",
@@ -51,7 +51,7 @@ export function CategoryFilter({ items }: { items: FaqItem[] }) {
               onClick={() => setActive(category)}
               aria-pressed={active === category}
               className={cn(
-                "rounded-pill px-4 py-2 text-small font-medium transition-colors",
+                "cursor-pointer rounded-pill px-4 py-2 text-small font-medium transition-colors",
                 active === category
                   ? "bg-btn-primary text-btn-primary-fg"
                   : "bg-badge-soft text-badge-soft-fg hover:opacity-80",

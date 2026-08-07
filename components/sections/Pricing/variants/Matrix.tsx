@@ -2,6 +2,8 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
+import { cn } from "@/lib/cn";
+import { fillLastRowClasses } from "@/lib/gridFill";
 import { getIcon } from "@/lib/icons";
 import { revealDelay } from "@/lib/reveal";
 import { PlanContent } from "../parts/PlanContent";
@@ -34,7 +36,12 @@ export function Matrix(props: PricingSection) {
     closing,
     iconShape,
     headerAlign,
+    fillLastRow = true,
   } = props;
+  const matrixCols = items.length >= 3 ? 3 : 2;
+  const spanClasses = fillLastRow
+    ? fillLastRowClasses(items.length, [{ prefix: "md:", cols: matrixCols }] as const)
+    : [];
 
   return (
     <Section id={id} surface={surface} iconShape={iconShape}>
@@ -48,11 +55,18 @@ export function Matrix(props: PricingSection) {
           className="mb-12 md:mb-16"
         />
 
-        <div className="grid gap-gutter md:grid-cols-3">
+        <div
+          className={cn("grid gap-gutter", items.length >= 3 ? "md:grid-cols-3" : "md:grid-cols-2")}
+        >
           {items.map((plan, index) => {
             const Icon = getIcon(plan.icon);
             return (
-              <div key={plan.name} data-reveal style={revealDelay(index)}>
+              <div
+                key={plan.name}
+                data-reveal
+                style={revealDelay(index)}
+                className={spanClasses[index] || undefined}
+              >
                 <Card
                   variant={plan.featured ? "elevated" : "framed"}
                   className="relative flex h-full flex-col overflow-visible"

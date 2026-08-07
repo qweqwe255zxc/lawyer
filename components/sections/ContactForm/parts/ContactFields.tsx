@@ -66,7 +66,7 @@ export function ContactFields({
       </div>
 
       <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-        <Button type="submit" disabled={form.status === "sending"}>
+        <Button type="submit" disabled={form.status === "sending"} full="mobile">
           {form.status === "sending" ? "Отправляем…" : submitLabel}
         </Button>
       </div>

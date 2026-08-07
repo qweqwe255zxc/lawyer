@@ -20,7 +20,7 @@ export const siteConfig: SiteConfig = {
         legalName: "ООО «Модуль Студио»",
         tagline: "Конструктор сайтов на готовых блоках",
         description:
-            "«Модуль» — конструктор лендингов для агентств и фрилансеров: готовые секции, три тарифа оформления, вёрстка на токенах вместо хардкода.",
+            "«Модуль» — конструктор лендингов для агентств и фрилансеров: готовые секции, два тарифа оформления, вёрстка на токенах вместо хардкода.",
     },
 
     contacts: {
@@ -53,13 +53,13 @@ export const siteConfig: SiteConfig = {
         title: "Модуль — конструктор сайтов для агентств и фрилансеров",
         titleTemplate: "%s — Модуль",
         description:
-            "Демо-шаблон «Модуль»: 12 типов секций, 63 варианта раскладок и три тарифа оформления — econom, standard, premium. Меняете site.config.ts, а не компоненты.",
+            "Демо-шаблон «Модуль»: 12 типов секций, 63 варианта раскладок и два тарифа оформления — econom, standard. Меняете site.config.ts, а не компоненты.",
         keywords: [
             "конструктор сайтов",
             "шаблон лендинга",
             "next.js шаблон",
             "варианты секций",
-            "econom standard premium",
+            "econom standard",
             "site.config.ts",
             "готовые блоки для лендинга",
         ],
@@ -82,7 +82,6 @@ export const siteConfig: SiteConfig = {
         //              подсветка секций, плашки под иконками, живой hover;
         //              заодно все секции без явного variant переключаются
         //              на карточные раскладки.
-        // "premium"  — дорого через воздух и акцентную рамку, без теней.
         // Что именно меняется и как собирать «Стандарт» — docs/presets.md.
         preset: "standard",
         // Форма .icon-tile по умолчанию для всего сайта — одна ручка на
@@ -189,7 +188,7 @@ export const siteConfig: SiteConfig = {
             ],
             facts: [
                 { value: "63", label: "готовых варианта секций" },
-                { value: "3 тарифа", label: "econom / standard / premium" },
+                { value: "2 тарифа", label: "econom / standard" },
                 { value: "0 строк кода", label: "чтобы собрать первый лендинг" },
             ],
             proof: {
@@ -250,8 +249,8 @@ export const siteConfig: SiteConfig = {
                 },
                 {
                     icon: "check",
-                    title: "3 тарифа оформления",
-                    text: "econom — плоско и документно. standard — карточки, тени, живой hover. premium — глубина через рамку и воздух, без теней.",
+                    title: "2 тарифа оформления",
+                    text: "econom — плоско и документно. standard — карточки, тени, живой hover.",
                     points: [
                         "Одна ручка theme.preset на весь сайт",
                         "Дефолтные раскладки секций переключаются вместе с тарифом",
@@ -411,18 +410,18 @@ export const siteConfig: SiteConfig = {
                     result: "Палитра Медицина из CLAUDE.md, Features variant=table, Hero variant=split с фото врача.",
                     year: "2024",
                     status: "Запущено",
-                    tags: ["premium", "table"],
+                    tags: ["econom", "table"],
                     photo: "/images/gallery-3.jpg",
                     link: { label: "Обсудить похожий проект", href: "#contact", variant: "quiet" },
                 },
                 {
                     category: "Портфолио",
                     title: "Витрина архитектурного бюро",
-                    problem: "Бюро хотело имиджевый сайт без единой тени — воздух и рамка вместо карточек.",
-                    result: "Тариф premium, Hero variant=showcase с фото проекта в рамке browser.",
+                    problem: "Бюро хотело сдержанный имиджевый сайт без карточек и теней — плоская документная подача вместо продуктового глянца.",
+                    result: "Тариф econom, Hero variant=showcase с фото проекта в рамке browser.",
                     year: "2024",
                     status: "Запущено",
-                    tags: ["standard", "showcase"],
+                    tags: ["econom", "showcase"],
                     photo: "/images/gallery-4.jpg",
                     link: { label: "Обсудить похожий проект", href: "#contact", variant: "quiet" },
                 },
@@ -516,7 +515,7 @@ export const siteConfig: SiteConfig = {
                 {
                     name: "Артём Белов",
                     role: "Frontend-инженер",
-                    focus: "Компоненты и пресеты econom / standard / premium",
+                    focus: "Компоненты и пресеты econom / standard",
                     experience: "6 лет на React",
                     photo: "/images/team-3.jpg",
                     tags: ["React", "Server Components"],
@@ -552,7 +551,7 @@ export const siteConfig: SiteConfig = {
             items: [
                 {
                     question: "Сколько стоит лицензия на шаблон?",
-                    answer: "Тарифы в разделе «Тарифы» — это тарифы ОФОРМЛЕНИЯ (глубина карточек, тени, радиусы), а не число доступных секций: все 12 типов секций и все 63 варианта доступны в любом из трёх. Цена лицензии считается отдельно, по брифу.",
+                    answer: "Тарифы в разделе «Тарифы» — это тарифы ОФОРМЛЕНИЯ (глубина карточек, тени, радиусы), а не число доступных секций: все 12 типов секций и все 63 варианта доступны в любом из двух. Цена лицензии считается отдельно, по брифу.",
                     icon: "handCoins",
                     category: "Тарифы",
                     tags: ["Тарифы", "Оплата"],
@@ -611,8 +610,8 @@ export const siteConfig: SiteConfig = {
             number: "09",
             nav: "Тарифы",
             eyebrow: "Тарифы оформления",
-            title: "econom / standard / premium — в чём разница",
-            lead: "Тариф — это глубина и пластика (тени, радиусы, подсветка), а не количество доступных секций: все три открывают полный каталог.",
+            title: "econom / standard — в чём разница",
+            lead: "Тариф — это глубина и пластика (тени, радиусы, подсветка), а не количество доступных секций: оба открывают полный каталог.",
             items: [
                 {
                     name: "Econom",
@@ -643,20 +642,6 @@ export const siteConfig: SiteConfig = {
                     ],
                     featured: true,
                     action: { label: "Взять тариф", href: "#contact", variant: "primary" },
-                },
-                {
-                    name: "Premium",
-                    tag: "ИМИДЖ",
-                    icon: "landmark",
-                    price: "29 900 ₽",
-                    unit: "/ проект",
-                    text: "Для имиджевых брендов и люксовых ниш.",
-                    features: [
-                        "Глубина через рамку и воздух, без теней",
-                        "Индивидуальная палитра и шрифтовая пара",
-                        "Личный менеджер запуска",
-                    ],
-                    action: { label: "Обсудить", href: "#contact", variant: "secondary" },
                 },
             ],
             note: "Тариф можно сменить в любой момент — это одна строка theme.preset, а не пересборка секций.",
@@ -692,22 +677,22 @@ export const siteConfig: SiteConfig = {
                 photo: "/images/stats-photo.jpg",
             },
             comparison: {
-                columns: ["Econom", "Standard", "Premium"],
+                columns: ["Econom", "Standard"],
                 highlightColumn: 1,
                 groups: [
                     {
                         title: "Пластика",
                         rows: [
-                            { label: "Тени карточек", values: [false, true, false] },
-                            { label: "Радиус карточки", values: ["2–4px", "16px", "2px"], highlight: true },
-                            { label: "Подсветка секций", values: [false, true, false] },
+                            { label: "Тени карточек", values: [false, true] },
+                            { label: "Радиус карточки", values: ["2–4px", "16px"], highlight: true },
+                            { label: "Подсветка секций", values: [false, true] },
                         ],
                     },
                     {
                         title: "Поддержка",
                         rows: [
-                            { label: "Telegram 30 дней", values: [false, true, true] },
-                            { label: "Личный менеджер", values: [false, false, true] },
+                            { label: "Telegram 30 дней", values: [false, true] },
+                            { label: "Личный менеджер", values: [false, false] },
                         ],
                     },
                 ],

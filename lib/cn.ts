@@ -1,6 +1,9 @@
-export type ClassValue = string | false | null | undefined;
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
-/** Минимальный склейщик классов — clsx ради трёх строк в бандл не тянем. */
+export type { ClassValue };
+
+/** clsx + tailwind-merge: конфликтующие tailwind-классы схлопываются в последний. */
 export function cn(...values: ClassValue[]): string {
-  return values.filter(Boolean).join(" ");
+  return twMerge(clsx(values));
 }

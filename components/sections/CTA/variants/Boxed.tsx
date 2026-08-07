@@ -21,7 +21,7 @@ export function Boxed(props: CtaSection) {
           <CtaEyebrow eyebrow={eyebrow} variant="badge" className="flex justify-center" />
 
           {title ? (
-            <h2 className={`font-heading text-h1 ${eyebrow ? "mt-4" : ""}`} data-reveal>
+            <h2 className={`font-heading section-title ${eyebrow ? "mt-4" : ""}`} data-reveal>
               {title}
             </h2>
           ) : null}
@@ -34,7 +34,7 @@ export function Boxed(props: CtaSection) {
 
           {actions.length > 0 ? (
             <div
-              className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:items-baseline sm:justify-center"
+              className="mt-9 flex flex-col flex-wrap items-center justify-center gap-4 sm:flex-row sm:items-baseline"
               data-reveal
             >
               {actions.map((action, index) => (

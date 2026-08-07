@@ -91,26 +91,6 @@ export const PRESET_DEFAULTS: Record<Preset, SectionDefaults> = {
     contact: "split",
     contactLayout: "cardContainer",
   },
-
-  /**
-   * Premium — дорого через воздух и рамку, а не через тень: раскладки
-   * ближе к Экономy, но карточки получают акцентную рамку и минимальный
-   * радиус (это уже сделано токенами, см. [data-preset="premium"]).
-   */
-  premium: {
-    hero: "split",
-    stats: "band",
-    statsContainer: "bordered",
-    features: "cards",
-    steps: "stack",
-    gallery: "table",
-    testimonials: "quotes",
-    team: "columns",
-    pricing: "cards",
-    faq: "narrow",
-    contact: "split",
-    contactLayout: "plain",
-  },
 };
 
 /** Дефолтные раскладки для конкретного тарифа. */

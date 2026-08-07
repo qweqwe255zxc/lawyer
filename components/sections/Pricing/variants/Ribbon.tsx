@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { cn } from "@/lib/cn";
 import { PlanContent } from "../parts/PlanContent";
@@ -10,6 +11,8 @@ import { PricingComparisonTable } from "../parts/PricingComparisonTable";
 import { PricingFootnotes } from "../parts/PricingFootnotes";
 import { PricingQuoteBlock } from "../parts/PricingQuoteBlock";
 import type { PricingSection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [{ prefix: "md:", cols: 3 }] as const;
 
 /**
  * Econom: карточки с лейблом `tag` над названием (через `showTag` —
@@ -37,7 +40,9 @@ export function Ribbon(props: PricingSection) {
     closing,
     quote,
     comparison,
+    fillLastRow = true,
   } = props;
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
 
   return (
     <Section id={id} surface={surface}>
@@ -53,6 +58,7 @@ export function Ribbon(props: PricingSection) {
               className={cn(
                 "flex h-full flex-col overflow-hidden",
                 plan.featured && "ui-card--featured",
+                spanClasses[index],
               )}
             >
               {plan.featured && plan.badge ? (

@@ -10,15 +10,15 @@ import type { FaqSection } from "@/types/site";
  * Как добавить новый дизайн — docs/section-system.md, раздел 7.
  */
 const variants: VariantMap<FaqSection, NonNullable<FaqSection["variant"]>> = {
-  narrow: Narrow,
-  wide: Wide,
-  "split-sidebar": SplitSidebar,
-  categorized: Categorized,
+    narrow: Narrow,
+    wide: Wide,
+    "split-sidebar": SplitSidebar,
+    categorized: Categorized,
 };
 
 export function FAQ(props: FaqSection) {
-  const Variant = variants[props.variant ?? "narrow"] ?? Narrow;
-  return <Variant {...props} />;
+    const Variant = variants[props.variant ?? "narrow"] ?? Narrow;
+    return <Variant {...props} />;
 }
 
 export default FAQ;

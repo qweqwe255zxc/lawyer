@@ -51,12 +51,16 @@ export function Panels(props: ContactFormProps) {
 
   return (
     <Section id={id} surface={surface} spacing="none" iconShape={iconShape}>
-      <div className="grid md:grid-cols-2 md:items-stretch">
+      {/* 7/5, а не 50/50: панель с адресом/телефоном/почтой — короткий,
+          самодостаточный список, а форма с несколькими полями рядом с ней
+          выглядела заметно мельче остальных элементов раскладки. Форме
+          нужно больше пространства, чем справочной информации. */}
+      <div className="grid md:grid-cols-12 md:items-stretch">
         {/* text-center + mx-auto на заголовке/лиде и на самой форме — тот
             же приём max-w(...)/2 держит колонку на общей оси страницы,
             но раньше содержимое внутри было прижато к левому краю этой
             колонки, а не центрировано в ней. */}
-        <div className="mx-auto w-full max-w-[calc(var(--container-page)/2)] px-gutter py-section-lg text-center">
+        <div className="mx-auto w-full max-w-[calc(var(--container-page)*7/12)] px-gutter py-section-lg text-center md:col-span-7">
           {eyebrow ? (
             <p className="text-caption font-medium uppercase text-fg-muted" data-reveal>
               {eyebrow}
@@ -93,7 +97,7 @@ export function Panels(props: ContactFormProps) {
             (flex-1) забирает ВЕСЬ остаток под инфоблоком, а не только
             высоту по aspect-ratio. Раньше при этом снизу оставалась чёрная
             (surface ink) полоса под белой картой фиксированной высоты. */}
-        <div data-surface="ink" className="flex h-full flex-col bg-bg text-fg">
+        <div data-surface="ink" className="flex h-full flex-col bg-bg text-fg md:col-span-5">
           <div className="px-gutter py-section-lg md:px-12">
             <p className="text-caption font-medium uppercase text-fg-muted" data-reveal>
               Офис

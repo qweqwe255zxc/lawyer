@@ -199,8 +199,22 @@ export function SectionRenderer({ sections, context }: SectionRendererProps) {
           return null;
         }
 
+        // titleStyle — переопределение per-секцию (SectionBase.titleStyle):
+        // без него data-title-style на <html> и так наследуется по DOM
+        // на любую глубину (см. theme/tokens.css), обёртка не нужна.
+        // Оборачиваем div'ом, а не пропом до Section: у ~40 файлов
+        // вариантов разная сигнатура пропов, а CSS custom properties
+        // наследуются через любой промежуточный элемент без разницы.
         return (
-          <Fragment key={section.id}>{render(section, context)}</Fragment>
+          <Fragment key={section.id}>
+            {section.titleStyle ? (
+              <div data-title-style={section.titleStyle}>
+                {render(section, context)}
+              </div>
+            ) : (
+              render(section, context)
+            )}
+          </Fragment>
         );
       })}
     </>

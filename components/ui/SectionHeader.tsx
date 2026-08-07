@@ -76,9 +76,7 @@ export function SectionHeader({
           !stacked && (hasKicker ? "md:col-span-9" : "md:col-span-12"),
         )}
       >
-        {title ? (
-          <h2 className="max-w-[22ch] font-heading text-h2">{title}</h2>
-        ) : null}
+        {title ? <h2 className="font-heading section-title">{title}</h2> : null}
         {lead ? (
           <p className="mt-5 max-w-[58ch] text-lead text-fg-muted">{lead}</p>
         ) : null}
