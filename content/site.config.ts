@@ -119,8 +119,9 @@ export const siteConfig: SiteConfig = {
             "ИНН 7701234567 · ОГРН 1157746012345",
         ],
         links: [{ label: "Политика конфиденциальности", href: "/privacy" }],
-        // columns/social/newsletter читают bold/classic/monogram —
-        // без них колончатые варианты просто не рисуют этот блок.
+        // columns читают только bold/classic/monogram; social/newsletter
+        // читают все варианты футера — без данных секция просто не
+        // рисует соответствующий блок.
         columns: [
             {
                 title: "Продукт",

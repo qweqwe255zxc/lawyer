@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
+import { NewsletterForm } from "../parts/NewsletterForm";
 import { SocialLinks } from "../parts/SocialLinks";
 import type { FooterProps } from "../types";
 
 /**
  * Всё по центру в одну колонку: знак, плоский ряд ссылок (nav — тот же
- * список разделов, что и в хедере, без группировки по колонкам),
- * копирайт, соцссылки. Самый компактный из вариантов по высоте.
+ * список разделов, что и в хедере, без группировки по колонкам), форма
+ * подписки, копирайт, соцссылки. Самый компактный из вариантов по
+ * высоте — newsletter опционален и не рендерится без footer.newsletter.
  */
 export function Centered({ brand, footer, nav }: FooterProps) {
   const year = new Date().getFullYear();
@@ -33,6 +35,10 @@ export function Centered({ brand, footer, nav }: FooterProps) {
                   ))}
                 </ul>
               </nav>
+            ) : null}
+
+            {footer.newsletter ? (
+              <NewsletterForm newsletter={footer.newsletter} className="w-full max-w-xs" />
             ) : null}
 
             <div className="w-full max-w-xs border-t border-rule pt-6">

@@ -1,14 +1,17 @@
 import { Container } from "@/components/ui/Container";
 import { BottomBar } from "../parts/BottomBar";
 import { FooterColumns } from "../parts/FooterColumns";
+import { NewsletterForm } from "../parts/NewsletterForm";
 import { SocialLinks } from "../parts/SocialLinks";
 import type { FooterProps } from "../types";
 
 /**
  * Жирный вордмарк и тег-лайн слева, соцссылки под ним; сгруппированные
- * колонки ссылок справа. Колонки и соцссылки — опциональные данные
- * (footer.columns / footer.social): без них секция просто не рендерит
- * соответствующий блок, а не подставляет заглушку.
+ * колонки ссылок и форма подписки справа. Колонки, соцссылки и
+ * newsletter — опциональные данные (footer.columns / footer.social /
+ * footer.newsletter): без них секция просто не рендерит соответствующий
+ * блок, а не подставляет заглушку. Логика доли колонок под newsletter —
+ * та же, что в Monogram.
  */
 export function Bold({ brand, footer }: FooterProps) {
   return (
@@ -28,8 +31,14 @@ export function Bold({ brand, footer }: FooterProps) {
             </div>
 
             {footer.columns ? (
-              <div className="md:col-span-7">
+              <div className={footer.newsletter ? "md:col-span-4" : "md:col-span-7"}>
                 <FooterColumns columns={footer.columns} />
+              </div>
+            ) : null}
+
+            {footer.newsletter ? (
+              <div className={footer.columns ? "md:col-span-3" : "md:col-span-7"}>
+                <NewsletterForm newsletter={footer.newsletter} />
               </div>
             ) : null}
           </div>

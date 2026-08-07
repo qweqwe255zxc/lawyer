@@ -1,15 +1,21 @@
 import Link from "next/link";
 import { BrandMark } from "@/components/ui/BrandMark";
 import { Container } from "@/components/ui/Container";
+import { NewsletterForm } from "../parts/NewsletterForm";
 import type { FooterProps } from "../types";
 
 /**
  * Спокойный финал страницы: двойная линейка сверху, мелкий кегль,
  * компактные отступы. Знак бренда тут — последнее место на странице,
  * где ещё используется акцентный цвет.
+ *
+ * footer.newsletter — опциональная 4-я колонка: без неё сетка остаётся
+ * 3 колонки по md:col-span-4 (как раньше), с ней все четыре узла
+ * сжимаются до md:col-span-3.
  */
 export function Default({ brand, contacts, footer, nav }: FooterProps) {
   const year = new Date().getFullYear();
+  const colSpan = footer.newsletter ? "md:col-span-3" : "md:col-span-4";
 
   return (
     <footer data-surface="paper" className="bg-bg text-fg">
@@ -18,7 +24,7 @@ export function Default({ brand, contacts, footer, nav }: FooterProps) {
         <div className="border-t border-rule pt-12 md:pt-16">
           <Container>
             <div className="grid gap-x-gutter gap-y-10 md:grid-cols-12">
-              <div className="md:col-span-4">
+              <div className={colSpan}>
                 <p className="flex items-center gap-2 font-display text-h3">
                   <BrandMark mark={brand.mark} alt={brand.name} />
                   <span>{brand.name}</span>
@@ -26,7 +32,7 @@ export function Default({ brand, contacts, footer, nav }: FooterProps) {
                 <p className="mt-3 text-small text-fg-muted">{brand.tagline}</p>
               </div>
 
-              <nav className="md:col-span-4" aria-label="Разделы сайта">
+              <nav className={colSpan} aria-label="Разделы сайта">
                 <ul className="grid gap-2.5 sm:grid-cols-2">
                   {nav.map((item) => (
                     <li key={item.href}>
@@ -41,7 +47,7 @@ export function Default({ brand, contacts, footer, nav }: FooterProps) {
                 </ul>
               </nav>
 
-              <div className="md:col-span-4">
+              <div className={colSpan}>
                 <ul className="grid gap-2.5">
                   <li>
                     <a
@@ -63,6 +69,12 @@ export function Default({ brand, contacts, footer, nav }: FooterProps) {
                   <li className="text-small text-fg-muted">{contacts.hours}</li>
                 </ul>
               </div>
+
+              {footer.newsletter ? (
+                <div className={colSpan}>
+                  <NewsletterForm newsletter={footer.newsletter} />
+                </div>
+              ) : null}
             </div>
 
             <div className="mt-12 grid gap-x-gutter gap-y-6 border-t border-rule py-8 md:grid-cols-12">

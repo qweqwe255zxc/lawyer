@@ -1,14 +1,15 @@
 import { Container } from "@/components/ui/Container";
 import { BottomBar } from "../parts/BottomBar";
 import { FooterColumns } from "../parts/FooterColumns";
+import { NewsletterForm } from "../parts/NewsletterForm";
 import { SocialLinks } from "../parts/SocialLinks";
 import type { FooterProps } from "../types";
 
 /**
  * Корпоративный футер: вордмарк обычного начертания (не капслок, как
  * в Bold) и более просторный ритм — mt-16 вместо mt-12, колонки шире.
- * Данные те же, что и у Bold: одна и та же схема footer.columns/social,
- * разница только в оформлении.
+ * Данные те же, что и у Bold: одна и та же схема footer.columns/social/
+ * newsletter, разница только в оформлении.
  */
 export function Classic({ brand, footer }: FooterProps) {
   return (
@@ -26,8 +27,14 @@ export function Classic({ brand, footer }: FooterProps) {
             </div>
 
             {footer.columns ? (
-              <div className="md:col-span-8">
+              <div className={footer.newsletter ? "md:col-span-5" : "md:col-span-8"}>
                 <FooterColumns columns={footer.columns} />
+              </div>
+            ) : null}
+
+            {footer.newsletter ? (
+              <div className={footer.columns ? "md:col-span-3" : "md:col-span-8"}>
+                <NewsletterForm newsletter={footer.newsletter} />
               </div>
             ) : null}
           </div>

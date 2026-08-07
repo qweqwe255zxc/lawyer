@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
+import { NewsletterForm } from "../parts/NewsletterForm";
 import { SocialLinks } from "../parts/SocialLinks";
 import type { FooterProps } from "../types";
 
 /**
  * Навигация разбита на два кластера по бокам от вордмарка по центру —
- * та же идея, что и в Header/variants/Split.tsx. Нижняя строка:
- * копирайт слева, соцссылки справа.
+ * та же идея, что и в Header/variants/Split.tsx. Опциональная форма
+ * подписки (footer.newsletter) — центрированным блоком между навигацией
+ * и нижней строкой. Нижняя строка: копирайт слева, соцссылки справа.
  */
 export function Split({ brand, footer, nav }: FooterProps) {
   const year = new Date().getFullYear();
@@ -63,6 +65,13 @@ export function Split({ brand, footer, nav }: FooterProps) {
               </ul>
             </nav>
           </div>
+
+          {footer.newsletter ? (
+            <NewsletterForm
+              newsletter={footer.newsletter}
+              className="mx-auto mt-10 w-full max-w-xs text-center"
+            />
+          ) : null}
 
           <div className="mt-10 flex flex-col items-center gap-4 border-t border-rule pt-6 md:flex-row md:justify-between">
             <p className="tabular text-small text-fg-muted">
