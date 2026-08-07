@@ -14,14 +14,14 @@ import type { StatsSection } from "@/types/site";
  * тонировка фона `bg-fg/6%`, темнее в светлой теме/светлее в тёмной —
  * не полная инверсия поверхности, она читалась как сломанная чёрная
  * карточка), остальные — обычная `framed`. Без явного highlight ни у
- * одного item — прежний дефолт по позиции (первая карточка accent,
- * последняя tint), чтобы конфиг без этого поля выглядел как раньше.
+ * одного item — дефолт только для первой карточки (accent); последняя
+ * не получает tint по умолчанию, чтобы не выглядеть как случайно
+ * выбитая карточка с другим фоном.
  * Ширина карточек — `lib/bentoSpan.ts`: растягивается на 2 слота только
  * там, где это ровно закрывает ряд, не там, где "ещё есть место".
  */
 export function Bento(props: StatsSection) {
   const { id, surface = "paper", number, eyebrow, title, lead, items, iconShape } = props;
-  const last = items.length - 1;
 
   return (
     <Section id={id} surface={surface} iconShape={iconShape}>
@@ -41,13 +41,7 @@ export function Bento(props: StatsSection) {
             // прежний дефолт: первая карточка accent, последняя tint
             // (только при 2+ элементах — с одним item совпадение "первая
             // и последняя" раньше давало две конфликтующие оправы разом).
-            const highlight =
-              item.highlight ??
-              (index === 0
-                ? "accent"
-                : index === last && items.length > 1
-                  ? "tint"
-                  : undefined);
+            const highlight = item.highlight ?? (index === 0 ? "accent" : undefined);
 
             return (
               <Card
