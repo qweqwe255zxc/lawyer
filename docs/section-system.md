@@ -111,7 +111,7 @@ item в ряду → одна карточка `col-span-2`, два слота �
 | Steps | `cards`, `cascade`, `numbered-cards` | `rail`, `stack`, `timeline-vertical`, `timeline-horizontal`, `split` |
 | Gallery | `grid`, `cards-icon`, `photo-grid`, `photo-bento` | `table` |
 | Testimonials | `cards`, `bento`, `rated-cards` | `quotes`, `spotlight` |
-| Team | `cards`, `photo-cards`, `badge-avatars`, `tags-cards`, `bento` | `columns`, `rows` |
+| Team | `cards`, `bento` | `columns`, `rows`, `photo-cards`, `badge-avatars`, `tags-cards` (последние три растягивают каждый неполный ряд через `lib/bentoSpan.ts`, не только последний, — `fillLastRow` их не выключает) |
 | Pricing | `cards`, `ribbon`, `split`, `dark`, `playful`, `quote`, `glass`, `banner`, `matrix` | `table` |
 
 Не читают варианты, где границы/разделители завязаны на позицию
@@ -330,6 +330,8 @@ item в ряду → одна карточка `col-span-2`, два слота �
 | `image?` | нет | — | фото шапки `variant="bento"` |
 | `banner?: TeamBanner` | нет | — | баннер «Хотите к нам?» под сеткой; читают все семь вариантов. Оправу (`soft`/`solid`/`quote`) решает variant по умолчанию (`columns`/`rows`/`cards`/`photo-cards` → `soft`, `badge-avatars` → `solid`, `tags-cards`/`bento` → `quote`), но `banner.tone` переопределяет её явно независимо от variant |
 | `number`, `eyebrow`, `title`, `lead` | нет | — | обычные (кроме `bento`) |
+| `fillLastRow?` | нет | `true` | растягивает последний неполный ряд (`lib/gridFill.ts`); читают только `cards`/`bento` |
+| `heroSpan?: "full"\|"half"` | нет | `"full"` | ширина крупной карточки первого человека; читает только `bento` |
 | — | — | — | аватар в `columns`/`rows`/`cards` — единый бокс `aspect-[3/4]`: фото или заглушка-инициалы того же размера |
 
 **Варианты:**
@@ -337,12 +339,12 @@ item в ряду → одна карточка `col-span-2`, два слота �
 | Значение | Раскладка |
 |---|---|
 | `columns` | 3 колонки на линейках |
-| `rows` | 1 колонка |
-| `cards` | 3 колонки, `Card variant="framed"` — дефолт «Стандарта» |
+| `rows` | 1 колонка, фото слева фиксированного горизонтального `aspect-[4/3]` (не растягивается по высоте текста — иначе на узкой колонке превращается в вертикальную полосу), содержимое справа |
+| `cards` | `sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`, `Card variant="framed"` — дефолт «Стандарта» |
 | `photo-cards` | фото во всю ширину карточки, роль акцентом, `social` |
 | `badge-avatars` | круглый аватар по центру, роль плашкой, `social` |
 | `tags-cards` | квадратное фото, имя+`link` в углу, `tags` |
-| `bento` | заголовок слева + фото справа; первый человек крупный с фото/именем поверх (градиент снизу), остальные — сетка поменьше |
+| `bento` | заголовок слева + фото справа; первый человек крупный с фото/именем поверх (градиент снизу, ширина — `heroSpan`), остальные — сетка поменьше |
 
 ### About — `About/`, тип `"about"`
 

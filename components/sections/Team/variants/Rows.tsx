@@ -8,10 +8,14 @@ import { TeamBannerBlock } from "../parts/TeamBannerBlock";
 import type { TeamSection } from "@/types/site";
 
 /**
- * Один человек — одна строка на всю ширину: фото во всю высоту строки
- * слева, содержимое справа. `md:items-stretch` на строке — фото и
- * текстовая колонка растягиваются до одной высоты (по самой высокой из
- * них), а не садятся по верхнему краю с фото произвольного роста.
+ * Один человек — одна строка на всю ширину: фото слева, содержимое
+ * справа. Фото держит фиксированный горизонтальный aspect-[4/3] на всех
+ * брейкпоинтах — раньше `md:aspect-auto` вместе со `items-stretch`
+ * растягивал бокс по высоте текстовой колонки при фиксированной ширине
+ * в 4/12, и на строке с длинным `focus` фото превращалось в узкую
+ * вертикальную полосу вместо горизонтального портрета. `md:self-start`
+ * держит фото у верхнего края строки, когда текст выше его собственной
+ * высоты.
  */
 export function Rows(props: TeamSection) {
   const { id, surface = "paper", number, eyebrow, title, lead, items, banner } = props;
@@ -33,7 +37,7 @@ export function Rows(props: TeamSection) {
                 className="border-t border-rule py-8 first:border-t-0 md:py-10"
               >
                 <div className="grid gap-x-gutter gap-y-6 md:grid-cols-12 md:items-stretch">
-                  <div className="ui-media relative aspect-[4/3] w-full overflow-hidden bg-rule md:col-span-4 md:aspect-auto">
+                  <div className="ui-media relative aspect-[4/3] w-full overflow-hidden bg-rule md:col-span-4 md:self-start">
                     {member.photo ? (
                       <Image
                         src={member.photo}
