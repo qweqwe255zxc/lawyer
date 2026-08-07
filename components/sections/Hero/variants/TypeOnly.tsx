@@ -29,13 +29,13 @@ export function TypeOnly(props: HeroSection) {
   return (
     <Section id={id} surface={surface} spacing="lg" tint="hero">
       <Container>
-        <div className="grid gap-x-gutter md:grid-cols-12">
-          <HeroRail number={number} rail={rail} className="md:col-span-2" />
+        <div className="grid gap-x-gutter lg:grid-cols-12">
+          <HeroRail number={number} rail={rail} className="lg:col-span-2" />
           <HeroLede
             headline={headline}
             lead={lead}
             actions={actions}
-            className="md:col-span-10"
+            className="lg:col-span-10"
           />
         </div>
 

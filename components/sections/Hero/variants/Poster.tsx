@@ -92,7 +92,7 @@ export function Poster(props: HeroSection) {
 
             {actions.length > 0 ? (
               <div
-                className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center"
+                className="mt-10 flex flex-col flex-wrap gap-4 sm:flex-row sm:items-center"
                 data-reveal
                 style={revealDelay(3)}
               >
@@ -108,7 +108,7 @@ export function Poster(props: HeroSection) {
               </div>
             ) : null}
 
-            <HeroFacts facts={facts} />
+            <HeroFacts facts={facts} columns={1} />
           </div>
         </div>
 
