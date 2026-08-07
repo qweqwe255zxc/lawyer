@@ -107,7 +107,7 @@ item в ряду → одна карточка `col-span-2`, два слота �
 | Секция | Читают | Не читают (не карточные/линейные раскладки) |
 |---|---|---|
 | Stats | `badge`, `plain`, `bento` | `band`, `grid`, `rows`, `photo` |
-| Features | `cards`, `cards-cta`, `bento` | `table`, `table-links` |
+| Features | `cards`, `bento` | `table` |
 | Steps | `cards`, `cascade`, `numbered-cards` | `rail`, `stack`, `timeline-vertical`, `timeline-horizontal`, `split` |
 | Gallery | `grid`, `cards-icon`, `photo-grid`, `photo-bento` | `table` |
 | Testimonials | `cards`, `bento`, `rated-cards` | `quotes`, `spotlight` |
@@ -116,8 +116,8 @@ item в ряду → одна карточка `col-span-2`, два слота �
 
 Не читают варианты, где границы/разделители завязаны на позицию
 элемента в сетке (`border-l`/`border-t` по `index % cols`, как у
-`Stats.band`/`Stats.rows`/`Features.table`/`Features.table-links`/
-`Gallery.table`/`Team.columns`) — растянутая карточка сдвинула бы
+`Stats.band`/`Stats.rows`/`Features.table`/`Gallery.table`/
+`Team.columns`) — растянутая карточка сдвинула бы
 позицию всех следующих за ней ячеек и сломала бы это построение. Такие
 раскладки вообще не оборачивают элемент в `Card`.
 
@@ -201,17 +201,23 @@ item в ряду → одна карточка `col-span-2`, два слота �
 
 ### Features — `Features/`, тип `"features"`
 
-Пять вариантов. `table`/`cards` — заголовок через `SectionHeader`.
-`cards-cta`/`bento` центрируют его через `parts/FeaturesHeader.tsx`.
-`table-links` строит собственную шапку в две колонки.
+Три варианта. `table`/`cards` — заголовок через `SectionHeader`. `bento`
+центрирует его через `parts/FeaturesHeader.tsx`.
+
+Было пять вариантов — `cards-cta` и `table-links` поглощены `cards`/
+`table` как дубликаты: отличались только опциональной ссылкой на
+элементе, которая и так читается из `item.link`, если задана. `table`
+сам рисует стрелку-ссылку в углу ячейки, `cards` — строку «Подробнее»
+под текстом и (опционально) кнопку `action` под сеткой. Не заводить
+`cards-cta`/`table-links` обратно отдельными `variant`.
 
 | Поле | Обязательное | По умолчанию | Примечание |
 |---|---|---|---|
-| `items: FeatureItem[]` (`title`, `text`, `icon?`, `points?`, `number?`, `photo?`, `link?`, `tags?`) | да | — | `icon` — ключ `lib/icons.ts`; `link`/`tags` — только карточные варианты |
+| `items: FeatureItem[]` (`title`, `text`, `icon?`, `points?`, `number?`, `photo?`, `link?`, `tags?`) | да | — | `icon` — ключ `lib/icons.ts`; `link` — читают `table`/`cards`/`bento` (сам решает, показывать ли ссылку/стрелку); `tags` — только `bento` |
 | `surface` | нет | `"surface"` | |
 | `variant` | нет | `"table"` | см. ниже |
-| `columns: 2\|3` | нет | `2` | читают `table`/`table-links` |
-| `action?` | нет | — | кнопка под сеткой; только `cards-cta` |
+| `columns: 2\|3` | нет | `2` у `table`, `3` у `cards` | читают оба; `bento` игнорирует (сама сетка асимметричная) |
+| `action?` | нет | — | кнопка под сеткой; только `cards` |
 | `number`, `eyebrow`, `title`, `lead` | нет | — | обычные |
 | — | — | — | `photo` рендерится в `aspect-[4/3] overflow-hidden`, не произвольным размером |
 
@@ -219,16 +225,14 @@ item в ряду → одна карточка `col-span-2`, два слота �
 
 | Значение | Раскладка | `photo` |
 |---|---|---|
-| `table` | линейки-разделители | форсирует `cards` |
-| `cards` | `Card variant="framed"` | ок |
-| `cards-cta` | эйброу по центру, ссылка «Подробнее» (`item.link`), опц. кнопка `action` под сеткой | ок |
-| `table-links` | шапка в 2 колонки, линейки как `table`, стрелка-ссылка в углу | форсирует `cards` |
+| `table` | линейки-разделители; стрелка-ссылка в углу ячейки включается сама, если хотя бы у одного `item` задан `link` (мобильный горизонтальный паддинг тоже включается вместе со стрелкой — иначе ей не хватает места и текст лезет под неё) | форсирует `cards` |
+| `cards` | `Card variant="framed"`, сетка `sm:grid-cols-2 lg:grid-cols-3` (или только `sm:grid-cols-2` при `columns:2`) — не `md:grid-cols-3` напрямую, три карточки в ряд между 768–1023px были зажаты; ссылка «Подробнее» и кнопка `action` включаются сами, если заданы | ок |
 | `bento` | эйброу по центру, первый элемент во всю ширину с акцентной рамкой (`tags` под описанием), остальные — сетка 2 кол. | ок |
 
-**Если у хотя бы одного `item` задан `photo`, а `variant` — `table`/
-`table-links`** — роутер форсирует `variant="cards"` (dev-warn), см.
-раздел 2: рамки там рисует `grid`, а не карточка, и высота фото
-произвольного размера ломает сетку.
+**Если у хотя бы одного `item` задан `photo`, а `variant` — `table`** —
+роутер форсирует `variant="cards"` (dev-warn), см. раздел 2: рамки там
+рисует `grid`, а не карточка, и высота фото произвольного размера
+ломает сетку.
 
 ### Steps — `Steps/`, тип `"steps"`
 
@@ -730,8 +734,8 @@ Webpack — оба проверены) не может доказать, что 
 | `ui-card` (+`--elevated`/`--accent`/`--featured`/`--live`/`--interactive`) | карточка | `Card`, контейнер `Stats`, таймлайн `Steps` |
 | `ui-button` | радиус/тень/подъём кнопки | `Button` |
 | `ui-control` | геометрия поля | `Input`, `Select` |
-| `ui-media` | скругление медиа без соседнего паддинга `Card` (без тени) | фото Features `table`/`table-links`, аватар Team `rows`/`columns` (без `Card`-обёртки — сравнивать не с чем) |
-| `ui-media-inset` | то же, но радиус уменьшен на паддинг родительской `Card` (концентрические дуги: угол фото должен отставать от угла карточки ровно на её паддинг, иначе на равных `--radius-card`/`--radius-media` дуги не делят центр), с нижней границей `--radius-control` — на Стандарте паддинг Card (28–36px) больше `--radius-card` (16px), и без пола честная разница уходит в 0 (острый угол фото вплотную к мягкому углу карточки) | фото `Pricing.plan.photo` (`PlanContent`), фото `Steps` `cascade`/`numbered-cards`, фото About/Hero-панели с `frame: "plain"` (`AboutMedia`, `HeroPanel`), фото Features `cards`/`cards-cta`/`bento` (`FeatureContent` с `mediaInset`), аватар Team `cards` (`MemberContent` с `mediaInset`) |
+| `ui-media` | скругление медиа без соседнего паддинга `Card` (без тени) | фото Features `table`, аватар Team `rows`/`columns` (без `Card`-обёртки — сравнивать не с чем) |
+| `ui-media-inset` | то же, но радиус уменьшен на паддинг родительской `Card` (концентрические дуги: угол фото должен отставать от угла карточки ровно на её паддинг, иначе на равных `--radius-card`/`--radius-media` дуги не делят центр), с нижней границей `--radius-control` — на Стандарте паддинг Card (28–36px) больше `--radius-card` (16px), и без пола честная разница уходит в 0 (острый угол фото вплотную к мягкому углу карточки) | фото `Pricing.plan.photo` (`PlanContent`), фото `Steps` `cascade`/`numbered-cards`, фото About/Hero-панели с `frame: "plain"` (`AboutMedia`, `HeroPanel`), фото Features `cards`/`bento` (`FeatureContent` с `mediaInset`), аватар Team `cards` (`MemberContent` с `mediaInset`) |
 | `ui-media-raised` | скругление+тень самостоятельного медиа | фото Hero/About, карта в контактах |
 | `ui-popover` | радиус/тень всплывающей панели | `Toast`, меню `Select` |
 | `ui-accordion`, `ui-accordion-item` | линейки (Эконом) / карточки (Стандарт) | `Accordion` |

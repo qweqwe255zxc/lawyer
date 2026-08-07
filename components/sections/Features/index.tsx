@@ -1,8 +1,6 @@
 import { Bento } from "./variants/Bento";
 import { Cards } from "./variants/Cards";
-import { CardsCta } from "./variants/CardsCta";
 import { Table } from "./variants/Table";
-import { TableLinks } from "./variants/TableLinks";
 import type { VariantMap } from "../variantMap";
 import type { FeaturesSection } from "@/types/site";
 
@@ -12,11 +10,16 @@ import type { FeaturesSection } from "@/types/site";
  *
  * Помимо выбора варианта роутер делает одну содержательную вещь: если
  * хотя бы у одного элемента задан photo, он ФОРСИРУЕТ Cards, что бы ни
- * стояло в конфиге — но только если стоял вариант БЕЗ карточки
- * (table/table-links: там рамки рисует grid, и он не умеет выравнивать
- * фото произвольной высоты, сетка расползается). cards-cta и bento уже
- * держат каждый item в `Card`, туда photo встаёт без проблем. Правило
- * обязательное, см. docs/section-system.md, раздел 2.
+ * стояло в конфиге — но только если стоял вариант БЕЗ карточки (table:
+ * там рамки рисует grid, и он не умеет выравнивать фото произвольной
+ * высоты, сетка расползается). cards и bento уже держат каждый item в
+ * `Card`, туда photo встаёт без проблем. Правило обязательное, см.
+ * docs/section-system.md, раздел 2.
+ *
+ * Раньше здесь было пять вариантов — `cards-cta` и `table-links`
+ * поглощены `cards`/`table` как дубликаты (отличались только опциональной
+ * ссылкой на элементе, которая и так читается из `item.link`). Не заводить
+ * их обратно отдельными `variant`.
  *
  * Как добавить новый дизайн — docs/section-system.md, раздел 7.
  */
@@ -26,12 +29,10 @@ const variants: VariantMap<
 > = {
   table: Table,
   cards: Cards,
-  "cards-cta": CardsCta,
-  "table-links": TableLinks,
   bento: Bento,
 };
 
-const GRID_ONLY: NonNullable<FeaturesSection["variant"]>[] = ["table", "table-links"];
+const GRID_ONLY: NonNullable<FeaturesSection["variant"]>[] = ["table"];
 
 export function Features(props: FeaturesSection) {
   const variant = props.variant ?? "table";
