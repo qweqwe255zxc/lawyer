@@ -73,11 +73,11 @@ export function Split(props: HeroSection) {
       }
     >
       <Container>
-        <div className="grid gap-x-gutter md:grid-cols-12 md:items-center">
+        <div className="grid gap-x-gutter lg:grid-cols-12 lg:items-center">
           <HeroRail
             number={number}
             rail={rail}
-            className="md:col-span-1 md:self-start"
+            className="lg:col-span-1 lg:self-start"
           />
 
           <HeroLede
@@ -85,33 +85,33 @@ export function Split(props: HeroSection) {
             lead={lead}
             actions={actions}
             compact
-            className="md:col-span-6"
+            className="lg:col-span-6"
           />
 
           {withImage ? (
             // Фото — col-span-5 col-start-8, встык к правому краю
-            // контейнера: rail(1)+text(6)=7, разрыва нет. Высота на md+
+            // контейнера: rail(1)+text(6)=7, разрыва нет. Высота на lg+
             // явная и стоит на ВНУТРЕННЕМ боксе, а не min-height на
             // grid-ячейке: при min-height + stretch фото растягивалось от
             // общего верхнего края строки и весь лишний рост уходил вниз.
-            // На мобильном грид схлопывается в одну колонку, там высоту
-            // держит aspect-square (md:aspect-auto его снимает).
+            // На мобильном и планшете грид схлопнут в одну колонку, там
+            // высоту держит aspect-square (lg:aspect-auto его снимает).
             // pl-8/lg:pl-12 — единственный источник зазора между текстом и
             // фото (плюс стандартный gap-x-gutter). Паддинг на внешнем
             // grid-элементе, overflow-hidden на внутреннем боксе, чтобы
             // паддинг не резал скругление.
             <div
               className={cn(
-                "mt-10 md:col-span-5 md:col-start-8 md:mt-0 md:pl-10 lg:pl-16",
-                hideMediaOnMobile && "hidden md:block",
+                "mt-10 lg:col-span-5 lg:col-start-8 lg:mt-0 lg:pl-10 xl:pl-16",
+                hideMediaOnMobile && "hidden lg:block",
               )}
             >
-              <div className="ui-media-raised relative aspect-[4/3] w-full overflow-hidden md:aspect-auto md:h-[34rem] lg:h-[40rem]">
+              <div className="ui-media-raised relative aspect-[4/3] w-full overflow-hidden lg:aspect-auto lg:h-[34rem] xl:h-[40rem]">
                 <Image
                   src={image as string}
                   alt={headline.join(" ")}
                   fill
-                  sizes="(min-width: 768px) 33vw, 100vw"
+                  sizes="(min-width: 1024px) 33vw, 100vw"
                   className="object-cover"
                   data-reveal
                   style={revealDelay(1)}
@@ -124,13 +124,13 @@ export function Split(props: HeroSection) {
             // Виджет живёт в той же колонке, что и фото, но без явной
             // высоты: карточка ровно такая, какой её делает содержимое, а
             // по вертикали её центрирует items-center на строке.
-            // hidden md:block — сознательно: на мобильном грид схлопнут в
+            // hidden lg:block — сознательно: до lg грид схлопнут в
             // одну колонку, и карточка встала бы между лидом и кнопками,
             // уводя CTA за первый экран. Метрики виджета — витрина, а не
             // единственный источник этих чисел: для мобильного есть facts
             // ниже и секция stats.
             <div
-              className="hidden md:col-span-5 md:col-start-8 md:block md:pl-10 lg:pl-16"
+              className="hidden lg:col-span-5 lg:col-start-8 lg:block lg:pl-10 xl:pl-16"
               data-reveal
               style={revealDelay(1)}
             >
