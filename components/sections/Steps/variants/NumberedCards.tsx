@@ -30,7 +30,7 @@ export function NumberedCards(props: StepsSection) {
           className="mb-12 md:mb-16"
         />
 
-        <ol className="grid gap-x-gutter gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <ol className="grid gap-gutter sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {items.map((item, index) => {
             const Icon = getIcon(item.icon);
             const isLast = index === items.length - 1;
