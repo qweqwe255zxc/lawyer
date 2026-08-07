@@ -61,8 +61,17 @@ export function Centered({
             ref={navRef}
             aria-label="Основная навигация"
             className={cn(
-              "no-scrollbar w-full overflow-x-auto",
-              overflowing && "invisible pointer-events-none",
+              "no-scrollbar overflow-x-auto",
+              // При переполнении нав прячем через invisible (не hidden —
+              // иначе clientWidth обнулится и useNavOverflow больше не
+              // сможет засечь, что место наконец появилось, см. коммент
+              // в useNavOverflow.ts), но ещё и вынимаем его из потока
+              // (absolute), иначе invisible-нав всё равно занимает свою
+              // строку в flex-col и под шапкой остаётся пустая полоса
+              // высотой в строку навигации.
+              overflowing
+                ? "invisible pointer-events-none absolute inset-x-0 top-full"
+                : "static w-full",
             )}
           >
             <ul className="mx-auto flex w-fit items-center gap-x-8">

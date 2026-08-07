@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
-import { Container } from "@/components/ui/Container";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { Container } from "@/components/ui/Container";
 import { cn } from "@/lib/cn";
 import { BurgerButton } from "../parts/BurgerButton";
 import { headerSurface, resolveScrolled } from "../parts/headerSurface";
@@ -13,11 +12,15 @@ import { useNavOverflow } from "../parts/useNavOverflow";
 import type { HeaderProps } from "../types";
 
 /**
- * Навигация разбита на два кластера, вордмарк — сам по себе пункт
- * по центру между ними (отдельного знака слева нет). Три колонки
- * grid держат кластер по центру ровно, даже когда левая (пустая) и
- * правая (кнопка) зоны разной ширины. Середину делит nav.length
- * пополам — при нечётном числе пунктов правый кластер на один длиннее.
+ * Навигация разбита на два кластера, вордмарк — сам по себе пункт по
+ * центру между ними (отдельного знака слева нет). Без CTA и переключателя
+ * темы в общей строке — как и в `centered`, они бы конкурировали за
+ * ширину с nav и заставляли вордмарк обрезаться первым (было именно так
+ * в прежней версии с 3-колоночным grid и невидимым зеркалом правого
+ * блока: https://.../ — при переполнении левая колонка теряла место под
+ * знак, а бургер оставался виден даже при полностью помещающемся nav).
+ * Тема доступна в углу всегда, CTA — в выезжающей панели вместе с
+ * остальной навигацией.
  */
 export function Split({
   brandName,
@@ -47,100 +50,36 @@ export function Split({
       )}
     >
       <Container>
-        {/* auto/1fr/auto, а не 1fr/auto/1fr: крайние колонки — auto,
-            то есть получают ровно столько места, сколько нужно их
-            содержимому (слева — невидимый двойник правого блока, справа —
-            сам блок, оба принудительно одинаковой ширины), и середина —
-            единственный гибкий трек (minmax(0,1fr)), забирающий весь
-            остаток. Это даёт сразу два свойства: (1) nav всегда ровно
-            посередине, потому что обе соседних колонки правда равны, а не
-            просто «честно делят» неравный остаток; (2) когда всему целиком
-            не хватает места, ужимается именно nav (у него уже есть
-            overflow-x-auto) — тогда nav.scrollWidth реально превышает
-            nav.clientWidth и useNavOverflow корректно включает бургер.
-            Раньше (auto — у nav) грид всегда давал nav его собственную
-            ширину без ужатия, и хук ничего не мог засечь: при большом
-            количестве пунктов меню кнопки в правой колонке просто
-            наезжали на последний пункт nav, а не отдавали место бургеру.
+        <div className="relative flex h-header items-center justify-center">
+          <div className="absolute inset-y-0 right-0 flex items-center gap-3">
+            {showThemeToggle ? (
+              <div className="hidden sm:block">
+                <ThemeToggle />
+              </div>
+            ) : null}
 
-            Ниже lg сам грид не нужен: nav в средней колонке всё равно
-            hidden, поэтому auto/1fr/auto вырождается в две несжимаемые
-            auto-колонки (у grid-track auto нет аналога flex-shrink) —
-            вордмарк ("М.max-w-[16rem].truncate") и правый кластер
-            (тема+кнопка+бургер) не делят между собой нехватку ширины,
-            а просто вместе перерастают контейнер, выталкивая бургер
-            за край экрана на самых узких телефонах. flex ниже lg решает
-            это тем же truncate: у flex-item он даёт automatic minimum
-            size = 0 (см. CSS Sizing §4.5), то есть вордмарк сжимается
-            первым и отдаёт место бургеру, а не наоборот. */}
-        <div className="flex h-header items-center justify-between gap-3 lg:grid lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-6">
-          <div className="col-start-1 flex min-w-0 items-center">
-            <Link
-              href="#hero"
-              className={cn(
-                "max-w-[16rem] truncate font-heading text-h3 font-bold uppercase",
-                !overflowing && "lg:hidden",
-              )}
-              onClick={closeMenu}
-            >
-              {brandName}
-            </Link>
-
-            {/* Невидимый двойник правого блока (тема+кнопки+бургер) —
-                без него левая колонка остаётся пустой, а правая тянет
-                под свой контент, и middle-колонка (nav) съезжает влево
-                от истинного центра шапки. С зеркалом обе крайних колонки
-                получают одинаковую содержательную ширину, и minmax(0,1fr)
-                делит остаток строго поровну. inert снимает эту копию из
-                фокуса и озвучки целиком — она не должна быть достижима.
-
-                Рендерим ВСЕГДА, а не только при !overflowing: раньше блок
-                пропадал ровно тогда, когда nav переставал переполняться,
-                и левая колонка «auto» тут же сжималась обратно до ширины
-                одного вордмарка — middle-колонка внезапно получала лишние
-                ~200px, freeing space меняло сам результат измерения,
-                на котором основано условие, и useNavOverflow видел
-                самосбивающуюся, круговую зависимость (влезло → зеркало
-                исчезло → появилось место → должно было влезать ещё сильнее,
-                но реальный клиентский бокс уже не совпадал с тем, что
-                измерили). Зеркало постоянной ширины убирает эту петлю:
-                левая колонка больше не меняет размер от самого overflowing. */}
-            <div inert aria-hidden="true" className="invisible hidden items-center gap-3 lg:flex">
-              {showThemeToggle ? (
-                <div className="hidden sm:block">
-                  <ThemeToggle />
-                </div>
-              ) : null}
-
-              {actions[0] ? (
-                <Button href={actions[0].href} variant={actions[0].variant ?? "primary"} size="sm">
-                  {actions[0].label}
-                </Button>
-              ) : null}
-
-              {actions.length > 1 ? (
-                <div className="hidden items-center gap-3 sm:flex">
-                  {actions.slice(1).map((action, index) => (
-                    <Button
-                      key={`mirror-${index}`}
-                      href={action.href}
-                      variant={action.variant ?? "primary"}
-                      size="sm"
-                    >
-                      {action.label}
-                    </Button>
-                  ))}
-                </div>
-              ) : null}
-
-              <BurgerButton open={false} onClick={() => {}} />
-            </div>
+            <BurgerButton open={menuOpen} onClick={toggleMenu} forceVisible={overflowing} />
           </div>
+
+          {/* Ниже lg сам nav скрыт целиком (lg:flex) — вордмарк
+              единственный элемент в потоке и остаётся центрированным
+              этим же flex-контейнером. truncate + max-w не даёт ему
+              наехать на угловой кластер на самых узких телефонах. */}
+          <Link
+            href="#hero"
+            className={cn(
+              "max-w-[calc(100%-5rem)] truncate font-heading text-h3 font-bold uppercase",
+              !overflowing && "lg:hidden",
+            )}
+            onClick={closeMenu}
+          >
+            {brandName}
+          </Link>
 
           <nav
             ref={navRef}
             className={cn(
-              "no-scrollbar col-start-2 hidden min-w-0 items-center gap-4 overflow-x-auto lg:flex xl:gap-6",
+              "no-scrollbar hidden min-w-0 items-center gap-4 overflow-x-auto lg:flex xl:gap-6",
               overflowing && "invisible pointer-events-none",
             )}
             aria-label="Основная навигация"
@@ -186,37 +125,6 @@ export function Split({
               ))}
             </ul>
           </nav>
-
-          <div className="col-start-3 flex items-center justify-end gap-3">
-            {showThemeToggle ? (
-              <div className="hidden sm:block">
-                <ThemeToggle />
-              </div>
-            ) : null}
-
-            {actions[0] ? (
-              <Button href={actions[0].href} variant={actions[0].variant ?? "primary"} size="sm">
-                {actions[0].label}
-              </Button>
-            ) : null}
-
-            {actions.length > 1 ? (
-              <div className="hidden items-center gap-3 sm:flex">
-                {actions.slice(1).map((action, index) => (
-                  <Button
-                    key={index}
-                    href={action.href}
-                    variant={action.variant ?? "primary"}
-                    size="sm"
-                  >
-                    {action.label}
-                  </Button>
-                ))}
-              </div>
-            ) : null}
-
-            <BurgerButton open={menuOpen} onClick={toggleMenu} forceVisible={overflowing} />
-          </div>
         </div>
       </Container>
 

@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/cn";
 import { BurgerButton } from "../parts/BurgerButton";
 import { headerSurface, resolveScrolled } from "../parts/headerSurface";
+import { HeaderCtaGroup } from "../parts/HeaderCtaGroup";
 import { MobileNav } from "../parts/MobileNav";
 import { useHeaderState } from "../parts/useHeaderState";
 import { useNavOverflow } from "../parts/useNavOverflow";
@@ -93,26 +93,7 @@ export function Monogram({
               </div>
             ) : null}
 
-            {actions[0] ? (
-              <Button href={actions[0].href} variant={actions[0].variant ?? "primary"} size="sm">
-                {actions[0].label}
-              </Button>
-            ) : null}
-
-            {actions.length > 1 ? (
-              <div className="hidden items-center gap-3 sm:flex">
-                {actions.slice(1).map((action, index) => (
-                  <Button
-                    key={index}
-                    href={action.href}
-                    variant={action.variant ?? "primary"}
-                    size="sm"
-                  >
-                    {action.label}
-                  </Button>
-                ))}
-              </div>
-            ) : null}
+            <HeaderCtaGroup actions={actions} />
 
             <BurgerButton open={menuOpen} onClick={toggleMenu} forceVisible={overflowing} />
           </div>
