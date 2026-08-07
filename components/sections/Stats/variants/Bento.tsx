@@ -2,9 +2,13 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { getIcon } from "@/lib/icons";
+import { cn } from "@/lib/cn";
+import { fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { StatsHeader } from "../parts/StatsHeader";
 import type { StatsSection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [{ prefix: "md:", cols: 2 }] as const;
 
 /**
  * Заголовок пилюлей по центру, дальше — двухколоночная сетка. Оправу
@@ -12,17 +16,24 @@ import type { StatsSection } from "@/types/site";
  * тонировка фона `bg-fg/6%`, темнее в светлой теме/светлее в тёмной —
  * не полная инверсия поверхности, она читалась как сломанная чёрная
  * карточка), остальные — обычная `framed`. Без явного highlight ни у
- * одного item — прежний дефолт по позиции (первая карточка accent,
- * последняя tint), чтобы конфиг без этого поля выглядел как раньше.
+ * одного item — дефолт только на первой карточке (accent): автовыделение
+ * ПОСЛЕДНЕЙ карточки убрано — оно срабатывало и там, где это не был
+ * содержательный акцент, а просто «какая карточка оказалась последней»,
+ * и читалось как случайное затемнение. Если нужна пара акцентов —
+ * ставить item.highlight явно на нужном элементе.
+ * Растягивание последнего неполного ряда (`fillLastRow`, дефолт `true`)
+ * теперь общая логика `lib/gridFill.ts` — при нечётном числе items
+ * последняя карточка по-прежнему растягивается на обе колонки, но это
+ * можно выключить пропом.
  * Точную асимметрию ширин колонок в референсе (2×2 bento с разными
  * пропорциями по рядам) не повторяем — это отдельная задача на
  * произвольные col-span/row-span, а не смену токенов (см. docs/
- * section-system.md, ниша «Бизнес — SaaS»); здесь двухколоночный поток,
- * устойчивый к любому числу items.
+ * section-system.md, ниша «Стандарт — сложный SaaS»); здесь
+ * двухколоночный поток, устойчивый к любому числу items.
  */
 export function Bento(props: StatsSection) {
-  const { id, surface = "paper", number, eyebrow, title, lead, items, iconShape } = props;
-  const last = items.length - 1;
+  const { id, surface = "paper", number, eyebrow, title, lead, items, iconShape, fillLastRow = true } = props;
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
 
   return (
     <Section id={id} surface={surface} iconShape={iconShape}>
@@ -42,13 +53,7 @@ export function Bento(props: StatsSection) {
             // прежний дефолт: первая карточка accent, последняя tint
             // (только при 2+ элементах — с одним item совпадение "первая
             // и последняя" раньше давало две конфликтующие оправы разом).
-            const highlight =
-              item.highlight ??
-              (index === 0
-                ? "accent"
-                : index === last && items.length > 1
-                  ? "tint"
-                  : undefined);
+            const highlight = item.highlight ?? (index === 0 ? "accent" : undefined);
 
             return (
               <Card
@@ -61,7 +66,7 @@ export function Bento(props: StatsSection) {
                 // как сломанный контраст, а не «акцентный» бокс. Мягкий
                 // тонированный фон вместо инверсии — темнее в светлой
                 // теме, светлее в тёмной, но не противоположный цвет.
-                className={highlight === "tint" ? "bg-fg/[0.06]" : undefined}
+                className={cn(highlight === "tint" && "bg-fg/[0.06]", spanClasses[index])}
               >
                 {Icon ? (
                   <span className="icon-tile">

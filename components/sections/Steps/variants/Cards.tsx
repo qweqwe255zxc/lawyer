@@ -1,10 +1,17 @@
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
+import { fillLastRowClasses } from "@/lib/gridFill";
 import { getIcon } from "@/lib/icons";
 import { revealDelay } from "@/lib/reveal";
 import { StepsHeader } from "../parts/StepsHeader";
 import type { StepsSection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [
+  { prefix: "sm:", cols: 2 },
+  { prefix: "lg:", cols: 3 },
+  { prefix: "xl:", cols: 4 },
+] as const;
 
 /**
  * Заголовок пилюлей по центру, дальше — ряд карточек: плашка .icon-tile
@@ -13,8 +20,9 @@ import type { StepsSection } from "@/types/site";
  * элементом — так короче), описание.
  */
 export function Cards(props: StepsSection) {
-  const { id, surface = "paper", number, eyebrow, title, lead, items, headerAlign, iconShape } =
+  const { id, surface = "paper", number, eyebrow, title, lead, items, headerAlign, iconShape, fillLastRow = true } =
     props;
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
 
   return (
     <Section id={id} surface={surface} iconShape={iconShape}>
@@ -37,7 +45,7 @@ export function Cards(props: StepsSection) {
             const Icon = getIcon(item.icon);
 
             return (
-              <li key={item.number} data-reveal style={revealDelay(index)}>
+              <li key={item.number} data-reveal style={revealDelay(index)} className={spanClasses[index] || undefined}>
                 <Card variant="framed" className="h-full">
                   {Icon ? (
                     <span className="icon-tile mb-4">

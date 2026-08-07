@@ -5,9 +5,15 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { cn } from "@/lib/cn";
+import { ASPECT_PAIR_4_3, fillLastRowAspectClasses, fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { GalleryHeader } from "../parts/GalleryHeader";
 import type { GallerySection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [
+  { prefix: "sm:", cols: 2 },
+  { prefix: "lg:", cols: 3 },
+] as const;
 
 /**
  * Заголовок пилюлей, ряд карточек с фото: категория — плашкой поверх
@@ -16,8 +22,12 @@ import type { GallerySection } from "@/types/site";
  * бокс фото просто не рендерится, карточка остаётся текстовой.
  */
 export function PhotoGrid(props: GallerySection) {
-  const { id, surface = "surface", number, eyebrow, title, lead, action, items, align = "left" } = props;
+  const { id, surface = "surface", number, eyebrow, title, lead, action, items, align = "left", fillLastRow = true } = props;
   const centered = align === "center";
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
+  const aspectClasses = fillLastRow
+    ? fillLastRowAspectClasses(items.length, GRID_BREAKPOINTS, ASPECT_PAIR_4_3)
+    : [];
 
   return (
     <Section id={id} surface={surface}>
@@ -33,10 +43,15 @@ export function PhotoGrid(props: GallerySection) {
 
         <ul className="grid gap-x-gutter gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, index) => (
-            <li key={`${item.category}-${item.year}-${index}`} data-reveal style={revealDelay(index % 3)}>
+            <li
+              key={`${item.category}-${item.year}-${index}`}
+              data-reveal
+              style={revealDelay(index % 3)}
+              className={spanClasses[index] || undefined}
+            >
               <Card variant="framed" padded={false} className="flex h-full flex-col overflow-hidden">
                 {item.photo ? (
-                  <div className="ui-media relative aspect-[4/3] w-full shrink-0 overflow-hidden rounded-none">
+                  <div className={cn("ui-media relative aspect-[4/3] w-full shrink-0 overflow-hidden rounded-none", aspectClasses[index])}>
                     <Image
                       src={item.photo}
                       alt={item.title ?? item.category}

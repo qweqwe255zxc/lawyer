@@ -2,10 +2,18 @@ import Image from "next/image";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
+import { cn } from "@/lib/cn";
+import { ASPECT_PAIR_3_4, fillLastRowAspectClasses, fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { MemberSocial } from "../parts/MemberSocial";
 import { TeamBannerBlock } from "../parts/TeamBannerBlock";
 import type { TeamSection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [
+  { prefix: "sm:", cols: 2 },
+  { prefix: "lg:", cols: 3 },
+  { prefix: "xl:", cols: 4 },
+] as const;
 
 /**
  * Заголовок слева + фото справа (та же раскладка, что у About), дальше —
@@ -17,8 +25,12 @@ import type { TeamSection } from "@/types/site";
  * section-system.md, раздел 6).
  */
 export function Bento(props: TeamSection) {
-  const { id, surface = "paper", number, eyebrow, title, lead, image, items, banner } = props;
+  const { id, surface = "paper", number, eyebrow, title, lead, image, items, banner, fillLastRow = true } = props;
   const [first, ...rest] = items;
+  const spanClasses = fillLastRow ? fillLastRowClasses(rest.length, GRID_BREAKPOINTS) : [];
+  const aspectClasses = fillLastRow
+    ? fillLastRowAspectClasses(rest.length, GRID_BREAKPOINTS, ASPECT_PAIR_3_4)
+    : [];
 
   return (
     <Section id={id} surface={surface}>
@@ -81,12 +93,22 @@ export function Bento(props: TeamSection) {
                   className="object-cover grayscale"
                 />
               ) : null}
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent p-7 md:p-9">
-                <p className="text-caption font-medium uppercase text-paper/70">
+              {/* data-surface="ink" + text-fg/text-fg-muted, а не хардкод
+                  text-paper: paper — токен фона страницы, в тёмной теме он
+                  сам становится тёмным (см. [data-theme="dark"] в
+                  theme/tokens.css), и «светлый» текст на градиенте
+                  незаметно гас на своей же подложке. ink-fg — токен,
+                  парный именно ink (градиент — от bg-ink), поэтому
+                  остаётся контрастным читаемым независимо от темы сайта. */}
+              <div
+                data-surface="ink"
+                className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent p-7 md:p-9"
+              >
+                <p className="text-caption font-medium uppercase text-fg-muted">
                   {first.role}
                 </p>
-                <h3 className="mt-1 font-display text-h2 text-paper">{first.name}</h3>
-                <p className="mt-2 max-w-[52ch] text-small text-paper/80">{first.focus}</p>
+                <h3 className="mt-1 font-display text-h2 text-fg">{first.name}</h3>
+                <p className="mt-2 max-w-[52ch] text-small text-fg-muted">{first.focus}</p>
                 <MemberSocial items={first.social} />
               </div>
             </Card>
@@ -95,11 +117,16 @@ export function Bento(props: TeamSection) {
 
         <ul className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {rest.map((member, index) => (
-            <li key={member.name} data-reveal style={revealDelay(index)}>
+            <li
+              key={member.name}
+              data-reveal
+              style={revealDelay(index)}
+              className={spanClasses[index] || undefined}
+            >
               <Card
                 variant="framed"
                 padded={false}
-                className="relative aspect-[3/4] overflow-hidden"
+                className={cn("relative aspect-[3/4] overflow-hidden", aspectClasses[index])}
                 data-surface={member.photo ? undefined : "ink"}
               >
                 {member.photo ? (
@@ -111,18 +138,23 @@ export function Bento(props: TeamSection) {
                     className="object-cover grayscale"
                   />
                 ) : null}
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 via-ink/20 to-transparent p-5">
-                  <p className="text-caption font-medium uppercase text-paper/70">
+                <div
+                  data-surface="ink"
+                  className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 via-ink/20 to-transparent p-5"
+                >
+                  <p className="text-caption font-medium uppercase text-fg-muted">
                     {member.role}
                   </p>
-                  <h3 className="mt-1 font-display text-h4 text-paper">{member.name}</h3>
+                  <h3 className="mt-1 font-display text-h4 text-fg">{member.name}</h3>
                 </div>
               </Card>
             </li>
           ))}
         </ul>
 
-        {banner ? <TeamBannerBlock banner={banner} tone="quote" className="mt-12 md:mt-16" /> : null}
+        {banner ? (
+          <TeamBannerBlock banner={banner} tone={banner.tone ?? "quote"} className="mt-12 md:mt-16" />
+        ) : null}
       </Container>
     </Section>
   );

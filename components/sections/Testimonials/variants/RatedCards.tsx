@@ -2,12 +2,18 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { cn } from "@/lib/cn";
+import { fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { RatingStars } from "../parts/RatingStars";
 import { TestimonialBody } from "../parts/TestimonialBody";
 import { TestimonialsHeader } from "../parts/TestimonialsHeader";
 import { TrustRow } from "../parts/TrustRow";
 import type { TestimonialsSection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [
+  { prefix: "sm:", cols: 2 },
+  { prefix: "lg:", cols: 3 },
+] as const;
 
 /**
  * Заголовок пилюлей по центру, простой ряд карточек: рейтинг, цитата,
@@ -16,7 +22,8 @@ import type { TestimonialsSection } from "@/types/site";
  * Опциональная строка `trust` под сеткой.
  */
 export function RatedCards(props: TestimonialsSection) {
-  const { id, surface = "paper", number, eyebrow, title, lead, trust, items, headerAlign } = props;
+  const { id, surface = "paper", number, eyebrow, title, lead, trust, items, headerAlign, fillLastRow = true } = props;
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
 
   return (
     <Section id={id} surface={surface}>
@@ -30,9 +37,14 @@ export function RatedCards(props: TestimonialsSection) {
           className="mb-12 md:mb-16"
         />
 
-        <div className="grid gap-gutter md:grid-cols-3">
+        <div className="grid gap-gutter sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, index) => (
-            <div key={`${item.author}-${index}`} data-reveal style={revealDelay(index)}>
+            <div
+              key={`${item.author}-${index}`}
+              data-reveal
+              style={revealDelay(index)}
+              className={spanClasses[index] || undefined}
+            >
               {/* Мягкая тонировка вместо полной инверсии поверхности —
                   раньше data-surface="ink" на светлой теме давал сплошной
                   чёрный прямоугольник вместо акцентной карточки. */}

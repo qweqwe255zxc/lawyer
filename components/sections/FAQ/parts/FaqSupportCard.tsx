@@ -34,7 +34,7 @@ export function FaqSupportCard({ support, className }: FaqSupportCardProps) {
           </div>
         </div>
 
-        <Button href={support.action.href} variant="secondary" className="shrink-0">
+        <Button href={support.action.href} variant="secondary" full="mobile" className="shrink-0">
           {support.action.label}
         </Button>
       </div>

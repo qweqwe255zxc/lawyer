@@ -6,8 +6,14 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { revealDelay } from "@/lib/reveal";
 import { cn } from "@/lib/cn";
+import { ASPECT_PAIR_4_3, fillLastRowAspectClasses, fillLastRowClasses } from "@/lib/gridFill";
 import { GalleryHeader } from "../parts/GalleryHeader";
 import type { GallerySection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [
+  { prefix: "sm:", cols: 2 },
+  { prefix: "lg:", cols: 3 },
+] as const;
 
 /**
  * Асимметричная витрина кейсов: первый элемент — крупный, во всю
@@ -19,9 +25,13 @@ import type { GallerySection } from "@/types/site";
  * «Бизнес — SaaS», docs/section-system.md, раздел 6).
  */
 export function PhotoBento(props: GallerySection) {
-  const { id, surface = "surface", number, eyebrow, title, lead, action, items, align = "left" } = props;
+  const { id, surface = "surface", number, eyebrow, title, lead, action, items, align = "left", fillLastRow = true } = props;
   const centered = align === "center";
   const [first, ...rest] = items;
+  const spanClasses = fillLastRow ? fillLastRowClasses(rest.length, GRID_BREAKPOINTS) : [];
+  const aspectClasses = fillLastRow
+    ? fillLastRowAspectClasses(rest.length, GRID_BREAKPOINTS, ASPECT_PAIR_4_3)
+    : [];
 
   return (
     <Section id={id} surface={surface}>
@@ -106,14 +116,19 @@ export function PhotoBento(props: GallerySection) {
 
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {rest.map((item, index) => (
-            <li key={`${item.category}-${item.year}-${index}`} data-reveal style={revealDelay(index)}>
+            <li
+              key={`${item.category}-${item.year}-${index}`}
+              data-reveal
+              style={revealDelay(index)}
+              className={spanClasses[index] || undefined}
+            >
               <Card
                 variant="framed"
                 padded={!item.photo}
                 className={cn("flex h-full flex-col", item.photo && "overflow-hidden")}
               >
                 {item.photo ? (
-                  <div className="ui-media relative aspect-[4/3] w-full shrink-0 overflow-hidden rounded-none">
+                  <div className={cn("ui-media relative aspect-[4/3] w-full shrink-0 overflow-hidden rounded-none", aspectClasses[index])}>
                     <Image
                       src={item.photo}
                       alt={item.title ?? item.category}

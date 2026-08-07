@@ -4,9 +4,16 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { getIcon } from "@/lib/icons";
 import { cn } from "@/lib/cn";
+import { ASPECT_PAIR_4_3, fillLastRowAspectClasses, fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { StepsHeader } from "../parts/StepsHeader";
 import type { StepsSection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [
+  { prefix: "sm:", cols: 2 },
+  { prefix: "lg:", cols: 3 },
+  { prefix: "xl:", cols: 4 },
+] as const;
 
 /**
  * Ряд карточек: кружок-номер с соединительной линией, иконка, заголовок,
@@ -14,8 +21,12 @@ import type { StepsSection } from "@/types/site";
  * ink-поверхность — обычно последний шаг («Результат»).
  */
 export function NumberedCards(props: StepsSection) {
-  const { id, surface = "paper", number, eyebrow, title, lead, items, headerAlign, iconShape } =
+  const { id, surface = "paper", number, eyebrow, title, lead, items, headerAlign, iconShape, fillLastRow = true } =
     props;
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
+  const aspectClasses = fillLastRow
+    ? fillLastRowAspectClasses(items.length, GRID_BREAKPOINTS, ASPECT_PAIR_4_3)
+    : [];
 
   return (
     <Section id={id} surface={surface} iconShape={iconShape}>
@@ -46,8 +57,10 @@ export function NumberedCards(props: StepsSection) {
                 // контейнера свой bg-bg (чистый --surface-bg), два разных
                 // тона совпадают почти везде, кроме скруглённых углов
                 // карточки — там в срезе виден чужой прямоугольный угол
-                // контейнера. bg-card делает их одним и тем же тоном.
-                className={item.featured ? "bg-card text-fg" : undefined}
+                // контейнера. bg-card делает их одним и тем же тоном,
+                // rounded-card — тем же радиусом (сам цвет угол не спасал,
+                // если бы токены вдруг разошлись; форма — надёжнее).
+                className={cn(item.featured && "rounded-card bg-card text-fg", spanClasses[index])}
               >
                 <Card variant="framed" className="h-full">
                   <div className="flex items-center gap-3">
@@ -74,7 +87,7 @@ export function NumberedCards(props: StepsSection) {
                   <p className="mt-2 text-small text-fg-muted">{item.text}</p>
 
                   {item.photo ? (
-                    <div className="ui-media relative mt-5 aspect-[4/3] w-full shrink-0 overflow-hidden">
+                    <div className={cn("ui-media-inset relative mt-5 aspect-[4/3] w-full shrink-0 overflow-hidden", aspectClasses[index])}>
                       <Image
                         src={item.photo}
                         alt={item.title}

@@ -376,6 +376,59 @@
     box-shadow: var(--media-shadow);
   }
 
+  /* Скругление для фото, вложенного в padded бордюрную Card (не для
+     самостоятельных медиа-панелей типа .ui-media-raised): правило
+     концентрических радиусов — угол внутренней рамки обязан отставать
+     от угла внешней ровно на паддинг между ними, иначе при равных
+     --radius-card/--radius-media (Стандарт) дуги не разделяют
+     общий центр и читаются как рассинхронизированные. 1.75rem/2.25rem —
+     актуальный паддинг Card (p-7/md:p-9, см. components/ui/Card.tsx).
+
+     Нижняя граница — --radius-control, а не 0px: паддинг Card (28–36px)
+     на Стандарте больше самого --radius-card (16px), и честная разница
+     уходит в минус. Без пола это давало острый угол вплотную к мягкому
+     скруглению карточки — геометрически «концентрично», но на глаз
+     читается как будто скругление вообще пропало. --radius-control —
+     ступень меньше --radius-card в этом же пресете (роль уже даёт
+     нужный масштаб: 2px в Экономе, 12px в Стандарте), поэтому угол
+     фото остаётся визуально мягким, но заметно меньше угла карточки. */
+  .ui-media-inset {
+    border-radius: max(var(--radius-control), calc(var(--radius-card) - 1.75rem));
+  }
+
+  @media (min-width: 768px) {
+    .ui-media-inset {
+      border-radius: max(var(--radius-control), calc(var(--radius-card) - 2.25rem));
+    }
+  }
+
+  /* ---- Заголовок секции (.section-title) ----------------------------- */
+  /* Размер/выравнивание/max-width заголовка — управляются токенами
+     --title-* (theme/tokens.css), которые переключает [data-title-style]
+     на <html> (сайтвайдный дефолт) или локально на секции (переопределение
+     конкретного раздела) — см. SectionRenderer.tsx. Кикер (номер/эйброу)
+     сюда не входит, он всегда --text-caption вне зависимости от стиля. */
+  .section-title {
+    font-size: var(--title-size);
+    line-height: var(--title-line-height);
+    letter-spacing: var(--title-tracking);
+    max-width: var(--title-max-width);
+    text-align: var(--title-align);
+    margin-inline: var(--title-margin-x);
+  }
+
+  /* Только масштаб (без text-align/max-width/margin-inline) — для
+     *Header-обёрток (Team/Steps/Stats/Features и т.д.), у которых
+     выравнивание уже управляется отдельным, более гранулярным пропом
+     SectionBase.headerAlign: там свой JS-переключатель центр/лево на
+     обёртке, и полный .section-title своим text-align на самом <h2>
+     переспорил бы его напрямую (h2 — не унаследует, а переобъявит). */
+  .section-title-scale {
+    font-size: var(--title-size);
+    line-height: var(--title-line-height);
+    letter-spacing: var(--title-tracking);
+  }
+
   /* ---- Всплывающая панель (тост, меню селекта) ---------------------- */
   .ui-popover {
     border-radius: var(--popover-radius);

@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
+import { fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { cn } from "@/lib/cn";
 import { PlanContent } from "../parts/PlanContent";
@@ -11,6 +12,8 @@ import { PricingFootnotes } from "../parts/PricingFootnotes";
 import { PricingHeader } from "../parts/PricingHeader";
 import { PricingQuoteBlock } from "../parts/PricingQuoteBlock";
 import type { PricingSection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [{ prefix: "md:", cols: 3 }] as const;
 
 /**
  * Лейбл `tag` в каждой карточке, выделенный тариф — поверхность accent
@@ -33,7 +36,9 @@ export function Glass(props: PricingSection) {
     quote,
     comparison,
     headerAlign,
+    fillLastRow = true,
   } = props;
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
 
   return (
     <Section id={id} surface={surface}>
@@ -52,7 +57,7 @@ export function Glass(props: PricingSection) {
             <div
               key={plan.name}
               data-surface={plan.featured ? "accent" : undefined}
-              className={cn(plan.featured && "rounded-card bg-bg text-fg")}
+              className={cn(plan.featured && "rounded-card bg-bg text-fg", spanClasses[index])}
               data-reveal
               style={revealDelay(index)}
             >

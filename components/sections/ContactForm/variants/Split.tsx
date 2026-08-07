@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Toast } from "@/components/ui/Toast";
+import { cn } from "@/lib/cn";
 import { ContactDetails } from "../parts/ContactDetails";
 import { ContactMap } from "../parts/ContactMap";
 import { FormColumn } from "../parts/FormColumn";
@@ -20,6 +21,7 @@ export function Split(props: ContactFormProps) {
     id,
     surface = "surface",
     layout = "plain",
+    order = "form-first",
     number,
     eyebrow,
     title,
@@ -43,6 +45,8 @@ export function Split(props: ContactFormProps) {
     errorText,
   });
 
+  const formFirst = order === "form-first";
+
   return (
     <Section id={id} surface={surface}>
       <Container>
@@ -53,11 +57,22 @@ export function Split(props: ContactFormProps) {
           lead={lead}
         />
 
-        <div className="mt-14 grid gap-x-gutter gap-y-14 md:mt-20 md:grid-cols-12">
+        {/* lg (1024), а не md (768): на 768–1023px 7/12-колонка формы
+            слишком узкая для полей в 2 ряда (sm:grid-cols-2 у
+            ContactFields, см. parts/ContactFields.tsx) — лейблы то
+            переносились на вторую строку, то нет, ряд читался рваным.
+            Ниже lg секция теперь одноколоночная (уже была так до 768),
+            с lg сразу получает 5/7-колонки, но при ширине, где для формы
+            физически хватает места. */}
+        <div className="mt-14 grid gap-x-gutter gap-y-14 lg:mt-20 lg:grid-cols-12">
           <ContactDetails
             contacts={contacts}
             detailsTitle={detailsTitle}
-            className="md:col-span-5"
+            // order-* — только ниже lg (см. выше, там же контейнер ещё
+            // одноколоночный): по умолчанию форма первая, реквизиты
+            // вторичны. С lg колонки идут бок о бок, порядок в DOM снова
+            // решает сам variant (реквизиты слева) — lg:order-none.
+            className={cn("lg:order-none lg:col-span-5", formFirst && "order-2")}
           />
 
           <FormColumn
@@ -66,7 +81,7 @@ export function Split(props: ContactFormProps) {
             submitLabel={submitLabel}
             consent={consent}
             layout={layout}
-            columnClassName="md:col-span-7"
+            columnClassName={cn("lg:order-none lg:col-span-7", formFirst && "order-1")}
           />
         </div>
 

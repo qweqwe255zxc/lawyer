@@ -3,10 +3,18 @@ import type { CSSProperties } from "react";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
+import { cn } from "@/lib/cn";
+import { ASPECT_PAIR_4_3, fillLastRowAspectClasses, fillLastRowClasses } from "@/lib/gridFill";
 import { getIcon } from "@/lib/icons";
 import { revealDelay } from "@/lib/reveal";
 import { StepsHeader } from "../parts/StepsHeader";
 import type { StepsSection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [
+  { prefix: "sm:", cols: 2 },
+  { prefix: "lg:", cols: 3 },
+  { prefix: "xl:", cols: 4 },
+] as const;
 
 /**
  * Карточки каскадом: каждая следующая ниже и правее предыдущей, номер —
@@ -17,8 +25,12 @@ import type { StepsSection } from "@/types/site";
  * («Playful Startup»). Фото — опционально, в подвале карточки.
  */
 export function Cascade(props: StepsSection) {
-  const { id, surface = "paper", number, eyebrow, title, lead, items, headerAlign, iconShape } =
+  const { id, surface = "paper", number, eyebrow, title, lead, items, headerAlign, iconShape, fillLastRow = true } =
     props;
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
+  const aspectClasses = fillLastRow
+    ? fillLastRowAspectClasses(items.length, GRID_BREAKPOINTS, ASPECT_PAIR_4_3)
+    : [];
 
   return (
     <Section id={id} surface={surface} iconShape={iconShape}>
@@ -45,24 +57,23 @@ export function Cascade(props: StepsSection) {
               <li
                 key={item.number}
                 data-reveal
-                // Смещение считаем по остатку от РЕАЛЬНОГО числа колонок
-                // на каждом брейкпоинте (2 на sm, 3 на lg, 4 на xl), иначе
-                // с фиксированным % 4 (посчитанным под lg:grid-cols-4)
-                // каскад ломался везде, где колонок меньше четырёх: ниже
-                // sm — вертикальный список получал неровный повторяющийся
-                // ритм вместо нулевого отступа, а в диапазоне sm–lg (2
-                // колонки) и lg–xl (3 колонки) смещение считалось не под
-                // ту раскладку и «наезжало» на обычный поток строк.
-                // mt-0 ниже sm — там всего одна колонка и каскада нет вовсе.
+                // Смещение — НАКОПИТЕЛЬНОЕ (index * 28px), а не остаток от
+                // числа колонок на брейкпоинте: с остатком (index % columns)
+                // каждая новая строка начиналась заново с нулевого отступа —
+                // лесенка обрывалась и «зубец» первой карточки следующей
+                // строки торчал выше последней карточки предыдущей, вместо
+                // того чтобы продолжать спуск. Накопительное смещение растёт
+                // с каждой карточкой независимо от переноса строк, поэтому
+                // лесенка читается непрерывной и сверху, и снизу на любом
+                // количестве колонок. mt-0 ниже sm — там всего одна колонка
+                // и каскада нет вовсе.
                 style={
                   {
                     ...revealDelay(index),
-                    "--offset-sm": `${(index % 2) * 28}px`,
-                    "--offset-lg": `${(index % 3) * 28}px`,
-                    "--offset-xl": `${(index % 4) * 28}px`,
+                    "--offset": `${index * 28}px`,
                   } as CSSProperties
                 }
-                className="relative mt-0 sm:mt-[var(--offset-sm)] lg:mt-[var(--offset-lg)] xl:mt-[var(--offset-xl)]"
+                className={cn("relative mt-0 sm:mt-[var(--offset)]", spanClasses[index])}
               >
                 <span
                   aria-hidden="true"
@@ -84,11 +95,15 @@ export function Cascade(props: StepsSection) {
                     </span>
                   ) : null}
 
-                  <h3 className="mt-4 max-w-[22ch] font-heading text-h3">{item.title}</h3>
-                  <p className="mt-3 text-body text-fg-muted">{item.text}</p>
+                  <h3 className="mt-4 line-clamp-2 min-h-[2.6em] max-w-[22ch] font-heading text-h3">
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 line-clamp-3 min-h-[4.8em] text-body text-fg-muted">
+                    {item.text}
+                  </p>
 
                   {item.photo ? (
-                    <div className="ui-media relative mt-6 aspect-[4/3] w-full shrink-0 overflow-hidden">
+                    <div className={cn("ui-media-inset relative mt-6 aspect-[4/3] w-full shrink-0 overflow-hidden", aspectClasses[index])}>
                       <Image
                         src={item.photo}
                         alt={item.title}

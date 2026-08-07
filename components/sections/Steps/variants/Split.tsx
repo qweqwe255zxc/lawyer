@@ -52,7 +52,7 @@ export function Split(props: StepsSection) {
             ) : null}
           </div>
 
-          <ol className="grid grid-cols-2 gap-4">
+          <ol className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {items.map((item, index) => {
               const Icon = getIcon(item.icon);
 
@@ -61,7 +61,7 @@ export function Split(props: StepsSection) {
                   key={item.number}
                   data-reveal
                   style={revealDelay(index)}
-                  className={item.featured ? "bg-bg text-fg" : undefined}
+                  className={item.featured ? "rounded-card bg-bg text-fg" : undefined}
                   data-surface={item.featured ? "accent" : undefined}
                 >
                   <Card variant="framed" className="relative h-full overflow-hidden">

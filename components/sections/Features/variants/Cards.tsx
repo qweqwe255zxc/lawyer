@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { ASPECT_PAIR_4_3, fillLastRowAspectClasses, fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { cn } from "@/lib/cn";
 import { FeatureContent } from "../parts/FeatureContent";
@@ -29,7 +30,16 @@ export function Cards(props: FeaturesSection) {
     lead,
     items,
     iconShape,
+    fillLastRow = true,
   } = props;
+  const gridBreakpoints =
+    columns === 2
+      ? ([{ prefix: "md:", cols: 2 }] as const)
+      : ([{ prefix: "sm:", cols: 2 }, { prefix: "lg:", cols: 3 }] as const);
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, gridBreakpoints) : [];
+  const aspectClasses = fillLastRow
+    ? fillLastRowAspectClasses(items.length, gridBreakpoints, ASPECT_PAIR_4_3)
+    : [];
 
   return (
     <Section id={id} surface={surface} iconShape={iconShape}>
@@ -44,7 +54,10 @@ export function Cards(props: FeaturesSection) {
         <div
           className={cn(
             "mt-14 grid md:mt-20",
-            columns === 2 ? "md:grid-cols-2" : "md:grid-cols-3",
+            // sm:grid-cols-2 lg:grid-cols-3, а не md:grid-cols-3: скачок
+            // 1→3 прямо на 768px не оставлял карточкам места, текст
+            // вылезал за границы — тот же порог, что уже стоит в CardsCta.
+            columns === 2 ? "md:grid-cols-2" : "sm:grid-cols-2 lg:grid-cols-3",
             "gap-gutter",
           )}
         >
@@ -52,14 +65,19 @@ export function Cards(props: FeaturesSection) {
             <Card
               key={item.title}
               variant="framed"
-              className="flex h-full flex-col"
+              className={cn("flex h-full flex-col", spanClasses[index])}
             >
               <div
                 className="flex flex-1 flex-col"
                 data-reveal
                 style={revealDelay(index % columns)}
               >
-                <FeatureContent item={item} iconLayout="inline" />
+                <FeatureContent
+                  item={item}
+                  iconLayout="inline"
+                  mediaInset
+                  mediaAspectClassName={aspectClasses[index]}
+                />
               </div>
             </Card>
           ))}

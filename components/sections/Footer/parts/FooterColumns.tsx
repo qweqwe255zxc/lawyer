@@ -10,12 +10,18 @@ interface FooterColumnsProps {
  * Число колонок приходит из данных (footer.columns.length), а не из
  * design-токена — поэтому grid-template-columns считается инлайном, а
  * не берётся из фиксированного набора Tailwind-классов md:grid-cols-N.
+ *
+ * `repeat(N, ...)` без auto-fit держал все N колонок в один ряд на любой
+ * ширине экрана: на мобильном 3 колонки сжимались до ~100px и длинные
+ * ссылки («Политика конфиденциальности») не помещались и вылезали за
+ * трек — auto-fit вместо этого переносит лишние колонки на следующую
+ * строку, когда в ряд для minmax(9rem, 1fr) не хватает места.
  */
 export function FooterColumns({ columns }: FooterColumnsProps) {
   return (
     <div
       className="grid gap-x-gutter gap-y-8"
-      style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))` }}
+      style={{ gridTemplateColumns: `repeat(auto-fit, minmax(9rem, 1fr))` }}
     >
       {columns.map((column) => (
         <nav key={column.title} aria-label={column.title}>
@@ -27,7 +33,7 @@ export function FooterColumns({ columns }: FooterColumnsProps) {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-small text-fg-muted transition-colors hover:text-fg"
+                  className="break-words text-small text-fg-muted transition-colors hover:text-fg"
                 >
                   {link.label}
                 </Link>

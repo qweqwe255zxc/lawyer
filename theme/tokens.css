@@ -147,14 +147,60 @@
   --scroll-offset: 6rem; /* header + воздух, для scroll-margin-top */
 
   /* --------------------------------------------------------------------
+     СТИЛЬ ЗАГОЛОВКА РАЗДЕЛА (.section-title в globals.css)
+
+     Два стиля, которые и так уже существуют в коде под разными именами
+     (обычный левый h2 у SectionHeader и центрированный h1-с-пилюлей у
+     Team/Steps/Stats/Features header'ов и CTA Centered/Boxed) — здесь
+     они становятся одной сквозной ручкой: --title-style на <html> из
+     ThemeConfig.titleStyle задаёт дефолт на весь сайт, а конкретная
+     секция может переопределить его локально через SectionBase.titleStyle
+     (SectionRenderer оборачивает такую секцию в data-title-style — см.
+     компонент). CSS custom properties наследуются по DOM, так что
+     секция без своего override просто получает сайтвайдное значение,
+     JS-резолва (как у iconShape) не нужно.
+     -------------------------------------------------------------------- */
+  --title-size: var(--size-h2);
+  --title-line-height: var(--leading-h2);
+  --title-tracking: var(--tracking-h2);
+  --title-max-width: 22ch;
+  --title-align: left;
+  --title-margin-x: 0;
+}
+
+/* [data-title-style] — не зависит от тарифа и не переопределяет ручки
+   пресета, поэтому объявлен отдельно от [data-preset] ниже, сразу
+   после :root. Значения дублируют :root для "standard": так секция
+   с явным data-title-style="standard" корректно сбрасывает унаследованный
+   "centered" от родителя/<html>, а не полагается на порядок каскада. */
+[data-title-style="standard"] {
+  --title-size: var(--size-h2);
+  --title-line-height: var(--leading-h2);
+  --title-tracking: var(--tracking-h2);
+  --title-max-width: 22ch;
+  --title-align: left;
+  --title-margin-x: 0;
+}
+
+[data-title-style="centered"] {
+  --title-size: var(--size-h1);
+  --title-line-height: var(--leading-h1);
+  --title-tracking: var(--tracking-h1);
+  --title-max-width: 46rem;
+  --title-align: center;
+  --title-margin-x: auto;
+}
+
+:root {
+  /* --------------------------------------------------------------------
      ГРАНИЦЫ, РАДИУСЫ, ТЕНИ
 
      Всё, что ниже, — это значения тарифа «Эконом»: плоско, документно,
      без теней. Тариф переключается ОДНИМ полем конфига
      (theme.preset в content/site.config.ts → data-preset на <html>),
-     а не правкой компонентов: блоки [data-preset="standard"] и
-     [data-preset="premium"] в конце файла переопределяют ручки ниже,
-     и вся страница разом получает глубину. Ни один компонент про
+     а не правкой компонентов: блок [data-preset="standard"] в конце
+     файла переопределяет ручки ниже, и вся страница разом получает
+     глубину. Ни один компонент про
      пресет не знает.
      -------------------------------------------------------------------- */
   --border-hairline: 1px;
@@ -548,8 +594,7 @@
 /* Карточка получает собственную поверхность на любой секции.
    Отдельным правилом по [data-surface], а не внутри блока выше:
    var(--surface-card) обязан резолвиться на самой секции. */
-[data-preset="standard"] [data-surface],
-[data-preset="premium"] [data-surface] {
+[data-preset="standard"] [data-surface] {
   --card-bg: var(--surface-card);
   --card-border: color-mix(in srgb, var(--surface-rule) 70%, transparent);
   /* Выделенный тариф выходит вперёд акцентной рамкой: в дорогом тарифе
@@ -641,36 +686,6 @@
    Берём --surface-rule-strong (тот же приём, которым уже починили
    границу карточки на [data-surface="ink"] чуть выше) — :not() держит
    ink в стороне, у него уже есть собственное, более сильное значение. */
-[data-theme="dark"][data-preset="standard"] [data-surface]:not([data-surface="ink"]),
-[data-theme="dark"][data-preset="premium"] [data-surface]:not([data-surface="ink"]) {
+[data-theme="dark"][data-preset="standard"] [data-surface]:not([data-surface="ink"]) {
   --card-border: color-mix(in srgb, var(--surface-rule-strong) 55%, transparent);
-}
-
-/* ----------------------------------------------------------------------------
-   PREMIUM — тоже «дорогой», но противоположным способом: глубина
-   строится рамкой и воздухом, а не тенью. Радиус минимальный,
-   теней нет вообще, карточка стоит на своей поверхности с акцентной
-   рамкой. Пластика кнопок и полей остаётся документной.
-   -------------------------------------------------------------------------- */
-[data-preset="premium"] {
-  --radius-card: var(--radius-sm);
-  --radius-control: var(--radius-sm);
-  --radius-media: var(--radius-sm);
-  --radius-pill: var(--radius-sm);
-
-  --card-shadow: var(--elevation-none);
-  --card-shadow-hover: var(--elevation-none);
-  --card-lift: 0rem;
-  --card-elevated-shadow: var(--elevation-none);
-  --card-elevated-shadow-hover: var(--elevation-none);
-
-  /* Единственное «движение» премиума — рамка, а не подъём. */
-  --card-hover-shadow: var(--elevation-none);
-  --card-hover-lift: 0rem;
-}
-
-/* Рамка карточки — акцентная и приглушённая: в полную силу акцента
-   она кричит на каждой карточке сразу. */
-[data-preset="premium"] [data-surface] {
-  --card-border: color-mix(in srgb, var(--accent-border) 45%, transparent);
 }

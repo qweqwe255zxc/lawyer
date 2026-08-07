@@ -1,9 +1,15 @@
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/cn";
+import { fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { GalleryShell } from "../parts/GalleryShell";
 import type { GallerySection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [
+  { prefix: "sm:", cols: 2 },
+  { prefix: "lg:", cols: 3 },
+] as const;
 
 /**
  * Кейсы карточками. Для проектов, где кейсов меньше и построчный реестр
@@ -15,14 +21,15 @@ import type { GallerySection } from "@/types/site";
  * Раньше это чинил хардкод border-rule-strong прямо тут.
  */
 export function Grid(props: GallerySection) {
-  const { items, align = "left" } = props;
+  const { items, align = "left", fillLastRow = true } = props;
   const centered = align === "center";
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
 
   return (
     <GalleryShell {...props}>
       <ul className="grid gap-gutter sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => (
-          <li key={`${item.category}-${item.year}-${index}`}>
+          <li key={`${item.category}-${item.year}-${index}`} className={spanClasses[index] || undefined}>
             <Card variant="framed" className="flex h-full flex-col">
               <div
                 className={cn("flex flex-1 flex-col", centered && "items-center text-center")}

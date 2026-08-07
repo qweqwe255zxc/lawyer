@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { ASPECT_PAIR_4_3, fillLastRowAspectClasses, fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { cn } from "@/lib/cn";
 import { PlanContent } from "../parts/PlanContent";
@@ -10,6 +11,11 @@ import { PricingComparisonTable } from "../parts/PricingComparisonTable";
 import { PricingFootnotes } from "../parts/PricingFootnotes";
 import { PricingQuoteBlock } from "../parts/PricingQuoteBlock";
 import type { PricingSection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [
+  { prefix: "sm:", cols: 2 },
+  { prefix: "lg:", cols: 3 },
+] as const;
 
 /**
  * Тарифы карточками. Вариант по умолчанию в «Стандарте» и единственный,
@@ -39,7 +45,12 @@ export function Cards(props: PricingSection) {
     closing,
     quote,
     comparison,
+    fillLastRow = true,
   } = props;
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
+  const aspectClasses = fillLastRow
+    ? fillLastRowAspectClasses(items.length, GRID_BREAKPOINTS, ASPECT_PAIR_4_3)
+    : [];
 
   return (
     <Section id={id} surface={surface}>
@@ -51,7 +62,7 @@ export function Cards(props: PricingSection) {
           lead={lead}
         />
 
-        <div className={cn("mt-14 grid md:mt-20", "gap-gutter md:grid-cols-3")}>
+        <div className={cn("mt-14 grid md:mt-20", "gap-gutter sm:grid-cols-2 lg:grid-cols-3")}>
           {items.map((plan, index) => (
             <Card
               key={plan.name}
@@ -59,6 +70,7 @@ export function Cards(props: PricingSection) {
               className={cn(
                 "flex h-full flex-col",
                 plan.featured && "ui-card--featured",
+                spanClasses[index],
               )}
             >
               <div
@@ -66,7 +78,11 @@ export function Cards(props: PricingSection) {
                 data-reveal
                 style={revealDelay(index)}
               >
-                <PlanContent plan={plan} priceClassName="text-h2" />
+                <PlanContent
+                  plan={plan}
+                  priceClassName="text-h2"
+                  mediaAspectClassName={aspectClasses[index]}
+                />
               </div>
             </Card>
           ))}

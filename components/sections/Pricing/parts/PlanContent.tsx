@@ -41,6 +41,12 @@ interface PlanContentProps {
   checkIcon?: boolean;
   /** Показать plan.tag (короткий лейбл над названием) — ribbon/panel/glass. */
   showTag?: boolean;
+  /**
+   * Переопределяет aspect-ratio фото для растянутой в 2 колонки карточки
+   * (`fillLastRow`, см. lib/gridFill.ts) — без этого фото удваивало бы
+   * не только ширину, но и высоту.
+   */
+  mediaAspectClassName?: string;
 }
 
 export function PlanContent({
@@ -48,11 +54,12 @@ export function PlanContent({
   priceClassName,
   checkIcon = false,
   showTag = false,
+  mediaAspectClassName,
 }: PlanContentProps) {
   return (
     <>
       {plan.photo ? (
-        <div className="ui-media relative mb-5 aspect-[4/3] w-full shrink-0 overflow-hidden">
+        <div className={cn("ui-media-inset relative mb-5 aspect-[4/3] w-full shrink-0 overflow-hidden", mediaAspectClassName)}>
           <Image
             src={plan.photo}
             alt={plan.name}
@@ -124,6 +131,7 @@ export function PlanContent({
             href={plan.action.href}
             variant={plan.action.variant ?? "secondary"}
             size="sm"
+            full="mobile"
           >
             {plan.action.label}
           </Button>

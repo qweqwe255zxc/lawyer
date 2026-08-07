@@ -35,7 +35,12 @@ export function StepsRailList({ items, columns }: StepsRailListProps) {
             key={item.number}
             data-reveal
             style={revealDelay(index)}
-            className="border-t border-rule pt-7"
+            // flex-col h-full: meta должна стоять на одном уровне по
+            // всему ряду, а не там, где кончился текст конкретной
+            // карточки — mt-auto у StepContent прижимает её к низу
+            // именно этой колонки высотой в весь ряд (grid растягивает
+            // <li> по умолчанию), а не к низу самого текста.
+            className="flex h-full flex-col border-t border-rule pt-7"
           >
             {Icon ? (
               <span className="icon-tile mb-4">
@@ -50,7 +55,7 @@ export function StepsRailList({ items, columns }: StepsRailListProps) {
               {item.number}
             </span>
 
-            <StepContent item={item} titleClassName="mt-5" />
+            <StepContent item={item} titleClassName="mt-5" metaClassName="mt-auto pt-6" />
           </li>
         );
       })}

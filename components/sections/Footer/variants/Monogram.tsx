@@ -64,7 +64,12 @@ export function Monogram({ brand, footer }: FooterProps) {
             ) : null}
           </div>
 
-          <BottomBar legalName={brand.legalName} links={footer.links} note={footer.note} />
+          <BottomBar
+            legalName={brand.legalName}
+            links={footer.links}
+            note={footer.note}
+            className="mt-4"
+          />
         </Container>
       </div>
     </footer>

@@ -61,9 +61,20 @@ export function Split({
             Раньше (auto — у nav) грид всегда давал nav его собственную
             ширину без ужатия, и хук ничего не мог засечь: при большом
             количестве пунктов меню кнопки в правой колонке просто
-            наезжали на последний пункт nav, а не отдавали место бургеру. */}
-        <div className="grid h-header grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-6">
-          <div className="col-start-1 flex items-center">
+            наезжали на последний пункт nav, а не отдавали место бургеру.
+
+            Ниже lg сам грид не нужен: nav в средней колонке всё равно
+            hidden, поэтому auto/1fr/auto вырождается в две несжимаемые
+            auto-колонки (у grid-track auto нет аналога flex-shrink) —
+            вордмарк ("М.max-w-[16rem].truncate") и правый кластер
+            (тема+кнопка+бургер) не делят между собой нехватку ширины,
+            а просто вместе перерастают контейнер, выталкивая бургер
+            за край экрана на самых узких телефонах. flex ниже lg решает
+            это тем же truncate: у flex-item он даёт automatic minimum
+            size = 0 (см. CSS Sizing §4.5), то есть вордмарк сжимается
+            первым и отдаёт место бургеру, а не наоборот. */}
+        <div className="flex h-header items-center justify-between gap-3 lg:grid lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-6">
+          <div className="col-start-1 flex min-w-0 items-center">
             <Link
               href="#hero"
               className={cn(
@@ -81,50 +92,60 @@ export function Split({
                 от истинного центра шапки. С зеркалом обе крайних колонки
                 получают одинаковую содержательную ширину, и minmax(0,1fr)
                 делит остаток строго поровну. inert снимает эту копию из
-                фокуса и озвучки целиком — она не должна быть достижима. */}
-            {!overflowing ? (
-              <div inert aria-hidden="true" className="invisible hidden items-center gap-3 lg:flex">
-                {showThemeToggle ? (
-                  <div className="hidden sm:block">
-                    <ThemeToggle />
-                  </div>
-                ) : null}
+                фокуса и озвучки целиком — она не должна быть достижима.
 
-                {actions[0] ? (
-                  <Button href={actions[0].href} variant={actions[0].variant ?? "primary"} size="sm">
-                    {actions[0].label}
-                  </Button>
-                ) : null}
+                Рендерим ВСЕГДА, а не только при !overflowing: раньше блок
+                пропадал ровно тогда, когда nav переставал переполняться,
+                и левая колонка «auto» тут же сжималась обратно до ширины
+                одного вордмарка — middle-колонка внезапно получала лишние
+                ~200px, freeing space меняло сам результат измерения,
+                на котором основано условие, и useNavOverflow видел
+                самосбивающуюся, круговую зависимость (влезло → зеркало
+                исчезло → появилось место → должно было влезать ещё сильнее,
+                но реальный клиентский бокс уже не совпадал с тем, что
+                измерили). Зеркало постоянной ширины убирает эту петлю:
+                левая колонка больше не меняет размер от самого overflowing. */}
+            <div inert aria-hidden="true" className="invisible hidden items-center gap-3 lg:flex">
+              {showThemeToggle ? (
+                <div className="hidden sm:block">
+                  <ThemeToggle />
+                </div>
+              ) : null}
 
-                {actions.length > 1 ? (
-                  <div className="hidden items-center gap-3 sm:flex">
-                    {actions.slice(1).map((action, index) => (
-                      <Button
-                        key={`mirror-${index}`}
-                        href={action.href}
-                        variant={action.variant ?? "primary"}
-                        size="sm"
-                      >
-                        {action.label}
-                      </Button>
-                    ))}
-                  </div>
-                ) : null}
+              {actions[0] ? (
+                <Button href={actions[0].href} variant={actions[0].variant ?? "primary"} size="sm">
+                  {actions[0].label}
+                </Button>
+              ) : null}
 
-                <BurgerButton open={false} onClick={() => {}} />
-              </div>
-            ) : null}
+              {actions.length > 1 ? (
+                <div className="hidden items-center gap-3 sm:flex">
+                  {actions.slice(1).map((action, index) => (
+                    <Button
+                      key={`mirror-${index}`}
+                      href={action.href}
+                      variant={action.variant ?? "primary"}
+                      size="sm"
+                    >
+                      {action.label}
+                    </Button>
+                  ))}
+                </div>
+              ) : null}
+
+              <BurgerButton open={false} onClick={() => {}} />
+            </div>
           </div>
 
           <nav
             ref={navRef}
             className={cn(
-              "no-scrollbar col-start-2 hidden min-w-0 items-center gap-5 overflow-x-auto lg:flex xl:gap-8",
+              "no-scrollbar col-start-2 hidden min-w-0 items-center gap-4 overflow-x-auto lg:flex xl:gap-6",
               overflowing && "invisible pointer-events-none",
             )}
             aria-label="Основная навигация"
           >
-            <ul className="flex items-center gap-5 xl:gap-8">
+            <ul className="flex items-center gap-4 xl:gap-6">
               {left.map((item) => (
                 <li key={item.href}>
                   <Link
@@ -149,7 +170,7 @@ export function Split({
               {brandName}
             </Link>
 
-            <ul className="flex items-center gap-5 xl:gap-8">
+            <ul className="flex items-center gap-4 xl:gap-6">
               {right.map((item) => (
                 <li key={item.href}>
                   <Link

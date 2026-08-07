@@ -2,10 +2,16 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { cn } from "@/lib/cn";
 import { TestimonialBody } from "../parts/TestimonialBody";
 import type { TestimonialsSection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [
+  { prefix: "sm:", cols: 2 },
+  { prefix: "lg:", cols: 3 },
+] as const;
 
 /**
  * Три отзыва в ряд, каждый в Card variant="framed" — то есть с глубиной
@@ -35,7 +41,9 @@ export function Cards(props: TestimonialsSection) {
     title,
     lead,
     items,
+    fillLastRow = true,
   } = props;
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
 
   return (
     <Section id={id} surface={surface} spacing={title ? "default" : "none"}>
@@ -50,14 +58,14 @@ export function Cards(props: TestimonialsSection) {
         <div
           className={cn(
             title ? "mt-14 md:mt-20" : "pb-section",
-            "grid gap-gutter md:grid-cols-3",
+            "grid gap-gutter sm:grid-cols-2 lg:grid-cols-3",
           )}
         >
           {items.map((item, index) => (
             <Card
               key={`${item.author}-${index}`}
               variant="framed"
-              className="flex h-full flex-col"
+              className={cn("flex h-full flex-col", spanClasses[index])}
             >
               <figure
                 className="flex flex-1 flex-col"

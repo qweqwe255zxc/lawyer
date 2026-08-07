@@ -5,9 +5,15 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { getIcon } from "@/lib/icons";
 import { cn } from "@/lib/cn";
+import { fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { GalleryHeader } from "../parts/GalleryHeader";
 import type { GallerySection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [
+  { prefix: "sm:", cols: 2 },
+  { prefix: "lg:", cols: 3 },
+] as const;
 
 /**
  * Заголовок с кнопкой в шапке, дальше — карточки: иконка в плашке, год
@@ -15,8 +21,9 @@ import type { GallerySection } from "@/types/site";
  * ссылка `link` внизу.
  */
 export function CardsIcon(props: GallerySection) {
-  const { id, surface = "surface", number, eyebrow, title, lead, action, items, align = "left", iconShape } = props;
+  const { id, surface = "surface", number, eyebrow, title, lead, action, items, align = "left", iconShape, fillLastRow = true } = props;
   const centered = align === "center";
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
 
   return (
     <Section id={id} surface={surface} iconShape={iconShape}>
@@ -35,7 +42,7 @@ export function CardsIcon(props: GallerySection) {
             const Icon = getIcon(item.icon);
 
             return (
-              <li key={`${item.category}-${item.year}-${index}`}>
+              <li key={`${item.category}-${item.year}-${index}`} className={spanClasses[index] || undefined}>
                 <Card variant="framed" className="flex h-full flex-col">
                   <div
                     className={cn(

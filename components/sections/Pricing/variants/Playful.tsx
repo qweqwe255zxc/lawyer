@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
+import { fillLastRowClasses } from "@/lib/gridFill";
 import { getIcon } from "@/lib/icons";
 import { revealDelay } from "@/lib/reveal";
 import { cn } from "@/lib/cn";
@@ -12,6 +13,8 @@ import { PricingFootnotes } from "../parts/PricingFootnotes";
 import { PricingHeader } from "../parts/PricingHeader";
 import { PricingQuoteBlock } from "../parts/PricingQuoteBlock";
 import type { PricingSection } from "@/types/site";
+
+const GRID_BREAKPOINTS = [{ prefix: "md:", cols: 3 }] as const;
 
 /**
  * Иконка-аватар над названием каждого тарифа (`plan.icon`), выделенный
@@ -38,7 +41,9 @@ export function Playful(props: PricingSection) {
     comparison,
     iconShape,
     headerAlign,
+    fillLastRow = true,
   } = props;
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
 
   return (
     <Section id={id} surface={surface} iconShape={iconShape}>
@@ -59,7 +64,7 @@ export function Playful(props: PricingSection) {
               <div
                 key={plan.name}
                 data-surface={plan.featured ? "accent" : undefined}
-                className={cn(plan.featured && "rounded-card bg-bg text-fg")}
+                className={cn(plan.featured && "rounded-card bg-bg text-fg", spanClasses[index])}
                 data-reveal
                 style={revealDelay(index)}
               >

@@ -40,8 +40,14 @@ export function Panel(props: AboutSection) {
   return (
     <Section id={id} surface={surface} iconShape={iconShape}>
       <Container>
-        <div className="grid gap-x-gutter gap-y-10 md:grid-cols-12 md:items-start">
-          <div className="md:col-span-5" data-reveal>
+        {/* lg (1024), а не md (768): на 768–1023px фото (7/12) прижималось
+            к тексту (5/12) почти вплотную — одного gap-x-gutter не хватало
+            на этой ширине колонки, картинка «наезжала» на текст. Ниже lg
+            секция теперь одноколоночная (уже было так до 768), а с lg сразу
+            получает те же 7/12 колонки, но при ширине, где для них
+            физически достаточно места. */}
+        <div className="grid gap-x-gutter gap-y-10 lg:grid-cols-12 lg:items-start">
+          <div className="lg:col-span-5" data-reveal>
             {number || eyebrow ? (
               <div className="flex items-baseline gap-4">
                 {number ? (
@@ -74,9 +80,9 @@ export function Panel(props: AboutSection) {
           </div>
 
           {photo ? (
-            <div className="md:col-span-7">
+            <div className="lg:col-span-7">
               <div
-                className="relative aspect-[4/3] w-full overflow-hidden md:aspect-[16/11]"
+                className="relative aspect-[4/3] w-full overflow-hidden lg:aspect-[16/11]"
                 data-reveal
                 style={revealDelay(1)}
               >
@@ -116,7 +122,7 @@ export function Panel(props: AboutSection) {
                   <p className="mt-4 max-w-[42ch] text-body text-fg-muted">{panel.text}</p>
 
                   {panel.stats && panel.stats.length > 0 ? (
-                    // lg, а не sm: эта сетка живёт внутри md:col-span-7 —
+                    // lg, а не sm: эта сетка живёт внутри lg:col-span-7 —
                     // с sm (640px, брейкпоинт вьюпорта, а не колонки) 4
                     // колонки включались ещё до того, как колонка реально
                     // расширялась хотя бы до 7/12 (md, 768px), и в диапазоне

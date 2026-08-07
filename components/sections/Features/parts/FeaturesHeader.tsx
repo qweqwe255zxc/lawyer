@@ -47,7 +47,7 @@ export function FeaturesHeader({
       ) : null}
 
       {title ? (
-        <h2 className={cn("mt-4 font-heading text-h1", centered && "mx-auto")} data-reveal>
+        <h2 className={cn("mt-4 font-heading section-title-scale", centered && "mx-auto")} data-reveal>
           {title}
         </h2>
       ) : null}

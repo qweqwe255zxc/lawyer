@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
+import { fillLastRowClasses } from "@/lib/gridFill";
 import { revealDelay } from "@/lib/reveal";
 import { getInitials } from "../parts/initials";
 import { MemberSocial } from "../parts/MemberSocial";
@@ -10,13 +11,20 @@ import { TeamBannerBlock } from "../parts/TeamBannerBlock";
 import { TeamHeader } from "../parts/TeamHeader";
 import type { TeamSection } from "@/types/site";
 
+const GRID_BREAKPOINTS = [
+  { prefix: "sm:", cols: 2 },
+  { prefix: "lg:", cols: 3 },
+  { prefix: "xl:", cols: 4 },
+] as const;
+
 /**
  * Круглый аватар по центру карточки, роль — плашкой (Badge soft), имя,
  * описание, `social`. Опциональный баннер снизу (tone="solid" —
  * акцентная заливка).
  */
 export function BadgeAvatars(props: TeamSection) {
-  const { id, surface = "paper", number, eyebrow, title, lead, banner, items, headerAlign } = props;
+  const { id, surface = "paper", number, eyebrow, title, lead, banner, items, headerAlign, fillLastRow = true } = props;
+  const spanClasses = fillLastRow ? fillLastRowClasses(items.length, GRID_BREAKPOINTS) : [];
 
   return (
     <Section id={id} surface={surface}>
@@ -32,7 +40,12 @@ export function BadgeAvatars(props: TeamSection) {
 
         <ul className="grid gap-x-gutter gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {items.map((member, index) => (
-            <li key={member.name} data-reveal style={revealDelay(index % 3)}>
+            <li
+              key={member.name}
+              data-reveal
+              style={revealDelay(index % 3)}
+              className={spanClasses[index] || undefined}
+            >
               <Card variant="framed" className="flex h-full flex-col items-center text-center">
                 <div className="ui-media relative size-28 shrink-0 overflow-hidden rounded-full bg-rule">
                   {member.photo ? (
@@ -71,7 +84,9 @@ export function BadgeAvatars(props: TeamSection) {
           ))}
         </ul>
 
-        {banner ? <TeamBannerBlock banner={banner} tone="solid" className="mt-12 md:mt-16" /> : null}
+        {banner ? (
+          <TeamBannerBlock banner={banner} tone={banner.tone ?? "solid"} className="mt-12 md:mt-16" />
+        ) : null}
       </Container>
     </Section>
   );
