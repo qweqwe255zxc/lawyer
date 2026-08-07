@@ -33,7 +33,7 @@ export function TagsCards(props: TeamSection) {
           className="mb-12 md:mb-16"
         />
 
-        <ul className="grid gap-x-gutter gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <ul className="grid gap-gutter sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {items.map((member, index) => (
             <li
               key={member.name}

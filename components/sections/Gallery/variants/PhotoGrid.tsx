@@ -32,7 +32,7 @@ export function PhotoGrid(props: GallerySection) {
           className="mb-12 md:mb-16"
         />
 
-        <ul className="grid gap-x-gutter gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-gutter sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, index) => (
             <li
               key={`${item.category}-${item.year}-${index}`}
