@@ -629,11 +629,19 @@ export interface TeamSection extends SectionBase {
   /**
    * Растягивает карточки последнего неполного ряда сетки на пустые
    * колонки (максимум col-span-2 на карточку, см. lib/gridFill.ts).
-   * Дефолт `true`; `false` отключает для этой секции. Читают только
-   * карточные варианты: cards, photo-cards, badge-avatars, tags-cards,
-   * bento (не columns/rows).
+   * Дефолт `true`; `false` отключает для этой секции. Читают cards и
+   * bento (для bento — сетка после первого крупного человека).
+   * photo-cards/badge-avatars/tags-cards пока держат прежнюю (каждый
+   * неполный ряд, не только последний) раскладку через lib/bentoSpan.ts.
    */
   fillLastRow?: boolean;
+  /**
+   * Ширина крупной карточки первого человека в variant="bento" — "full"
+   * (дефолт) во всю ширину контейнера, "half" — вполовину, для проекта
+   * без фото с подходящими для full-bleed landscape-пропорциями. Читает
+   * только bento.
+   */
+  heroSpan?: "full" | "half";
 }
 
 // About ("о нас" / "о месте")

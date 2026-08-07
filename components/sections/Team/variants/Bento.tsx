@@ -3,22 +3,48 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { revealDelay } from "@/lib/reveal";
-import { bentoSpan, bentoMediaAspect } from "@/lib/bentoSpan";
+import { ASPECT_PAIR_3_4, fillLastRowAspectClasses, fillLastRowClasses } from "@/lib/gridFill";
 import { cn } from "@/lib/cn";
 import { MemberSocial } from "../parts/MemberSocial";
 import { TeamBannerBlock } from "../parts/TeamBannerBlock";
 import type { TeamSection } from "@/types/site";
 
+const GRID_BREAKPOINTS = [
+  { prefix: "sm:", cols: 2 },
+  { prefix: "lg:", cols: 3 },
+  { prefix: "xl:", cols: 4 },
+] as const;
+
 /**
  * Заголовок слева + фото справа (та же раскладка, что у About), дальше —
- * сетка людей: первый — крупный на всю ширину ячейки, с именем/ролью
- * поверх фото (тёмный градиент снизу, как у Stats/variants/Photo.tsx),
- * остальные — сетка со спанами из `lib/bentoSpan.ts` (растягивается на
- * 2 слота только когда это ровно закрывает ряд).
+ * сетка людей: первый — крупный, с именем/ролью поверх фото (тёмный
+ * градиент снизу, как у Stats/variants/Photo.tsx) — `heroSpan="half"`
+ * сужает его до половины ширины для проекта без подходящего широкого
+ * кадра, по умолчанию `"full"` держит его во всю ширину контейнера.
+ * Остальные — сетка с `fillLastRow` (см. lib/gridFill.ts, тот же приём,
+ * что у Team/Cards.tsx): растягивается только последний неполный ряд, а
+ * не каждый — так высота фото у растянутой карточки расходится с
+ * соседями заметно реже.
  */
 export function Bento(props: TeamSection) {
-  const { id, surface = "paper", number, eyebrow, title, lead, image, items, banner } = props;
+  const {
+    id,
+    surface = "paper",
+    number,
+    eyebrow,
+    title,
+    lead,
+    image,
+    items,
+    banner,
+    heroSpan = "full",
+    fillLastRow = true,
+  } = props;
   const [first, ...rest] = items;
+  const spanClasses = fillLastRow ? fillLastRowClasses(rest.length, GRID_BREAKPOINTS) : [];
+  const aspectClasses = fillLastRow
+    ? fillLastRowAspectClasses(rest.length, GRID_BREAKPOINTS, ASPECT_PAIR_3_4)
+    : [];
 
   return (
     <Section id={id} surface={surface}>
@@ -61,7 +87,7 @@ export function Bento(props: TeamSection) {
         </div>
 
         {first ? (
-          <div className="mt-10 md:mt-14" data-reveal>
+          <div className={cn("mt-10 md:mt-14", heroSpan === "half" && "md:w-1/2")} data-reveal>
             <Card
               variant="framed"
               padded={false}
@@ -99,15 +125,12 @@ export function Bento(props: TeamSection) {
               key={member.name}
               data-reveal
               style={revealDelay(index)}
-              className={bentoSpan(index, rest.length, { sm: 2, lg: 3, xl: 4 })}
+              className={spanClasses[index]}
             >
               <Card
                 variant="framed"
                 padded={false}
-                className={cn(
-                  "relative overflow-hidden",
-                  bentoMediaAspect(index, rest.length, { sm: 2, lg: 3, xl: 4 }, "3/4"),
-                )}
+                className={cn("relative overflow-hidden", aspectClasses[index])}
                 data-surface={member.photo ? undefined : "ink"}
               >
                 {member.photo ? (
