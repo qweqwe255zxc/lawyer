@@ -33,7 +33,7 @@ export function Cards(props: StepsSection) {
             экранах 4 колонки сжимали заголовок с описанием до нечитаемой
             ширины. 4 колонки появляются только на xl (1280px+), где на
             каждую карточку остаётся достаточно места. */}
-        <ol className="grid gap-x-gutter gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <ol className="grid gap-gutter sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {items.map((item, index) => {
             const Icon = getIcon(item.icon);
 

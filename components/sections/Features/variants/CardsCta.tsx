@@ -31,7 +31,7 @@ export function CardsCta(props: FeaturesSection) {
 
         {/* 3 в ряд, не 4: на четырёх колонках карточке едва хватало ширины
             под заголовок и текст описания, всё выглядело зажатым. */}
-        <div className="grid gap-x-gutter gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-gutter sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, index) => (
             <div
               key={item.title}
