@@ -3,7 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { revealDelay } from "@/lib/reveal";
-import { bentoSpan } from "@/lib/bentoSpan";
+import { bentoSpan, bentoMediaAspect } from "@/lib/bentoSpan";
 import { MemberContent } from "../parts/MemberContent";
 import { TeamBannerBlock } from "../parts/TeamBannerBlock";
 import type { TeamSection } from "@/types/site";
@@ -44,7 +44,10 @@ export function Cards(props: TeamSection) {
                   data-reveal
                   style={revealDelay(index)}
                 >
-                  <MemberContent member={member} />
+                  <MemberContent
+                    member={member}
+                    mediaAspectClassName={bentoMediaAspect(index, items.length, { md: 3, xl: 4 }, "3/4")}
+                  />
                 </div>
               </Card>
             </li>

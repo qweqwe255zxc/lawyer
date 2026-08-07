@@ -3,7 +3,8 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { revealDelay } from "@/lib/reveal";
-import { bentoSpan } from "@/lib/bentoSpan";
+import { bentoSpan, bentoMediaAspect } from "@/lib/bentoSpan";
+import { cn } from "@/lib/cn";
 import { MemberSocial } from "../parts/MemberSocial";
 import { TeamBannerBlock } from "../parts/TeamBannerBlock";
 import type { TeamSection } from "@/types/site";
@@ -103,7 +104,10 @@ export function Bento(props: TeamSection) {
               <Card
                 variant="framed"
                 padded={false}
-                className="relative aspect-[3/4] overflow-hidden"
+                className={cn(
+                  "relative overflow-hidden",
+                  bentoMediaAspect(index, rest.length, { sm: 2, lg: 3, xl: 4 }, "3/4"),
+                )}
                 data-surface={member.photo ? undefined : "ink"}
               >
                 {member.photo ? (

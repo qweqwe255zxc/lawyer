@@ -6,7 +6,8 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { getIcon } from "@/lib/icons";
 import { revealDelay } from "@/lib/reveal";
-import { bentoSpan } from "@/lib/bentoSpan";
+import { bentoSpan, bentoMediaAspect } from "@/lib/bentoSpan";
+import { cn } from "@/lib/cn";
 import { getInitials } from "../parts/initials";
 import { TeamBannerBlock } from "../parts/TeamBannerBlock";
 import { TeamHeader } from "../parts/TeamHeader";
@@ -41,7 +42,12 @@ export function TagsCards(props: TeamSection) {
               className={bentoSpan(index, items.length, { sm: 2, lg: 3, xl: 4 })}
             >
               <Card variant="framed" padded={false} className="flex h-full flex-col overflow-hidden">
-                <div className="ui-media relative aspect-square w-full shrink-0 overflow-hidden rounded-none bg-rule">
+                <div
+                  className={cn(
+                    "ui-media relative w-full shrink-0 overflow-hidden rounded-none bg-rule",
+                    bentoMediaAspect(index, items.length, { sm: 2, lg: 3, xl: 4 }, "square"),
+                  )}
+                >
                   {member.photo ? (
                     <Image
                       src={member.photo}

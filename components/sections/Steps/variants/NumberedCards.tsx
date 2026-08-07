@@ -5,7 +5,7 @@ import { Section } from "@/components/ui/Section";
 import { getIcon } from "@/lib/icons";
 import { cn } from "@/lib/cn";
 import { revealDelay } from "@/lib/reveal";
-import { bentoSpan } from "@/lib/bentoSpan";
+import { bentoSpan, bentoMediaAspect } from "@/lib/bentoSpan";
 import { StepsHeader } from "../parts/StepsHeader";
 import type { StepsSection } from "@/types/site";
 
@@ -78,7 +78,12 @@ export function NumberedCards(props: StepsSection) {
                   <p className="mt-2 text-small text-fg-muted">{item.text}</p>
 
                   {item.photo ? (
-                    <div className="ui-media relative mt-5 aspect-[4/3] w-full shrink-0 overflow-hidden">
+                    <div
+                      className={cn(
+                        "ui-media relative mt-5 w-full shrink-0 overflow-hidden",
+                        bentoMediaAspect(index, items.length, { sm: 2, lg: 3, xl: 4 }, "4/3"),
+                      )}
+                    >
                       <Image
                         src={item.photo}
                         alt={item.title}

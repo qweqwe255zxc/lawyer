@@ -3,7 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { revealDelay } from "@/lib/reveal";
-import { bentoSpan } from "@/lib/bentoSpan";
+import { bentoSpan, bentoMediaAspect } from "@/lib/bentoSpan";
 import { cn } from "@/lib/cn";
 import { FeatureContent } from "../parts/FeatureContent";
 import type { FeaturesSection } from "@/types/site";
@@ -63,7 +63,11 @@ export function Cards(props: FeaturesSection) {
                 data-reveal
                 style={revealDelay(index % columns)}
               >
-                <FeatureContent item={item} iconLayout="inline" />
+                <FeatureContent
+                  item={item}
+                  iconLayout="inline"
+                  mediaAspectClassName={bentoMediaAspect(index, items.length, { md: columns }, "4/3")}
+                />
               </div>
             </Card>
           ))}

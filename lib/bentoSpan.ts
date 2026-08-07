@@ -68,3 +68,52 @@ export function bentoSpan(index: number, total: number, columns: BentoColumns): 
     .filter((value): value is string => Boolean(value))
     .join(" ");
 }
+
+type AspectBase = "4/3" | "3/4" | "square";
+
+/**
+ * aspect-ratio фиксированного бокса (фото/аватар) масштабируется вместе
+ * с шириной col-span-2 — без этого карточка растягивается не только по
+ * горизонтали, но и по вертикали (высота бокса растёт вслед за
+ * удвоенной шириной), а сосед в том же ряду вытягивается следом за ней
+ * через grid align-items: stretch. `calc(var(--bento-span)*W)/H` держит
+ * высоту постоянной: множитель --bento-span завязан на те же span'ы,
+ * что и `bentoSpan` выше, чтобы бокс расширялся только там, где сама
+ * карточка стала в 2 слота.
+ */
+const ASPECT_CLASS: Record<AspectBase, string> = {
+  "4/3": "aspect-[calc(var(--bento-span)*4)/3]",
+  "3/4": "aspect-[calc(var(--bento-span)*3)/4]",
+  square: "aspect-[calc(var(--bento-span))/1]",
+};
+
+const SPAN_VAR_CLASS: Record<Breakpoint, Record<Span, string>> = {
+  sm: { 1: "sm:[--bento-span:1]", 2: "sm:[--bento-span:2]" },
+  md: { 1: "md:[--bento-span:1]", 2: "md:[--bento-span:2]" },
+  lg: { 1: "lg:[--bento-span:1]", 2: "lg:[--bento-span:2]" },
+  xl: { 1: "xl:[--bento-span:1]", 2: "xl:[--bento-span:2]" },
+};
+
+/**
+ * Классы для фиксированного aspect-ratio бокса внутри карточки, которая
+ * растягивается через `bentoSpan` (те же `index`/`total`/`columns`) —
+ * держит высоту бокса такой же, как у нерастянутых соседей, пока сама
+ * карточка становится в 2 раза шире.
+ */
+export function bentoMediaAspect(
+  index: number,
+  total: number,
+  columns: BentoColumns,
+  base: AspectBase,
+): string {
+  const varClasses = (Object.keys(columns) as Breakpoint[])
+    .map((bp) => {
+      const count = columns[bp];
+      if (!count) return null;
+      const span = rowSpans(total, count)[index] ?? 1;
+      return SPAN_VAR_CLASS[bp][span];
+    })
+    .filter((value): value is string => Boolean(value));
+
+  return ["[--bento-span:1]", ...varClasses, ASPECT_CLASS[base]].join(" ");
+}

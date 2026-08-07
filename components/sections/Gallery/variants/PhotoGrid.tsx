@@ -6,7 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { cn } from "@/lib/cn";
 import { revealDelay } from "@/lib/reveal";
-import { bentoSpan } from "@/lib/bentoSpan";
+import { bentoSpan, bentoMediaAspect } from "@/lib/bentoSpan";
 import { GalleryHeader } from "../parts/GalleryHeader";
 import type { GallerySection } from "@/types/site";
 
@@ -42,7 +42,12 @@ export function PhotoGrid(props: GallerySection) {
             >
               <Card variant="framed" padded={false} className="flex h-full flex-col overflow-hidden">
                 {item.photo ? (
-                  <div className="ui-media relative aspect-[4/3] w-full shrink-0 overflow-hidden rounded-none">
+                  <div
+                    className={cn(
+                      "ui-media relative w-full shrink-0 overflow-hidden rounded-none",
+                      bentoMediaAspect(index, items.length, { sm: 2, lg: 3 }, "4/3"),
+                    )}
+                  >
                     <Image
                       src={item.photo}
                       alt={item.title ?? item.category}

@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { revealDelay } from "@/lib/reveal";
-import { bentoSpan } from "@/lib/bentoSpan";
+import { bentoSpan, bentoMediaAspect } from "@/lib/bentoSpan";
 import { cn } from "@/lib/cn";
 import { GalleryHeader } from "../parts/GalleryHeader";
 import type { GallerySection } from "@/types/site";
@@ -117,7 +117,12 @@ export function PhotoBento(props: GallerySection) {
                 className={cn("flex h-full flex-col", item.photo && "overflow-hidden")}
               >
                 {item.photo ? (
-                  <div className="ui-media relative aspect-[4/3] w-full shrink-0 overflow-hidden rounded-none">
+                  <div
+                    className={cn(
+                      "ui-media relative w-full shrink-0 overflow-hidden rounded-none",
+                      bentoMediaAspect(index, rest.length, { sm: 2, lg: 3 }, "4/3"),
+                    )}
+                  >
                     <Image
                       src={item.photo}
                       alt={item.title ?? item.category}

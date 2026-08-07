@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { revealDelay } from "@/lib/reveal";
-import { bentoSpan } from "@/lib/bentoSpan";
+import { bentoSpan, bentoMediaAspect } from "@/lib/bentoSpan";
 import { cn } from "@/lib/cn";
 import { FeatureContent } from "../parts/FeatureContent";
 import { FeaturesHeader } from "../parts/FeaturesHeader";
@@ -55,7 +55,15 @@ export function Bento(props: FeaturesSection) {
                     Сама FeatureContent+tags — отдельная flex-колонка, чтобы
                     mt-auto ниже отсчитывался от полного объёма карточки. */}
                 <div className="flex flex-1 flex-col">
-                  <FeatureContent item={item} iconLayout="inline" />
+                  <FeatureContent
+                    item={item}
+                    iconLayout="inline"
+                    mediaAspectClassName={
+                      index === 0
+                        ? undefined
+                        : bentoMediaAspect(index - 1, items.length - 1, { sm: 2 }, "4/3")
+                    }
+                  />
 
                   {item.tags && item.tags.length > 0 ? (
                     <ul className="mt-5 flex flex-wrap gap-2">
