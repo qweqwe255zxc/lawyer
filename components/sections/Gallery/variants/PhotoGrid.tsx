@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { cn } from "@/lib/cn";
 import { revealDelay } from "@/lib/reveal";
+import { bentoSpan } from "@/lib/bentoSpan";
 import { GalleryHeader } from "../parts/GalleryHeader";
 import type { GallerySection } from "@/types/site";
 
@@ -33,7 +34,12 @@ export function PhotoGrid(props: GallerySection) {
 
         <ul className="grid gap-x-gutter gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, index) => (
-            <li key={`${item.category}-${item.year}-${index}`} data-reveal style={revealDelay(index % 3)}>
+            <li
+              key={`${item.category}-${item.year}-${index}`}
+              data-reveal
+              style={revealDelay(index % 3)}
+              className={bentoSpan(index, items.length, { sm: 2, lg: 3 })}
+            >
               <Card variant="framed" padded={false} className="flex h-full flex-col overflow-hidden">
                 {item.photo ? (
                   <div className="ui-media relative aspect-[4/3] w-full shrink-0 overflow-hidden rounded-none">

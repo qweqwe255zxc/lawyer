@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { revealDelay } from "@/lib/reveal";
+import { bentoSpan } from "@/lib/bentoSpan";
 import { MemberContent } from "../parts/MemberContent";
 import { TeamBannerBlock } from "../parts/TeamBannerBlock";
 import type { TeamSection } from "@/types/site";
@@ -36,7 +37,7 @@ export function Cards(props: TeamSection) {
 
         <ul className="mt-14 grid gap-gutter md:mt-20 md:grid-cols-3 xl:grid-cols-4">
           {items.map((member, index) => (
-            <li key={member.name}>
+            <li key={member.name} className={bentoSpan(index, items.length, { md: 3, xl: 4 })}>
               <Card variant="framed" className="flex h-full flex-col">
                 <div
                   className="flex flex-1 flex-col"

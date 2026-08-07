@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { getIcon } from "@/lib/icons";
 import { revealDelay } from "@/lib/reveal";
+import { bentoSpan } from "@/lib/bentoSpan";
 import { StepsHeader } from "../parts/StepsHeader";
 import type { StepsSection } from "@/types/site";
 
@@ -37,7 +38,12 @@ export function Cards(props: StepsSection) {
             const Icon = getIcon(item.icon);
 
             return (
-              <li key={item.number} data-reveal style={revealDelay(index)}>
+              <li
+                key={item.number}
+                data-reveal
+                style={revealDelay(index)}
+                className={bentoSpan(index, items.length, { sm: 2, lg: 3, xl: 4 })}
+              >
                 <Card variant="framed" className="h-full">
                   {Icon ? (
                     <span className="icon-tile mb-4">

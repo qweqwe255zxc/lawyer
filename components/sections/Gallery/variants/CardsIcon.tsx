@@ -6,6 +6,7 @@ import { Section } from "@/components/ui/Section";
 import { getIcon } from "@/lib/icons";
 import { cn } from "@/lib/cn";
 import { revealDelay } from "@/lib/reveal";
+import { bentoSpan } from "@/lib/bentoSpan";
 import { GalleryHeader } from "../parts/GalleryHeader";
 import type { GallerySection } from "@/types/site";
 
@@ -35,7 +36,10 @@ export function CardsIcon(props: GallerySection) {
             const Icon = getIcon(item.icon);
 
             return (
-              <li key={`${item.category}-${item.year}-${index}`}>
+              <li
+                key={`${item.category}-${item.year}-${index}`}
+                className={bentoSpan(index, items.length, { sm: 2, lg: 3 })}
+              >
                 <Card variant="framed" className="flex h-full flex-col">
                   <div
                     className={cn(

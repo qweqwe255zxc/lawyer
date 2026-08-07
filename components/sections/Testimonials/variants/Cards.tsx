@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { revealDelay } from "@/lib/reveal";
+import { bentoSpan } from "@/lib/bentoSpan";
 import { cn } from "@/lib/cn";
 import { TestimonialBody } from "../parts/TestimonialBody";
 import type { TestimonialsSection } from "@/types/site";
@@ -57,7 +58,7 @@ export function Cards(props: TestimonialsSection) {
             <Card
               key={`${item.author}-${index}`}
               variant="framed"
-              className="flex h-full flex-col"
+              className={cn("flex h-full flex-col", bentoSpan(index, items.length, { md: 3 }))}
             >
               <figure
                 className="flex flex-1 flex-col"

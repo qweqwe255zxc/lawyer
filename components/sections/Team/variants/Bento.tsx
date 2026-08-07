@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { revealDelay } from "@/lib/reveal";
+import { bentoSpan } from "@/lib/bentoSpan";
 import { MemberSocial } from "../parts/MemberSocial";
 import { TeamBannerBlock } from "../parts/TeamBannerBlock";
 import type { TeamSection } from "@/types/site";
@@ -11,10 +12,8 @@ import type { TeamSection } from "@/types/site";
  * Заголовок слева + фото справа (та же раскладка, что у About), дальше —
  * сетка людей: первый — крупный на всю ширину ячейки, с именем/ролью
  * поверх фото (тёмный градиент снизу, как у Stats/variants/Photo.tsx),
- * остальные — сетка поменьше с тем же приёмом. Асимметрию из референса
- * не повторяет — как и в остальных bento, это отдельная задача на
- * произвольные col-span/row-span (см. нишу «Бизнес — SaaS», docs/
- * section-system.md, раздел 6).
+ * остальные — сетка со спанами из `lib/bentoSpan.ts` (растягивается на
+ * 2 слота только когда это ровно закрывает ряд).
  */
 export function Bento(props: TeamSection) {
   const { id, surface = "paper", number, eyebrow, title, lead, image, items, banner } = props;
@@ -95,7 +94,12 @@ export function Bento(props: TeamSection) {
 
         <ul className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {rest.map((member, index) => (
-            <li key={member.name} data-reveal style={revealDelay(index)}>
+            <li
+              key={member.name}
+              data-reveal
+              style={revealDelay(index)}
+              className={bentoSpan(index, rest.length, { sm: 2, lg: 3, xl: 4 })}
+            >
               <Card
                 variant="framed"
                 padded={false}

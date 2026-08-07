@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { cn } from "@/lib/cn";
 import { revealDelay } from "@/lib/reveal";
+import { bentoSpan } from "@/lib/bentoSpan";
 import { RatingStars } from "../parts/RatingStars";
 import { TestimonialBody } from "../parts/TestimonialBody";
 import { TestimonialsHeader } from "../parts/TestimonialsHeader";
@@ -32,7 +33,12 @@ export function RatedCards(props: TestimonialsSection) {
 
         <div className="grid gap-gutter md:grid-cols-3">
           {items.map((item, index) => (
-            <div key={`${item.author}-${index}`} data-reveal style={revealDelay(index)}>
+            <div
+              key={`${item.author}-${index}`}
+              data-reveal
+              style={revealDelay(index)}
+              className={bentoSpan(index, items.length, { md: 3 })}
+            >
               {/* Мягкая тонировка вместо полной инверсии поверхности —
                   раньше data-surface="ink" на светлой теме давал сплошной
                   чёрный прямоугольник вместо акцентной карточки. */}

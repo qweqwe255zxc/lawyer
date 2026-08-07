@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { revealDelay } from "@/lib/reveal";
+import { bentoSpan } from "@/lib/bentoSpan";
 import { cn } from "@/lib/cn";
 import { FeatureContent } from "../parts/FeatureContent";
 import { FeaturesHeader } from "../parts/FeaturesHeader";
@@ -12,12 +13,10 @@ import type { FeaturesSection } from "@/types/site";
 
 /**
  * Заголовок пилюлей по центру, асимметричная сетка: первый элемент —
- * во всю ширину (featured), остальные — обычная сетка в 2 колонки.
- * Точную асимметрию 2×2 bento из референса (разная ширина колонок по
- * рядам) не повторяем — как и в Stats/Bento и Steps/NumberedCards, это
- * отдельная задача на произвольные col-span/row-span (см. нишу
- * «Бизнес — SaaS», раздел 6), а не смена токенов; здесь устойчивый к
- * любому числу items поток.
+ * во всю ширину (featured), остальные — сетка в 2 колонки со спанами
+ * из `lib/bentoSpan.ts`: карточка растягивается на 2 слота, только
+ * если это ровно закрывает ширину ряда, — устойчиво к любому числу
+ * items, без вечно пустующего одиночного хвоста.
  */
 export function Bento(props: FeaturesSection) {
   const { id, surface = "surface", number, eyebrow, title, lead, items, iconShape, headerAlign } = props;
@@ -40,7 +39,11 @@ export function Bento(props: FeaturesSection) {
               key={item.title}
               data-reveal
               style={revealDelay(index)}
-              className={cn(index === 0 && "sm:col-span-2")}
+              className={cn(
+                index === 0
+                  ? "sm:col-span-2"
+                  : bentoSpan(index - 1, items.length - 1, { sm: 2 }),
+              )}
             >
               <Card
                 variant={index === 0 ? "bordered-accent" : "framed"}

@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { getIcon } from "@/lib/icons";
 import { revealDelay } from "@/lib/reveal";
+import { bentoSpan } from "@/lib/bentoSpan";
 import { getInitials } from "../parts/initials";
 import { TeamBannerBlock } from "../parts/TeamBannerBlock";
 import { TeamHeader } from "../parts/TeamHeader";
@@ -33,7 +34,12 @@ export function TagsCards(props: TeamSection) {
 
         <ul className="grid gap-x-gutter gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {items.map((member, index) => (
-            <li key={member.name} data-reveal style={revealDelay(index % 3)}>
+            <li
+              key={member.name}
+              data-reveal
+              style={revealDelay(index % 3)}
+              className={bentoSpan(index, items.length, { sm: 2, lg: 3, xl: 4 })}
+            >
               <Card variant="framed" padded={false} className="flex h-full flex-col overflow-hidden">
                 <div className="ui-media relative aspect-square w-full shrink-0 overflow-hidden rounded-none bg-rule">
                   {member.photo ? (

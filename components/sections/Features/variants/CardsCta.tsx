@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { revealDelay } from "@/lib/reveal";
+import { bentoSpan } from "@/lib/bentoSpan";
 import { FeatureContent } from "../parts/FeatureContent";
 import { FeaturesHeader } from "../parts/FeaturesHeader";
 import type { FeaturesSection } from "@/types/site";
@@ -32,7 +33,12 @@ export function CardsCta(props: FeaturesSection) {
             под заголовок и текст описания, всё выглядело зажатым. */}
         <div className="grid gap-x-gutter gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, index) => (
-            <div key={item.title} data-reveal style={revealDelay(index)}>
+            <div
+              key={item.title}
+              data-reveal
+              style={revealDelay(index)}
+              className={bentoSpan(index, items.length, { sm: 2, lg: 3 })}
+            >
               <Card variant="framed" className="flex h-full flex-col">
                 <div className="flex flex-1 flex-col">
                   <FeatureContent item={item} iconLayout="inline" />

@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/Section";
 import { getIcon } from "@/lib/icons";
 import { cn } from "@/lib/cn";
 import { revealDelay } from "@/lib/reveal";
+import { bentoSpan } from "@/lib/bentoSpan";
 import { StepsHeader } from "../parts/StepsHeader";
 import type { StepsSection } from "@/types/site";
 
@@ -47,7 +48,10 @@ export function NumberedCards(props: StepsSection) {
                 // тона совпадают почти везде, кроме скруглённых углов
                 // карточки — там в срезе виден чужой прямоугольный угол
                 // контейнера. bg-card делает их одним и тем же тоном.
-                className={item.featured ? "bg-card text-fg" : undefined}
+                className={cn(
+                  item.featured && "bg-card text-fg",
+                  bentoSpan(index, items.length, { sm: 2, lg: 3, xl: 4 }),
+                )}
               >
                 <Card variant="framed" className="h-full">
                   <div className="flex items-center gap-3">

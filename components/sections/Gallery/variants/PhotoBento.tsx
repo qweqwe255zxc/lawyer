@@ -5,18 +5,17 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { revealDelay } from "@/lib/reveal";
+import { bentoSpan } from "@/lib/bentoSpan";
 import { cn } from "@/lib/cn";
 import { GalleryHeader } from "../parts/GalleryHeader";
 import type { GallerySection } from "@/types/site";
 
 /**
  * Асимметричная витрина кейсов: первый элемент — крупный, во всю
- * ширину, с фото и `stats` (сумма/срок и т.п.), остальные — обычная
- * сетка поменьше (фото, если задано, иначе просто карточка). Точную
- * асимметрию 2×2 из референсов не повторяет — как и в остальных bento
- * (`Stats`/`Bento`, `Steps`/`NumberedCards`, `Features`/`Bento`), это
- * отдельная задача на произвольные col-span/row-span (см. нишу
- * «Бизнес — SaaS», docs/section-system.md, раздел 6).
+ * ширину, с фото и `stats` (сумма/срок и т.п.), остальные — сетка со
+ * спанами из `lib/bentoSpan.ts` (растягивается на 2 слота только
+ * когда это ровно закрывает ряд, фото — если задано, иначе просто
+ * карточка).
  */
 export function PhotoBento(props: GallerySection) {
   const { id, surface = "surface", number, eyebrow, title, lead, action, items, align = "left" } = props;
@@ -106,7 +105,12 @@ export function PhotoBento(props: GallerySection) {
 
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {rest.map((item, index) => (
-            <li key={`${item.category}-${item.year}-${index}`} data-reveal style={revealDelay(index)}>
+            <li
+              key={`${item.category}-${item.year}-${index}`}
+              data-reveal
+              style={revealDelay(index)}
+              className={bentoSpan(index, rest.length, { sm: 2, lg: 3 })}
+            >
               <Card
                 variant="framed"
                 padded={!item.photo}

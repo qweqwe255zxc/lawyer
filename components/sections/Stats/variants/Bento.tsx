@@ -3,6 +3,8 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { getIcon } from "@/lib/icons";
 import { revealDelay } from "@/lib/reveal";
+import { bentoSpan } from "@/lib/bentoSpan";
+import { cn } from "@/lib/cn";
 import { StatsHeader } from "../parts/StatsHeader";
 import type { StatsSection } from "@/types/site";
 
@@ -14,11 +16,8 @@ import type { StatsSection } from "@/types/site";
  * карточка), остальные — обычная `framed`. Без явного highlight ни у
  * одного item — прежний дефолт по позиции (первая карточка accent,
  * последняя tint), чтобы конфиг без этого поля выглядел как раньше.
- * Точную асимметрию ширин колонок в референсе (2×2 bento с разными
- * пропорциями по рядам) не повторяем — это отдельная задача на
- * произвольные col-span/row-span, а не смену токенов (см. docs/
- * section-system.md, ниша «Бизнес — SaaS»); здесь двухколоночный поток,
- * устойчивый к любому числу items.
+ * Ширина карточек — `lib/bentoSpan.ts`: растягивается на 2 слота только
+ * там, где это ровно закрывает ряд, не там, где "ещё есть место".
  */
 export function Bento(props: StatsSection) {
   const { id, surface = "paper", number, eyebrow, title, lead, items, iconShape } = props;
@@ -61,7 +60,10 @@ export function Bento(props: StatsSection) {
                 // как сломанный контраст, а не «акцентный» бокс. Мягкий
                 // тонированный фон вместо инверсии — темнее в светлой
                 // теме, светлее в тёмной, но не противоположный цвет.
-                className={highlight === "tint" ? "bg-fg/[0.06]" : undefined}
+                className={cn(
+                  highlight === "tint" && "bg-fg/[0.06]",
+                  bentoSpan(index, items.length, { md: 2 }),
+                )}
               >
                 {Icon ? (
                   <span className="icon-tile">

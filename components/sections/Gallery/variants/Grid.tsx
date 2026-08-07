@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/cn";
 import { revealDelay } from "@/lib/reveal";
+import { bentoSpan } from "@/lib/bentoSpan";
 import { GalleryShell } from "../parts/GalleryShell";
 import type { GallerySection } from "@/types/site";
 
@@ -22,7 +23,10 @@ export function Grid(props: GallerySection) {
     <GalleryShell {...props}>
       <ul className="grid gap-gutter sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => (
-          <li key={`${item.category}-${item.year}-${index}`}>
+          <li
+            key={`${item.category}-${item.year}-${index}`}
+            className={bentoSpan(index, items.length, { sm: 2, lg: 3 })}
+          >
             <Card variant="framed" className="flex h-full flex-col">
               <div
                 className={cn("flex flex-1 flex-col", centered && "items-center text-center")}

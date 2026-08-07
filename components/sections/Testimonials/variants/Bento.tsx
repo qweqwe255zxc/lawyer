@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { revealDelay } from "@/lib/reveal";
+import { bentoSpan } from "@/lib/bentoSpan";
 import { RatingStars } from "../parts/RatingStars";
 import { TestimonialBody } from "../parts/TestimonialBody";
 import { TestimonialsHeader } from "../parts/TestimonialsHeader";
@@ -10,11 +11,9 @@ import type { TestimonialsSection } from "@/types/site";
 
 /**
  * Заголовок пилюлей по центру, первый отзыв — крупный (рейтинг, большая
- * цитата, автор с фото), остальные — сетка поменьше. Асимметрию из
- * референса (разная высота карточек, водяной знак кавычек) не
- * повторяет — как и в остальных bento (Stats/Steps/Features/Gallery/
- * Team), это отдельная задача на произвольные col-span/row-span (см.
- * нишу «Бизнес — SaaS», docs/section-system.md, раздел 6).
+ * цитата, автор с фото), остальные — сетка со спанами из
+ * `lib/bentoSpan.ts` (растягивается на 2 слота только когда это ровно
+ * закрывает ряд).
  */
 export function Bento(props: TestimonialsSection) {
   const { id, surface = "paper", number, eyebrow, title, lead, trust, items, headerAlign } = props;
@@ -54,7 +53,12 @@ export function Bento(props: TestimonialsSection) {
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {rest.map((item, index) => (
-            <div key={`${item.author}-${index}`} data-reveal style={revealDelay(index)}>
+            <div
+              key={`${item.author}-${index}`}
+              data-reveal
+              style={revealDelay(index)}
+              className={bentoSpan(index, rest.length, { sm: 2, lg: 3 })}
+            >
               <Card variant="framed" className="flex h-full flex-col">
                 <figure className="flex flex-1 flex-col">
                   <RatingStars rating={item.rating} />
