@@ -228,7 +228,7 @@ export const siteConfig: SiteConfig = {
             id: "services",
             type: "features",
             surface: "paper",
-            // variant: "table" | "cards" | "cards-cta" | "table-links" | "bento"
+            // variant: "table" | "cards" | "bento"
             variant: "bento",
             number: "02",
             nav: "Возможности",

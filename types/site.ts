@@ -83,7 +83,7 @@ export interface SectionBase {
    *+заголовок+лид) там, где она есть: center — прежний вид по умолчанию,
    * left — колонтитул и заголовок прижимаются к левому краю, без
    * mx-auto/text-center. Читают только карточные шапки, у которых это
-   * центрирование в принципе есть (Features cards-cta/bento, Steps
+   * центрирование в принципе есть (Features bento, Steps
    * cards/cascade/timeline/split/numbered-cards, Testimonials bento/
    * rated-cards/spotlight, Team photo-cards/badge-avatars/tags-cards,
    * Pricing dark/playful/glass/banner/matrix) — обычный `SectionHeader`
@@ -357,7 +357,7 @@ export interface FeatureItem {
   text: string;
   points?: string[];
   photo?: string;
-  /** Ссылка «Подробнее» на элементе. Читают cards-cta, table-links, bento. */
+  /** Ссылка «Подробнее» на элементе. Показывается сама, если задана — читают table, cards, bento. */
   link?: CtaLink;
   /** Короткие теги-плашки под описанием. Читает только bento. */
   tags?: string[];
@@ -366,25 +366,25 @@ export interface FeatureItem {
 export interface FeaturesSection extends SectionBase {
   type: "features";
   /**
-   * table/cards      — исходные раскладки.
-   * cards-cta        — заголовок пилюлей по центру, карточки со ссылкой
-   *                    `item.link`, опциональная кнопка `action` под сеткой.
-   * table-links      — заголовок в две колонки (title слева, lead справа),
-   *                    сетка 2 колонки на линейках (без карточек — рамки
-   *                    рисует grid, как в table) со стрелкой-ссылкой.
-   * bento            — заголовок пилюлей по центру, асимметричная
-   *                    двухколоночная сетка карточек; `item.tags` — плашки
-   *                    под описанием первого элемента.
+   * table   — линейки-разделители без карточек; стрелка-ссылка в углу
+   *           ячейки включается сама, если хотя бы у одного item задан
+   *           `link` (раньше это был отдельный вариант `table-links`).
+   * cards   — карточки; ссылка «Подробнее» (`item.link`) и кнопка `action`
+   *           под сеткой читаются сами, если заданы (раньше — отдельный
+   *           вариант `cards-cta`).
+   * bento   — заголовок пилюлей по центру, асимметричная двухколоночная
+   *           сетка карточек; `item.tags` — плашки под описанием первого
+   *           элемента.
    */
-  variant?: "table" | "cards" | "cards-cta" | "table-links" | "bento";
+  variant?: "table" | "cards" | "bento";
   columns?: 2 | 3;
-  /** Кнопка под сеткой карточек. Читает только cards-cta. */
+  /** Кнопка под сеткой карточек. Читает только cards. */
   action?: CtaLink;
   /**
    * Растягивает карточки последнего неполного ряда сетки на пустые
    * колонки (максимум col-span-2 на карточку, см. lib/gridFill.ts).
    * Дефолт `true`; `false` отключает для этой секции. Читают только
-   * карточные варианты: cards, cards-cta, bento (не table/table-links).
+   * карточные варианты: cards, bento (не table).
    */
   fillLastRow?: boolean;
   items: FeatureItem[];

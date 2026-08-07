@@ -10,8 +10,6 @@ const base = siteConfig.sections.find(
 const variants: NonNullable<FeaturesSection["variant"]>[] = [
   "table",
   "cards",
-  "cards-cta",
-  "table-links",
   "bento",
 ];
 

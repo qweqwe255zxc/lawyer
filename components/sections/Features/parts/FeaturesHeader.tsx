@@ -11,12 +11,12 @@ interface FeaturesHeaderProps {
 }
 
 /**
- * Заголовок пилюлей для cards-cta и bento — то, что обычный
- * `SectionHeader` не умеет (у него колонтитул всегда на левом поле).
- * Тот же приём, что и Steps/parts/StepsHeader.tsx и
- * Testimonials/parts/TestimonialsHeader.tsx — компонент свой для секции,
- * не общий. По центру — прежний единственный вид; align="left" читает
- * `SectionBase.headerAlign`, когда секция явно его переопределяет.
+ * Заголовок пилюлей для bento — то, что обычный `SectionHeader` не умеет
+ * (у него колонтитул всегда на левом поле). Тот же приём, что и
+ * Steps/parts/StepsHeader.tsx и Testimonials/parts/TestimonialsHeader.tsx
+ * — компонент свой для секции, не общий. По центру — прежний
+ * единственный вид; align="left" читает `SectionBase.headerAlign`, когда
+ * секция явно его переопределяет.
  */
 export function FeaturesHeader({
   number,
